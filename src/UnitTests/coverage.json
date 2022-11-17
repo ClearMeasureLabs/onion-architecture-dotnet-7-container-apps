@@ -1,0 +1,236 @@
+{
+  "ProgrammingWithPalermo.ChurchBulletin.Core.dll": {
+    "C:\\Users\\JeffreyPalermo\\Source\\Repos\\jeffreypalermo\\onion-architecture-dotnet-7-container-apps\\src\\Core\\ChurchBulletinException.cs": {
+      "ProgrammingWithPalermo.ChurchBulletin.Core.ChurchBulletinException": {
+        "System.Void ProgrammingWithPalermo.ChurchBulletin.Core.ChurchBulletinException::.ctor(System.String,System.Exception)": {
+          "Lines": {
+            "6": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\JeffreyPalermo\\Source\\Repos\\jeffreypalermo\\onion-architecture-dotnet-7-container-apps\\src\\Core\\Queries\\ChurchBulletinItemByDateAndTimeQuery.cs": {
+      "ProgrammingWithPalermo.ChurchBulletin.Core.Queries.ChurchBulletinItemByDateAndTimeQuery": {
+        "System.DateTime ProgrammingWithPalermo.ChurchBulletin.Core.Queries.ChurchBulletinItemByDateAndTimeQuery::get_TargetDate()": {
+          "Lines": {
+            "5": 0
+          },
+          "Branches": []
+        },
+        "System.Void ProgrammingWithPalermo.ChurchBulletin.Core.Queries.ChurchBulletinItemByDateAndTimeQuery::.ctor(System.DateTime)": {
+          "Lines": {
+            "7": 0,
+            "8": 0,
+            "9": 0,
+            "10": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\JeffreyPalermo\\Source\\Repos\\jeffreypalermo\\onion-architecture-dotnet-7-container-apps\\src\\Core\\Model\\ChurchBulletinItem.cs": {
+      "ProgrammingWithPalermo.ChurchBulletin.Core.Model.ChurchBulletinItem": {
+        "System.String ProgrammingWithPalermo.ChurchBulletin.Core.Model.ChurchBulletinItem::get_Name()": {
+          "Lines": {
+            "5": 0
+          },
+          "Branches": []
+        },
+        "System.String ProgrammingWithPalermo.ChurchBulletin.Core.Model.ChurchBulletinItem::get_Place()": {
+          "Lines": {
+            "6": 2
+          },
+          "Branches": []
+        },
+        "System.DateTime ProgrammingWithPalermo.ChurchBulletin.Core.Model.ChurchBulletinItem::get_Date()": {
+          "Lines": {
+            "7": 0
+          },
+          "Branches": []
+        },
+        "System.Guid ProgrammingWithPalermo.ChurchBulletin.Core.Model.ChurchBulletinItem::get_Id()": {
+          "Lines": {
+            "8": 13
+          },
+          "Branches": []
+        },
+        "System.String ProgrammingWithPalermo.ChurchBulletin.Core.Model.ChurchBulletinItem::GetFriendlyPlace()": {
+          "Lines": {
+            "11": 1,
+            "12": 1,
+            "13": 1
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\JeffreyPalermo\\Source\\Repos\\jeffreypalermo\\onion-architecture-dotnet-7-container-apps\\src\\Core\\Model\\EntityBase.cs": {
+      "ProgrammingWithPalermo.ChurchBulletin.Core.Model.EntityBase`1": {
+        "System.Boolean ProgrammingWithPalermo.ChurchBulletin.Core.Model.EntityBase`1::Equals(T)": {
+          "Lines": {
+            "8": 4,
+            "9": 4,
+            "10": 4,
+            "11": 4,
+            "12": 4
+          },
+          "Branches": [
+            {
+              "Line": 9,
+              "Offset": 12,
+              "EndOffset": 14,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 9,
+              "Offset": 12,
+              "EndOffset": 18,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 4
+            },
+            {
+              "Line": 10,
+              "Offset": 29,
+              "EndOffset": 31,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 10,
+              "Offset": 29,
+              "EndOffset": 35,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 4
+            }
+          ]
+        },
+        "System.Boolean ProgrammingWithPalermo.ChurchBulletin.Core.Model.EntityBase`1::Equals(System.Object)": {
+          "Lines": {
+            "15": 1,
+            "16": 1,
+            "17": 1,
+            "18": 1,
+            "19": 1,
+            "20": 1
+          },
+          "Branches": [
+            {
+              "Line": 16,
+              "Offset": 7,
+              "EndOffset": 9,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 16,
+              "Offset": 7,
+              "EndOffset": 13,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 1
+            },
+            {
+              "Line": 17,
+              "Offset": 19,
+              "EndOffset": 21,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 17,
+              "Offset": 19,
+              "EndOffset": 25,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 1
+            },
+            {
+              "Line": 18,
+              "Offset": 44,
+              "EndOffset": 46,
+              "Path": 0,
+              "Ordinal": 4,
+              "Hits": 0
+            },
+            {
+              "Line": 18,
+              "Offset": 44,
+              "EndOffset": 50,
+              "Path": 1,
+              "Ordinal": 5,
+              "Hits": 1
+            }
+          ]
+        },
+        "System.String ProgrammingWithPalermo.ChurchBulletin.Core.Model.EntityBase`1::ToString()": {
+          "Lines": {
+            "23": 0,
+            "24": 0,
+            "25": 0
+          },
+          "Branches": []
+        },
+        "System.Int32 ProgrammingWithPalermo.ChurchBulletin.Core.Model.EntityBase`1::GetHashCode()": {
+          "Lines": {
+            "28": 0,
+            "29": 0,
+            "30": 0
+          },
+          "Branches": []
+        },
+        "System.Boolean ProgrammingWithPalermo.ChurchBulletin.Core.Model.EntityBase`1::op_Equality(ProgrammingWithPalermo.ChurchBulletin.Core.Model.EntityBase`1<T>,ProgrammingWithPalermo.ChurchBulletin.Core.Model.EntityBase`1<T>)": {
+          "Lines": {
+            "33": 1,
+            "34": 1,
+            "35": 1
+          },
+          "Branches": []
+        },
+        "System.Boolean ProgrammingWithPalermo.ChurchBulletin.Core.Model.EntityBase`1::op_Inequality(ProgrammingWithPalermo.ChurchBulletin.Core.Model.EntityBase`1<T>,ProgrammingWithPalermo.ChurchBulletin.Core.Model.EntityBase`1<T>)": {
+          "Lines": {
+            "38": 0,
+            "39": 0,
+            "40": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\JeffreyPalermo\\Source\\Repos\\jeffreypalermo\\onion-architecture-dotnet-7-container-apps\\src\\Core\\Model\\WeatherForecast.cs": {
+      "ProgrammingWithPalermo.ChurchBulletin.Core.Model.WeatherForecast": {
+        "System.DateTime ProgrammingWithPalermo.ChurchBulletin.Core.Model.WeatherForecast::get_Date()": {
+          "Lines": {
+            "8": 0
+          },
+          "Branches": []
+        },
+        "System.Int32 ProgrammingWithPalermo.ChurchBulletin.Core.Model.WeatherForecast::get_TemperatureC()": {
+          "Lines": {
+            "10": 0
+          },
+          "Branches": []
+        },
+        "System.String ProgrammingWithPalermo.ChurchBulletin.Core.Model.WeatherForecast::get_Summary()": {
+          "Lines": {
+            "12": 0
+          },
+          "Branches": []
+        },
+        "System.Int32 ProgrammingWithPalermo.ChurchBulletin.Core.Model.WeatherForecast::get_TemperatureF()": {
+          "Lines": {
+            "14": 0
+          },
+          "Branches": []
+        }
+      }
+    }
+  }
+}

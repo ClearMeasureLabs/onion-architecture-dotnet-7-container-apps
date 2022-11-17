@@ -1,0 +1,41 @@
+﻿@using ProgrammingWithPalermo.ChurchBulletin.Core.Model
+@inject HttpClient Http
+@inherits Palermo.BlazorMvc.ViewComponentBase
+
+<PageTitle>Church Bulletin</PageTitle>
+
+<h1>Church Bulletin</h1>
+
+<p>This component demonstrates fetching church bulletin items.</p>
+
+@if (Model == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Place</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var bulletin in Model)
+            {
+                <tr>
+                    <td>@bulletin.Date.ToShortDateString()</td>
+                    <td>@bulletin.Name</td>
+                    <td>@bulletin.GetFriendlyPlace()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    public ChurchBulletinItem[]? Model { get; set; }
+
+}

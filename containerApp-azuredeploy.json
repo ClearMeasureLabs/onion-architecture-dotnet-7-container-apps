@@ -1,0 +1,100 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "container_app_name": {
+      "defaultValue": "onion",
+      "type": "String"
+    },
+    "location": {
+      "defaultValue": "southcentralus",
+      "type": "String"
+    },
+    "environment_name": {
+      "defaultValue": "dev",
+      "type": "String"
+    },
+
+    "managed_environment_name": {
+      "type" : "String"
+    },
+
+    "container_image": {
+      "type": "String"
+    },
+    "registry_password": {
+      "type": "SecureString"
+    },
+    "registry_username": {
+      "type": "SecureString"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "apiVersion": "2022-03-01",
+      "type": "Microsoft.App/containerApps",
+      "name": "[parameters('container_app_name')]",
+      "location": "[parameters('location')]",
+      "identity": {
+        "type": "None"
+      },
+      "properties": {
+        "managedEnvironmentId": "[resourceId('Microsoft.App/managedEnvironments', parameters('managed_environment_name'))]",
+        "configuration": {
+          "secrets": [
+            {
+              "name": "mysecret",
+              "value": "thisismysecret"
+            },
+            {
+              "name": "myregistrypassword",
+              "value": "[parameters('registry_password')]"
+            }
+          ],
+          "ingress": {
+            "external": true,
+            "targetPort": 80,
+            "allowInsecure": true,
+            "traffic": [
+              {
+                "latestRevision": true,
+                "weight": 100
+              }
+            ]
+          },
+          "registries": [
+            {
+              "server": "onionacr.azurecr.io",
+              "username": "[parameters('registry_username')]",
+              "passwordSecretRef": "myregistrypassword"
+            }
+          ],
+          "dapr": {
+            "appId": "[parameters('container_app_name')]",
+            "appPort": 80,
+            "appProtocol": "http",
+            "enabled": true
+          }
+        },
+        "template": {
+          "revisionSuffix": "myrevision",
+          "containers": [
+            {
+              "name": "main",
+              "image": "[parameters('container_image')]",
+              "resources": {
+                "cpu": 0.5,
+                "memory": "1Gi"
+              }
+            }
+          ],
+          "scale": {
+            "minReplicas": 1,
+            "maxReplicas": 3
+          }
+        }
+      }
+    }
+  ]
+}

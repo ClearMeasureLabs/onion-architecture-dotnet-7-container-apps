@@ -1,0 +1,465 @@
+#Reserving space for documentation
+#Finalized, committing.
+
+
+trigger:
+    - "*"
+
+variables:
+   major: 1
+   minor: 1
+name: $(major).$(minor)$(Rev:.r)
+
+stages:
+- stage: 'Build'
+  displayName: 'Build Application'
+
+#Phase 1: Build the prereqs for deployment, including the application and the database.
+#DB deploy could be pushed to phase 2 - the only important thing is to make sure that 
+#the database is up before the container build starts.  We need the variables to inject
+#into appsettings.json before the container pulls that file in.  Updating it after the
+#build involves installing some tools and doing some moderately painful awk/sed work
+#to fix the file in place.  Easier, faster, and safer to do it beforehand.
+
+
+
+  jobs: 
+    - job: 'Build'
+      displayName: 'Build job'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+      - group: ContainerApp-TDD
+      steps:
+
+      - task: UseDotNet@2
+        displayName: 'Install SDK 6.0.400'
+        inputs:
+          packageType: 'sdk'
+          version: '6.0.400'
+
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: |
+            [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
+            echo $env:Version
+            echo $(Build.BuildNumber)
+            #gci $(Build.SourcesDirectory) -Recurse
+
+      - task: OctoInstaller@5
+        displayName: 'Install octo cli tools on Windows agent'
+        inputs:
+          version: '*'
+
+      - task: PowerShell@2
+        displayName: Build.ps1
+        inputs:
+          targetType: filePath
+          filePath: ./build.ps1
+          arguments: '; CIBuild'
+
+      - task: PublishTestResults@2
+        displayName: 'Publish Test Results ./build/test/*.trx'
+        inputs:
+          testResultsFormat: VSTest
+          testResultsFiles: 'build/test/*.trx'
+          mergeTestResults: true
+          testRunTitle: 'CI Tests'
+        continueOnError: true
+        condition: succeededOrFailed()
+    
+      - task: PublishCodeCoverageResults@1
+        displayName: 'Publish code coverage from $(System.DefaultWorkingDirectory)/**/UnitTests/coverage.cobertura.xml'
+        inputs:
+          codeCoverageTool: Cobertura
+          summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/UnitTests/coverage.cobertura.xml'
+    
+      - task: PublishCodeCoverageResults@1
+        displayName: 'Publish code coverage from $(System.DefaultWorkingDirectory)/**/UnitTests/coverage.cobertura.xml copy'
+        inputs:
+          codeCoverageTool: Cobertura
+          summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/IntegrationTests/coverage.cobertura.xml'
+
+      - task: NuGetCommand@2
+        inputs:
+          command: 'push'
+          packagesToPush: '.\build\*.nupkg'
+          nuGetFeedType: 'internal'
+          publishVstsFeed: '$(FeedName)'
+
+      - task: OctopusCreateRelease@5
+        inputs:
+          OctoConnectedServiceName: 'octoServiceConnection'
+          Space: 'Onion DevOps'
+          ProjectGroup: 'Default Project Group'
+          ProjectName: 'AzContainerApp'
+          CustomReleaseNotes: 'Pushed from Azure DevOps'
+          DeployToEnvironment: 'TDD'
+          ReleaseNumber: '$(Build.BuildNumber)'
+          DeploymentProgress: true
+          AdditionalArguments: '--deploymenttimeout=00:30:00 --skip=DeployContainerAppARM' 
+
+#Phase 2:  Build the Docker container and push it to the registry for consumption in Phase 3.
+#With the application already built and packaged in phase 1, all we're doing here is fetching it,
+#extracting, and getting it into the container by way of COPY in the dockerfile.
+
+- stage: 'DeployTDD'
+  displayName: 'Deploy to TDD'
+
+  jobs: 
+  - job: 'DockerBuildandPush'
+    displayName: 'Deploy TDD'
+    pool:
+      vmImage: 'ubuntu-latest'
+    variables:
+      - group: ContainerApp-TDD
+ 
+    steps:
+
+      - task: DownloadPackage@1
+        displayName: 'Download UI Package'
+        inputs:
+          packageType: 'nuget'
+          feed: '$(FeedName)'
+          view: '$(PackageView)'
+          definition: '6e0407d8-4abf-4eb4-bf6b-f89d04cfe79c'
+          version: 'latest'
+          downloadPath: '$(System.DefaultWorkingDirectory)/built'
+          extract: true
+
+
+      - task: AzurePowerShell@4
+        displayName: 'Capture Created Database Variables'
+        inputs:
+          azureSubscription: 'ClearMeasurePlaygroundServiceConnection'
+          ScriptType: InlineScript
+          Inline: |
+              $AzResourceGroupDeployment = Get-AzResourceGroupDeployment -ResourceGroupName "$(ResourceGroupName)" | Sort-Object Timestamp -Descending | Select-Object -First 1      
+              Write-Host $AzResourceGroupDeployment
+              $AzResourceGroupDeployment.Outputs.GetEnumerator() | ForEach-Object {
+                $variableName = $_.key
+                $variableValue = $_.value.Value
+                Write-Host "##vso[task.setvariable variable=$variableName;]$variableValue" 
+                Write-Host "$variableName $variableValue" 
+                }
+          azurePowerShellVersion: LatestVersion
+
+      - task: PowerShell@2
+        displayName: "Inject connection string into appsettings.json file"
+        inputs:
+          targetType: 'inline'
+          script: |
+            $serverFQDN = "$(finalDatabaseServerName).database.windows.net"
+            $json = get-content $(System.DefaultWorkingDirectory)/built/appsettings.json | ConvertFrom-Json
+            $cstring = "Server=tcp:$serverFQDN,1433;Initial Catalog=$(finalDatabaseName);Persist Security Info=False;User ID=$(finalDatabaseLogin);Password=$(finalDatabaseLoginPassword);MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+            $json.ConnectionStrings.SqlConnectionString = $cstring
+            Write-Host $cstring
+            $json | ConvertTo-Json | Out-File $(System.DefaultWorkingDirectory)/built/appsettings.json
+            
+            $fixed = get-content $(System.DefaultWorkingDirectory)/built/appsettings.json | ConvertFrom-Json
+            Write-Host $fixed.ConnectionStrings
+            
+      - task: Docker@2
+        inputs:
+          containerRegistry: 'CMOnionARCServiceConnection'
+          repository: 'onion'
+          command: 'buildAndPush'
+          Dockerfile: '**/Dockerfile'
+          tags: |
+            $(EnvironmentName)-$(Build.BuildNumber)
+
+  #Phase 3:  Create/update the Container App.  This has to come after the container is built -
+  #ARM fails validation if it tries to deploy a Container App without a container image.
+
+  - job: 'OctopusReleaseContainerApp'
+    displayName: 'Octopus Release Container App'
+    pool:
+      vmImage: 'ubuntu-latest'
+    variables:
+      - group: ContainerApp-TDD
+    dependsOn: 'DockerBuildandPush'
+
+    steps:
+      - task: OctoInstaller@5
+        displayName: 'Install octo cli tools on Linux agent'
+        inputs:
+          version: '*'
+
+      - task: OctopusDeployRelease@5
+        inputs:
+          OctoConnectedServiceName: 'octoServiceConnection'
+          Space: 'Onion DevOps'
+          ProjectGroup: 'Default Project Group'
+          Project: 'AzContainerApp'
+          ReleaseNumber: '$(Build.BuildNumber)'
+          Environments: 'TDD'
+          ShowProgress: true
+          AdditionalArguments:  ' --deploymenttimeout=00:30:00 --skip="Deploy Database ARM" --skip="CaptureDBVariables" --skip "Non-Az Create Database Schema"  '
+
+      - task: AzurePowerShell@5
+        displayName: "Capture Container APP URL"
+        inputs:
+          azureSubscription: 'ClearMeasurePlaygroundServiceConnection'
+          ScriptType: 'InlineScript'
+          Inline: |
+            Install-Module Az.App
+            $ca = Get-AzContainerApp -ResourceGroupName $(ResourceGroupName) -Name $(ContainerAppName)
+            
+            $fqdn = $ca.LatestRevisionFQDN
+            
+            Write-Host $fqdn
+            
+            Write-Host "##vso[task.setvariable variable=$ContainerAppFQDN;]$fqdn"
+            
+            Write-Host $(ContainerAppFQDN)
+          azurePowerShellVersion: 'LatestVersion'
+        continueOnError: true
+        enabled: false
+
+
+######################################################################
+#UAT Deploy                                                          # 
+######################################################################
+- stage: 'DeployUAT'
+  displayName: 'Deploy to UAT'
+
+  jobs: 
+    - job: 'DeployUAT'
+      displayName: 'Deploy UAT'
+      pool:
+        vmImage: 'ubuntu-latest'
+      variables:
+      - group: ContainerApp-UAT
+      steps:
+
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: |
+            [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
+            echo $env:Version
+            echo $(Build.BuildNumber)
+            #gci $(Build.SourcesDirectory) -Recurse  
+
+      - task: OctoInstaller@5
+        displayName: 'Install octo cli tools on AzDo agent'
+        inputs:
+          version: '*'
+ 
+      - task: OctopusDeployRelease@5
+        inputs:
+          OctoConnectedServiceName: 'octoServiceConnection'
+          Space: 'Onion DevOps'
+          ProjectGroup: 'Default Project Group'
+          Project: 'AzContainerApp'
+          ReleaseNumber: '$(Build.BuildNumber)'
+          Environments: 'UAT'
+          ShowProgress: true
+          AdditionalArguments: '--deploymenttimeout=00:30:00 --skip=DeployContainerAppARM'
+          
+      - task: DownloadPackage@1
+        inputs:
+          packageType: 'nuget'
+          feed: 'd5caa1df-f7fc-426a-ace2-513ab6032f8c/98ec5b13-ca39-439a-9451-7b3bea0f696b'
+          view: '44223af1-a729-4545-90f2-878828a9e197'
+          definition: '6e0407d8-4abf-4eb4-bf6b-f89d04cfe79c'
+          version: 'latest'
+          downloadPath: '$(System.DefaultWorkingDirectory)/built'
+          extract: true
+
+      - task: AzurePowerShell@4
+        displayName: 'Capture Created Database Variables'
+        inputs:
+          azureSubscription: 'ClearMeasurePlaygroundServiceConnection'
+          ScriptType: InlineScript
+          Inline: |
+              $AzResourceGroupDeployment = Get-AzResourceGroupDeployment -ResourceGroupName "$(ResourceGroupName)" | Sort-Object Timestamp -Descending | Select-Object -First 1      
+              Write-Host $AzResourceGroupDeployment
+              $AzResourceGroupDeployment.Outputs.GetEnumerator() | ForEach-Object {
+                $variableName = $_.key
+                $variableValue = $_.value.Value
+                Write-Host "##vso[task.setvariable variable=$variableName;]$variableValue" 
+                Write-Host "$variableName $variableValue" 
+              }
+          azurePowerShellVersion: LatestVersion
+
+      - task: PowerShell@2
+        displayName: "Inject connection string into appsettings.json file"
+        inputs:
+          targetType: 'inline'
+          script: |
+            $serverFQDN = "$(finalDatabaseServerName).database.windows.net"
+            $json = get-content $(System.DefaultWorkingDirectory)/built/appsettings.json | ConvertFrom-Json
+            $cstring = "Server=tcp:$serverFQDN,1433;Initial Catalog=$(finalDatabaseName);Persist Security Info=False;User ID=$(finalDatabaseLogin);Password=$(finalDatabaseLoginPassword);MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+            $json.ConnectionStrings.SqlConnectionString = $cstring
+            Write-Host $cstring
+            $json | ConvertTo-Json | Out-File $(System.DefaultWorkingDirectory)/built/appsettings.json
+            
+            $fixed = get-content $(System.DefaultWorkingDirectory)/built/appsettings.json | ConvertFrom-Json
+            Write-Host $fixed.ConnectionStrings
+          
+      - task: Docker@2
+        inputs:
+          containerRegistry: 'CMOnionARCServiceConnection'
+          repository: 'onion'
+          command: 'buildAndPush'
+          Dockerfile: '**/Dockerfile'
+          tags: |
+            $(EnvironmentName)-$(Build.BuildNumber)
+
+      - task: OctopusDeployRelease@5
+        inputs:
+          OctoConnectedServiceName: 'octoServiceConnection'
+          Space: 'Onion DevOps'
+          ProjectGroup: 'Default Project Group'
+          Project: 'AzContainerApp'
+          ReleaseNumber: '$(Build.BuildNumber)'
+          Environments: 'UAT'
+          ShowProgress: true
+          AdditionalArguments:  ' --deploymenttimeout=00:30:00 --skip="Deploy Database ARM" --skip="CaptureDBVariables" --skip "Non-Az Create Database Schema"  '
+
+      - task: AzurePowerShell@5
+        displayName: "Capture Container APP URL"
+        inputs:
+          azureSubscription: 'ClearMeasurePlaygroundServiceConnection'
+          ScriptType: 'InlineScript'
+          Inline: |
+            Install-Module Az.App
+            $ca = Get-AzContainerApp -ResourceGroupName $(ResourceGroupName) -Name $(ContainerAppName)
+            
+            $fqdn = $ca.LatestRevisionFQDN
+            
+            Write-Host $fqdn
+            
+            Write-Host "##vso[task.setvariable variable=$ContainerAppFQDN;]$fqdn"
+            
+            Write-Host $(ContainerAppFQDN)
+          azurePowerShellVersion: 'LatestVersion'
+        continueOnError: true
+        enabled: false
+
+######################################################################
+#PRD Deploy                                                          # 
+######################################################################
+- stage: 'DeployPRD'
+  displayName: 'Deploy to PRD'
+
+  jobs: 
+    - job: 'DeployPRD'
+      displayName: 'Deploy PRD'
+      pool:
+        vmImage: 'ubuntu-latest'
+      variables:
+      - group: ContainerApp-PRD
+      steps:
+
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: |
+            [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
+            echo $env:Version
+            echo $(Build.BuildNumber)
+            #gci $(Build.SourcesDirectory) -Recurse  
+
+      - task: OctoInstaller@5
+        displayName: 'Install octo cli tools on AzDo agent'
+        inputs:
+          version: '*'
+ 
+      - task: OctopusDeployRelease@5
+        inputs:
+          OctoConnectedServiceName: 'octoServiceConnection'
+          Space: 'Onion DevOps'
+          ProjectGroup: 'Default Project Group'
+          Project: 'AzContainerApp'
+          ReleaseNumber: '$(Build.BuildNumber)'
+          Environments: 'Prod'
+          ShowProgress: true
+          AdditionalArguments: '--deploymenttimeout=00:30:00 --skip=DeployContainerAppARM'
+          
+      - task: DownloadPackage@1
+        inputs:
+          packageType: 'nuget'
+          feed: 'd5caa1df-f7fc-426a-ace2-513ab6032f8c/98ec5b13-ca39-439a-9451-7b3bea0f696b'
+          view: '44223af1-a729-4545-90f2-878828a9e197'
+          definition: '6e0407d8-4abf-4eb4-bf6b-f89d04cfe79c'
+          version: 'latest'
+          downloadPath: '$(System.DefaultWorkingDirectory)/built'
+
+      - task: Bash@3
+        inputs:
+          targetType: 'inline'
+          script: 'ls -lsa $(System.DefaultWorkingDirectory)/built'
+
+      - task: AzurePowerShell@4
+        displayName: 'Capture Created Database Variables'
+        inputs:
+          azureSubscription: 'ClearMeasurePlaygroundServiceConnection'
+          ScriptType: InlineScript
+          Inline: |
+              $AzResourceGroupDeployment = Get-AzResourceGroupDeployment -ResourceGroupName "$(ResourceGroupName)" | Sort-Object Timestamp -Descending | Select-Object -First 1      
+              Write-Host $AzResourceGroupDeployment
+              $AzResourceGroupDeployment.Outputs.GetEnumerator() | ForEach-Object {
+                $variableName = $_.key
+                $variableValue = $_.value.Value
+                Write-Host "##vso[task.setvariable variable=$variableName;]$variableValue" 
+                #Write-Host "$variableName $variableValue" 
+              }
+          azurePowerShellVersion: LatestVersion
+
+      - task: PowerShell@2
+        displayName: "Inject connection string into appsettings.json file"
+        inputs:
+          targetType: 'inline'
+          script: |
+            $serverFQDN = "$(finalDatabaseServerName).database.windows.net"
+            $json = get-content $(System.DefaultWorkingDirectory)/built/appsettings.json | ConvertFrom-Json
+            $cstring = "Server=tcp:$serverFQDN,1433;Initial Catalog=$(finalDatabaseName);Persist Security Info=False;User ID=$(finalDatabaseLogin);Password=$(finalDatabaseLoginPassword);MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+            $json.ConnectionStrings.SqlConnectionString = $cstring
+            Write-Host $cstring
+            $json | ConvertTo-Json | Out-File $(System.DefaultWorkingDirectory)/built/appsettings.json
+            
+            $fixed = get-content $(System.DefaultWorkingDirectory)/built/appsettings.json | ConvertFrom-Json
+            Write-Host $fixed.ConnectionStrings
+          
+      - task: Docker@2
+        inputs:
+          containerRegistry: 'CMOnionARCServiceConnection'
+          repository: 'onion'
+          command: 'buildAndPush'
+          Dockerfile: '**/Dockerfile'
+          tags: |
+            $(EnvironmentName)-$(Build.BuildNumber)
+
+      - task: OctopusDeployRelease@5
+        inputs:
+          OctoConnectedServiceName: 'octoServiceConnection'
+          Space: 'Onion DevOps'
+          ProjectGroup: 'Default Project Group'
+          Project: 'AzContainerApp'
+          ReleaseNumber: '$(Build.BuildNumber)'
+          Environments: 'Prod'
+          ShowProgress: true
+          AdditionalArguments:  ' --deploymenttimeout=00:30:00 --skip="Deploy Database ARM" --skip="CaptureDBVariables" --skip "Non-Az Create Database Schema"  '
+
+      - task: AzurePowerShell@5
+        displayName: "Capture Container APP URL"
+        inputs:
+          azureSubscription: 'ClearMeasurePlaygroundServiceConnection'
+          ScriptType: 'InlineScript'
+          Inline: |
+            Install-Module Az.App
+            $ca = Get-AzContainerApp -ResourceGroupName $(ResourceGroupName) -Name $(ContainerAppName)
+            
+            $fqdn = $ca.LatestRevisionFQDN
+            
+            Write-Host $fqdn
+            
+            Write-Host "##vso[task.setvariable variable=$ContainerAppFQDN;]$fqdn"
+            
+            Write-Host $(ContainerAppFQDN)
+          azurePowerShellVersion: 'LatestVersion' 
+        continueOnError: true
+        enabled: false

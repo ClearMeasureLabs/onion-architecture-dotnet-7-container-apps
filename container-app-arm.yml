@@ -1,0 +1,36 @@
+# Starter pipeline
+
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- none
+
+pool:
+  vmImage: windows-latest
+
+variables:
+- group: ContainerAppsInfrastructure
+
+steps:
+
+- task: AzureResourceManagerTemplateDeployment@3
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'tfMPN'
+    subscriptionId: 'c61decc5-a544-4e44-8ae1-fdfa3045cf92'
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: 'tf-Container-App-RG'
+    location: 'South Central US'
+    templateLocation: 'Linked artifact'
+    csmFile: 'containerApp-azuredeploy.json'
+    overrideParameters: >-
+          -container_image $(container_image)
+          -container_app_name $(container_app_name)
+          -environment_name $(environment_name)
+          -managed_environment_name $(managed_environment_name)
+          -registry_password $(registry_password)
+          -registry_username $(registry_username)
+    deploymentMode: 'Incremental'
+
