@@ -27,6 +27,7 @@ app.UseRouting();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
+app.MapHealthChecks("_healthcheck");
 
 await app.Services.GetRequiredService<HealthCheckService>().CheckHealthAsync();
 
