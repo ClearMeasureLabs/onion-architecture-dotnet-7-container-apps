@@ -352,3 +352,6 @@ MigrationBackup/
 /build/test
 coverage.cobertura.xml
 /src/.idea/.idea.ChurchBulletin/.idea
+/src/AcceptanceTests/coverage.json
+/src/IntegrationTests/coverage.json
+/src/UnitTests/coverage.json
