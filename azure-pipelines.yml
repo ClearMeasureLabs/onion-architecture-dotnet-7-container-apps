@@ -101,58 +101,17 @@ stages:
       vmImage: 'ubuntu-latest'
     variables:
       - group: Integration-Build
-    condition: false
  
     steps:
-
       - task: DownloadPackage@1
         displayName: 'Download UI Package'
         inputs:
           packageType: 'nuget'
           feed: '$(FeedName)'
-          view: '$(PackageView)'
-          definition: '6e0407d8-4abf-4eb4-bf6b-f89d04cfe79c'
+          view: 'Local'
+          definition: 'ChurchBulletin.UI'
           version: 'latest'
           downloadPath: '$(System.DefaultWorkingDirectory)/built'
           extract: true
 
 
-      - task: AzurePowerShell@4
-        displayName: 'Capture Created Database Variables'
-        inputs:
-          azureSubscription: 'ClearMeasurePlaygroundServiceConnection'
-          ScriptType: InlineScript
-          Inline: |
-              $AzResourceGroupDeployment = Get-AzResourceGroupDeployment -ResourceGroupName "$(ResourceGroupName)" | Sort-Object Timestamp -Descending | Select-Object -First 1      
-              Write-Host $AzResourceGroupDeployment
-              $AzResourceGroupDeployment.Outputs.GetEnumerator() | ForEach-Object {
-                $variableName = $_.key
-                $variableValue = $_.value.Value
-                Write-Host "##vso[task.setvariable variable=$variableName;]$variableValue" 
-                Write-Host "$variableName $variableValue" 
-                }
-          azurePowerShellVersion: LatestVersion
-
-      - task: PowerShell@2
-        displayName: "Inject connection string into appsettings.json file"
-        inputs:
-          targetType: 'inline'
-          script: |
-            $serverFQDN = "$(finalDatabaseServerName).database.windows.net"
-            $json = get-content $(System.DefaultWorkingDirectory)/built/appsettings.json | ConvertFrom-Json
-            $cstring = "Server=tcp:$serverFQDN,1433;Initial Catalog=$(finalDatabaseName);Persist Security Info=False;User ID=$(finalDatabaseLogin);Password=$(finalDatabaseLoginPassword);MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-            $json.ConnectionStrings.SqlConnectionString = $cstring
-            Write-Host $cstring
-            $json | ConvertTo-Json | Out-File $(System.DefaultWorkingDirectory)/built/appsettings.json
-            
-            $fixed = get-content $(System.DefaultWorkingDirectory)/built/appsettings.json | ConvertFrom-Json
-            Write-Host $fixed.ConnectionStrings
-            
-      - task: Docker@2
-        inputs:
-          containerRegistry: 'CMOnionARCServiceConnection'
-          repository: 'onion'
-          command: 'buildAndPush'
-          Dockerfile: '**/Dockerfile'
-          tags: |
-            $(EnvironmentName)-$(Build.BuildNumber)
