@@ -89,7 +89,6 @@ stages:
         inputs:
           command: 'push'
           packagesToPush: '.\build\*.nupkg'
-          nuGetFeedType: 'internal'
           publishVstsFeed: '$(FeedName)'
 
      
