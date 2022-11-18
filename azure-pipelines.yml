@@ -8,7 +8,7 @@ trigger:
 variables:
    major: 1
    minor: 1
-name: $(major).$(minor)$(Rev:.r)
+name: $(major).$(minor).$(Rev:r)
 
 stages:
 - stage: 'Build'
