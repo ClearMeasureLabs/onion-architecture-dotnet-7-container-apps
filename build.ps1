@@ -68,8 +68,6 @@ Function UnitTests{
 			--no-restore --configuration $projectConfig `
 			--collect:"XPlat Code Coverage"
 		}
-
-		copy $test_dir\UnitTests\**\*.xml $test_dir\UnitTests\
 	}
 	finally {
 		Pop-Location
@@ -86,8 +84,6 @@ Function IntegrationTest{
 			--no-restore --configuration $projectConfig `
 			--collect:"XPlat Code Coverage"
 		}
-
-		copy $test_dir\IntegrationTests\**\*.xml $test_dir\IntegrationTests\
 	}
 	finally {
 		Pop-Location
