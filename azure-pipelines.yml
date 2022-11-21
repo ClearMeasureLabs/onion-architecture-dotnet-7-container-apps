@@ -101,6 +101,7 @@ stages:
         vmImage: 'ubuntu-latest'
       variables:
         - group: Integration-Build
+      dependsOn: Build
  
       steps:
       - task: DownloadPackage@1
@@ -110,7 +111,7 @@ stages:
           feed: '$(FeedName)'
           view: 'Local'
           definition: 'ChurchBulletin.UI'
-          version: 'latest'
+          version: '$(name)'
           downloadPath: '$(System.DefaultWorkingDirectory)/built'
           extract: true
       - task: Docker@2
