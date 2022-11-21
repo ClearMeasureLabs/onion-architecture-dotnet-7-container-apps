@@ -77,7 +77,8 @@ stages:
         displayName: 'Publish code coverage'
         inputs:
           codeCoverageTool: Cobertura
-          summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.cobertura.xml'
+          summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/UnitTests/**/coverage.cobertura.xml'
+          additionalCodeCoverageFiles: '$(System.DefaultWorkingDirectory)/**/coverage.cobertura.xml'
     
       - task: NuGetCommand@2
         inputs:
