@@ -105,7 +105,7 @@ stages:
           feed: '$(FeedName)'
           view: 'Local'
           definition: 'ChurchBulletin.UI'
-          version: '$(name)'
+          version: '$(Build.BuildNumber)'
           downloadPath: '$(System.DefaultWorkingDirectory)/built'
           extract: true
       - task: Docker@2
