@@ -74,11 +74,16 @@ stages:
         condition: succeededOrFailed()
     
       - task: PublishCodeCoverageResults@1
-        displayName: 'Publish code coverage'
+        displayName: 'Publish code coverage UnitTests'
         inputs:
           codeCoverageTool: Cobertura
           summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/UnitTests/**/coverage.cobertura.xml'
-          additionalCodeCoverageFiles: '$(System.DefaultWorkingDirectory)/**/coverage.cobertura.xml'
+          
+      - task: PublishCodeCoverageResults@1
+        displayName: 'Publish code coverage IntegrationTests'
+        inputs:
+          codeCoverageTool: Cobertura
+          summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/IntegrationTests/**/coverage.cobertura.xml'
     
       - task: NuGetCommand@2
         inputs:
