@@ -74,17 +74,17 @@ stages:
         condition: succeededOrFailed()
     
       - task: PublishCodeCoverageResults@1
-        displayName: 'Publish code coverage from $(System.DefaultWorkingDirectory)/**/UnitTests/coverage.cobertura.xml'
+        displayName: 'Publish code coverage UnitTests'
         inputs:
           codeCoverageTool: Cobertura
-          summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/UnitTests/coverage.cobertura.xml'
-    
+          summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/UnitTests/**/coverage.cobertura.xml'
+          
       - task: PublishCodeCoverageResults@1
-        displayName: 'Publish code coverage from $(System.DefaultWorkingDirectory)/**/UnitTests/coverage.cobertura.xml copy'
+        displayName: 'Publish code coverage IntegrationTests'
         inputs:
           codeCoverageTool: Cobertura
-          summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/IntegrationTests/coverage.cobertura.xml'
-
+          summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/IntegrationTests/**/coverage.cobertura.xml'
+    
       - task: NuGetCommand@2
         inputs:
           command: 'push'
@@ -96,16 +96,14 @@ stages:
 #With the application already built and packaged in phase 1, all we're doing here is fetching it,
 #extracting, and getting it into the container by way of COPY in the dockerfile.
 
-- stage: 'Publish_UI_Container'
-  
-  jobs: 
-  - job: 'DockerBuildandPush'
-    pool:
-      vmImage: 'ubuntu-latest'
-    variables:
-      - group: Integration-Build
+    - job: 'DockerBuildandPush'
+      pool:
+        vmImage: 'ubuntu-latest'
+      variables:
+        - group: Integration-Build
+      dependsOn: Build
  
-    steps:
+      steps:
       - task: DownloadPackage@1
         displayName: 'Download UI Package'
         inputs:
@@ -113,8 +111,15 @@ stages:
           feed: '$(FeedName)'
           view: 'Local'
           definition: 'ChurchBulletin.UI'
-          version: 'latest'
+          version: '$(Build.BuildNumber)'
           downloadPath: '$(System.DefaultWorkingDirectory)/built'
           extract: true
-
+      - task: Docker@2
+        inputs:
+          containerRegistry: 'OnionArcServiceConnection'
+          repository: 'ChurchBulletin.UI'
+          command: 'buildAndPush'
+          Dockerfile: '**/Dockerfile'
+          tags: |
+            $(Build.BuildNumber)
 
