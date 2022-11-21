@@ -96,16 +96,13 @@ stages:
 #With the application already built and packaged in phase 1, all we're doing here is fetching it,
 #extracting, and getting it into the container by way of COPY in the dockerfile.
 
-- stage: 'Publish_UI_Container'
-  
-  jobs: 
-  - job: 'DockerBuildandPush'
-    pool:
-      vmImage: 'ubuntu-latest'
-    variables:
-      - group: Integration-Build
+    - job: 'DockerBuildandPush'
+      pool:
+        vmImage: 'ubuntu-latest'
+      variables:
+        - group: Integration-Build
  
-    steps:
+      steps:
       - task: DownloadPackage@1
         displayName: 'Download UI Package'
         inputs:
