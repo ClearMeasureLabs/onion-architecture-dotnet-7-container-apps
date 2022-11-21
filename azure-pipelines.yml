@@ -67,7 +67,7 @@ stages:
         displayName: 'Publish Test Results ./build/test/*.trx'
         inputs:
           testResultsFormat: VSTest
-          testResultsFiles: 'build/test/*.trx'
+          testResultsFiles: 'build/test/**/*.trx'
           mergeTestResults: true
           testRunTitle: 'CI Tests'
         continueOnError: true
