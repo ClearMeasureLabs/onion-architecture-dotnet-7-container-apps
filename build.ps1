@@ -63,11 +63,13 @@ Function UnitTests{
 
 	try {
 		exec {
-			& dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura -nologo -v $verbosity --logger:trx `
-			--results-directory $test_dir --no-build `
+			& dotnet test  -nologo -v $verbosity --logger:trx `
+			--results-directory $test_dir\UnitTests --no-build `
 			--no-restore --configuration $projectConfig `
-			--collect:"Code Coverage" 
+			--collect:"XPlat Code Coverage"
 		}
+
+		copy $test_dir\UnitTests\**\*.xml $test_dir\UnitTests\
 	}
 	finally {
 		Pop-Location
@@ -79,11 +81,13 @@ Function IntegrationTest{
 
 	try {
 		exec {
-			& dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura -nologo -v $verbosity --logger:trx `
-			--results-directory $test_dir --no-build `
+			& dotnet test -nologo -v $verbosity --logger:trx `
+			--results-directory $test_dir\IntegrationTests --no-build `
 			--no-restore --configuration $projectConfig `
-			--collect:"Code Coverage" 
+			--collect:"XPlat Code Coverage"
 		}
+
+		copy $test_dir\IntegrationTests\**\*.xml $test_dir\IntegrationTests\
 	}
 	finally {
 		Pop-Location
@@ -98,10 +102,10 @@ Function AcceptanceTest{
 
 	try {
 		exec {
-			& dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura -nologo -v $verbosity --logger:trx `
-			--results-directory $test_dir --no-build `
+			& dotnet test -v $verbosity --logger:trx `
+			--results-directory $test_dir\AcceptanceTests --no-build `
 			--no-restore --configuration $projectConfig `
-			--collect:"Code Coverage" 
+			--collect:"XPlat Code Coverage"
 		}
 	}
 	finally {
