@@ -12,7 +12,7 @@ $projectConfig = $env:BuildConfiguration
 $framework = "net7.0"
 $version = $env:BUILD_BUILDNUMBER
 
-$verbosity = "m"
+$verbosity = "minimal"
 
 $build_dir = "$base_dir\build"
 $test_dir = "$build_dir\test"
@@ -63,7 +63,7 @@ Function UnitTests{
 
 	try {
 		exec {
-			& dotnet test  -nologo -v $verbosity --logger:trx `
+			& dotnet test /p:CollectCoverage=true -nologo -v $verbosity --logger:trx `
 			--results-directory $test_dir\UnitTests --no-build `
 			--no-restore --configuration $projectConfig `
 			--collect:"XPlat Code Coverage"
@@ -79,7 +79,7 @@ Function IntegrationTest{
 
 	try {
 		exec {
-			& dotnet test -nologo -v $verbosity --logger:trx `
+			& dotnet test /p:CollectCoverage=true -nologo -v $verbosity --logger:trx `
 			--results-directory $test_dir\IntegrationTests --no-build `
 			--no-restore --configuration $projectConfig `
 			--collect:"XPlat Code Coverage"
@@ -98,7 +98,7 @@ Function AcceptanceTest{
 
 	try {
 		exec {
-			& dotnet test -v $verbosity --logger:trx `
+			& dotnet test /p:CollectCoverage=true -nologo -v $verbosity --logger:trx `
 			--results-directory $test_dir\AcceptanceTests --no-build `
 			--no-restore --configuration $projectConfig `
 			--collect:"XPlat Code Coverage"
