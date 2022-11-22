@@ -77,13 +77,13 @@ stages:
         displayName: 'Publish code coverage UnitTests'
         inputs:
           codeCoverageTool: Cobertura
-          summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/UnitTests/**/coverage.cobertura.xml'
+          summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/UnitTests/**/In/**/coverage.cobertura.xml'
           
       - task: PublishCodeCoverageResults@1
         displayName: 'Publish code coverage IntegrationTests'
         inputs:
           codeCoverageTool: Cobertura
-          summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/IntegrationTests/**/coverage.cobertura.xml'
+          summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/IntegrationTests/**/In/**/coverage.cobertura.xml'
     
       - task: NuGetCommand@2
         inputs:
