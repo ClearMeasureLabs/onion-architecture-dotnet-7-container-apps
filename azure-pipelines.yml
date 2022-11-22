@@ -84,6 +84,7 @@ stages:
         inputs:
           codeCoverageTool: Cobertura
           summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/IntegrationTests/**/In/**/coverage.cobertura.xml'
+        enabled: false
     
       - task: NuGetCommand@2
         inputs:
