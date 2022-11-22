@@ -77,7 +77,7 @@ stages:
         displayName: 'Publish code coverage UnitTests'
         inputs:
           codeCoverageTool: Cobertura
-          summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/UnitTests/**/In/**/coverage.cobertura.xml'
+          summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/**/In/**/coverage.cobertura.xml'
           
       - task: PublishCodeCoverageResults@1
         displayName: 'Publish code coverage IntegrationTests'
