@@ -13,7 +13,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="TestResults\**" />
+    <EmbeddedResource Remove="TestResults\**" />
+    <None Remove="TestResults\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="coverage.cobertura.xml" />
+    <None Remove="coverage.json" />
   </ItemGroup>
 
   <ItemGroup>
