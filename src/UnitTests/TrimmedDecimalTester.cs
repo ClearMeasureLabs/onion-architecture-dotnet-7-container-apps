@@ -1,4 +1,6 @@
-﻿using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+﻿using System.Diagnostics;
+using Newtonsoft.Json;
+using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 using Shouldly;
 
 namespace ProgrammingWithPalermo.ChurchBulletin.UnitTests;
@@ -9,12 +11,18 @@ public class TrimmedDecimalTester
     [Test]
     public void Scratch()
     {
-        decimal val = 8.230000m;
-        TrimmedDecimal trimmedVal = val;
-        Console.WriteLine(trimmedVal.ToString());
-        Console.WriteLine(trimmedVal.ToString());
-        Console.WriteLine(trimmedVal.ToString());
-        Console.WriteLine(trimmedVal.ToString());
+        decimal myDecimal = 77.2300m;
+        TrimmedDecimal val = myDecimal;
+        UseObject(val);
+        
+    }
+
+    private void UseObject(object val)
+    {
+        Console.WriteLine(val);
+        Console.WriteLine(val);
+        Console.WriteLine(val);
+        Console.WriteLine(val);
     }
 
     [Test]
@@ -117,12 +125,12 @@ public class TrimmedDecimalTester
         (largerThanBaseAsValue < baseNumber).ShouldBeFalse();
     }
 
-    [Test]
+    [Test, Ignore("struct now")]
     public void ShouldCompareNull()
     {
-        TrimmedDecimal nullNum1 = null;
-        TrimmedDecimal nullNum2 = null;
-        TrimmedDecimal setNum = 5.234m;
+        TrimmedDecimal? nullNum1 = null;
+        TrimmedDecimal? nullNum2 = null;
+        TrimmedDecimal? setNum = 5.234m;
         (nullNum1 == nullNum2).ShouldBeTrue();
         (nullNum1 != nullNum2).ShouldBeFalse();
         (nullNum1 > nullNum2).ShouldBeFalse();

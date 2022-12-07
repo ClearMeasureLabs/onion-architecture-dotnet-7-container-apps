@@ -1,13 +1,13 @@
 ﻿namespace ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
-public class TrimmedDecimal : IComparable
+public struct TrimmedDecimal : IComparable
 {
     public TrimmedDecimal(decimal? val)
     {
         Value = val.GetValueOrDefault();
     }
 
-    public decimal Value { get; set; }
+    private decimal Value { get; set; }
 
     public int CompareTo(object obj)
     {
