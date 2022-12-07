@@ -125,11 +125,11 @@ public class TrimmedDecimalTester
         (largerThanBaseAsValue < baseNumber).ShouldBeFalse();
     }
 
-    [Test, Ignore("struct now")]
-    public void ShouldCompareNull()
+    [Test]
+    public void ShouldCompareDefaultValue()
     {
-        TrimmedDecimal? nullNum1 = null;
-        TrimmedDecimal? nullNum2 = null;
+        TrimmedDecimal? nullNum1 = new TrimmedDecimal();
+        TrimmedDecimal? nullNum2 = new TrimmedDecimal();
         TrimmedDecimal? setNum = 5.234m;
         (nullNum1 == nullNum2).ShouldBeTrue();
         (nullNum1 != nullNum2).ShouldBeFalse();

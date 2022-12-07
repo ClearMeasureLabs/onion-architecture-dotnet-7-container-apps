@@ -1,18 +1,18 @@
 ﻿namespace ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 
-public struct TrimmedDecimal : IComparable
+public readonly struct TrimmedDecimal : IComparable
 {
     public TrimmedDecimal(decimal? val)
     {
         Value = val.GetValueOrDefault();
     }
 
-    private decimal Value { get; set; }
+    private decimal Value { get; }
 
-    public int CompareTo(object obj)
+    public int CompareTo(object? obj)
     {
         if (obj == null) return 1;
-        if (obj is TrimmedDecimal) return CompareTo((TrimmedDecimal)obj);
+        if (obj is TrimmedDecimal trimmedDecimal) return CompareTo(trimmedDecimal);
 
         throw new Exception($"Can't compare to instance of {obj.GetType()}");
     }
@@ -22,7 +22,7 @@ public struct TrimmedDecimal : IComparable
         return Value.ToString("0.######");
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj == null) return false;
         if (obj is TrimmedDecimal) return CompareTo(obj) == 0;
@@ -36,7 +36,6 @@ public struct TrimmedDecimal : IComparable
 
     public int CompareTo(TrimmedDecimal other)
     {
-        if (other == null) return 1;
         if (Value < other.Value) return -1;
         if (Value > other.Value) return 1;
         return 0;
@@ -44,8 +43,6 @@ public struct TrimmedDecimal : IComparable
 
     public static bool operator ==(TrimmedDecimal left, TrimmedDecimal right)
     {
-        if ((object)left == null) return (object)right == null;
-
         return left.Equals(right);
     }
 
@@ -56,15 +53,11 @@ public struct TrimmedDecimal : IComparable
 
     public static bool operator >(TrimmedDecimal left, TrimmedDecimal right)
     {
-        if (left == null) return false;
-
         return left.CompareTo(right) > 0;
     }
 
     public static bool operator <(TrimmedDecimal left, TrimmedDecimal right)
     {
-        if (left == null) return right != null;
-
         return left.CompareTo(right) < 0;
     }
 
@@ -141,17 +134,17 @@ public struct TrimmedDecimal : IComparable
 
     public static implicit operator decimal(TrimmedDecimal num)
     {
-        return num == null ? 0 : num.Value;
+        return num.Value;
     }
 
     public static implicit operator float(TrimmedDecimal num)
     {
-        return num == null ? 0 : (float)num.Value;
+        return (float)num.Value;
     }
 
     public static implicit operator int(TrimmedDecimal num)
     {
-        return num == null ? 0 : (int)num.Value;
+        return (int)num.Value;
     }
 
     public static implicit operator TrimmedDecimal(decimal num)
