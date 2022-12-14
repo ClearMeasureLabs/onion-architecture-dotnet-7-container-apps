@@ -15,6 +15,7 @@
 	<ItemGroup>
 		<None Remove="appsettings.test.json" />
 		<None Remove="coverage.cobertura.xml" />
+		<None Remove="coverage.json" />
 	</ItemGroup>
 
 	<ItemGroup>

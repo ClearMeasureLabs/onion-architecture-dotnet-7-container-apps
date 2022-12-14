@@ -24,7 +24,14 @@ namespace ProgrammingWithPalermo.ChurchBulletin.UnitTests
         public void ShouldOutputFriendlyPlace()
         {
             var item = new ChurchBulletinItem(){Place = "Sanctuary"};
-            item.GetFriendlyPlace().ShouldBe("@ Sanctuary");
+            item.GetFriendlyPlace().ShouldBe("@ SANCTUARY");
+        }
+
+        [Test]
+        public void PlaceShouldBeAllCaps()
+        {
+            var item = new ChurchBulletinItem() { Place = "lowercase" };
+            item.Place.ShouldBe((UpperCaseString)"LOWERCASE");
         }
     }
 }

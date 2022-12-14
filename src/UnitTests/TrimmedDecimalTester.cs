@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using Newtonsoft.Json;
-using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
+﻿using ProgrammingWithPalermo.ChurchBulletin.Core.Model;
 using Shouldly;
 
 namespace ProgrammingWithPalermo.ChurchBulletin.UnitTests;
@@ -11,10 +9,9 @@ public class TrimmedDecimalTester
     [Test]
     public void Scratch()
     {
-        decimal myDecimal = 77.2300m;
+        var myDecimal = 77.2300m;
         TrimmedDecimal val = myDecimal;
         UseObject(val);
-        
     }
 
     private void UseObject(object val)
