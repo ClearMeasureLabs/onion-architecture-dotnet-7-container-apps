@@ -159,7 +159,7 @@ Function PrivateBuild{
 	IntegrationTest
 	AcceptanceTest
 	$sw.Stop()
-	write-host "Build time: " $sw.Elapsed.ToString()
+	write-host "BUILD SUCCEEDED - Build time: " $sw.Elapsed.ToString() -ForegroundColor Green
 }
 
 Function CIBuild{
@@ -171,5 +171,5 @@ Function CIBuild{
 	IntegrationTest
 	Package
 	$sw.Stop()
-	write-host "Build time: " $sw.Elapsed.ToString()
+	write-host "BUILD SUCCEEDED - Build time: " $sw.Elapsed.ToString() -ForegroundColor Green
 }
