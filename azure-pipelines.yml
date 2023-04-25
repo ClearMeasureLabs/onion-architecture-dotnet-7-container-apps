@@ -128,3 +128,26 @@ stages:
           Channel: 'Channels-561'
           DeployToEnvironment: 'Environments-342'
           AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
+
+#Create Release pushes the most recent rev to the TDD environment.  
+#All we have to do now to promote it is call Deploy with the next 
+#environment up, like so:
+
+    - job: 'DeployToUAT'
+      pool:
+        vmImage: 'ubuntu-latest'
+      variables:
+        - group: UAT-Release
+      dependsOn: DockerBuildandPushToTDD
+      
+      steps:
+      - task: OctopusDeployRelease@5
+        inputs:
+          OctoConnectedServiceName: 'octoServiceConnection'
+          Space: 'Spaces-195'
+          ProjectGroup: 'ProjectGroups-534'
+          Project: 'Projects-541'
+          ReleaseNumber: '$(Build.BuildNumber)'
+          Environments: 'Environments-341' #UAT's environment ID, see -342 above for TDD
+          AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
+          ShowProgress: true
