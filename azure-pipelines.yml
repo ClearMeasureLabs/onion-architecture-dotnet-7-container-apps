@@ -32,6 +32,16 @@ stages:
       - group: Integration-Build
       steps:
 
+      - task: UseDotNet@2
+        displayName: 'Install SDK 7.0.100'
+        inputs:
+          packageType: 'sdk'
+          version: '7.0.100'
+      - task: UseDotNet@2
+        inputs:
+          packageType: 'runtime'
+          version: '6.0.0'
+
       - task: PowerShell@2
         inputs:
           targetType: 'inline'
@@ -40,11 +50,6 @@ stages:
             echo $env:Version
             echo $(Build.BuildNumber)
             #gci $(Build.SourcesDirectory) -Recurse
-
-      - task: OctoInstaller@5
-        displayName: 'Install octo cli tools on Windows agent'
-        inputs:
-          version: '*'
 
       - task: PowerShell@2
         displayName: Build.ps1
@@ -90,6 +95,10 @@ stages:
       dependsOn: Build
  
       steps:
+      - task: OctoInstaller@5
+        displayName: 'Install octo cli tools on Linux agent'
+        inputs:
+          version: '*'
       - task: DownloadPackage@1
         displayName: 'Download UI Package'
         inputs:
@@ -109,3 +118,13 @@ stages:
           tags: |
             $(Build.BuildNumber)
 
+      - task: OctopusCreateRelease@5
+        inputs:
+          OctoConnectedServiceName: 'octoServiceConnection'
+          Space: 'Spaces-195'
+          ProjectGroup: 'ProjectGroups-534'
+          ProjectName: 'Projects-541'
+          ReleaseNumber: '$(Build.BuildNumber)'
+          Channel: 'Channels-561'
+          DeployToEnvironment: 'Environments-342'
+          AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
