@@ -133,6 +133,14 @@ stages:
 #All we have to do now to promote it is call Deploy with the next 
 #environment up, like so:
 
+    - job: WaitforTDD
+      pool: server
+
+      - task: Delay@1
+        inputs:
+          delayForMinutes: '2' #give Octo time to deploy to TDD before attempting to deploy to UAT. 
+
+
     - job: 'DeployToUAT'
       pool:
         vmImage: 'ubuntu-latest'
@@ -145,10 +153,6 @@ stages:
         displayName: 'Install octo cli tools on Linux agent'
         inputs:
           version: '*'
-
-      - task: Delay@1
-        inputs:
-          delayForMinutes: '2' #give Octo time to deploy to TDD before attempting to deploy to UAT. 
 
       - task: OctopusDeployRelease@5
         inputs:
