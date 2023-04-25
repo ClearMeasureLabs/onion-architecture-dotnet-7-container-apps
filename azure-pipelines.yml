@@ -137,7 +137,7 @@ stages:
       pool:
         vmImage: 'ubuntu-latest'
       variables:
-        - group: UAT-Release
+        - group: Integration-Build
       dependsOn: DockerBuildandPush
       
       steps:
