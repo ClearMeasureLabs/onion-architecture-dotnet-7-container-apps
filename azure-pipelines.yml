@@ -135,7 +135,8 @@ stages:
 
     - job: WaitforTDD
       pool: server
-
+      
+      steps:
       - task: Delay@1
         inputs:
           delayForMinutes: '2' #give Octo time to deploy to TDD before attempting to deploy to UAT. 
