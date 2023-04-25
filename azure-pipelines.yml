@@ -141,6 +141,11 @@ stages:
       dependsOn: DockerBuildandPush
       
       steps:
+      - task: OctoInstaller@5
+        displayName: 'Install octo cli tools on Linux agent'
+        inputs:
+          version: '*'
+
       - task: OctopusDeployRelease@5
         inputs:
           OctoConnectedServiceName: 'octoServiceConnection'
