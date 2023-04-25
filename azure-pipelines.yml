@@ -135,6 +135,7 @@ stages:
 
     - job: WaitforTDD
       pool: server
+      dependsOn: DockerBuildandPush
       
       steps:
       - task: Delay@1
