@@ -136,11 +136,11 @@ stages:
     - job: WaitforTDD
       pool: server
       dependsOn: DockerBuildandPush
-      
+
       steps:
       - task: Delay@1
         inputs:
-          delayForMinutes: '2' #give Octo time to deploy to TDD before attempting to deploy to UAT. 
+          delayForMinutes: '5' #give Octo time to deploy to TDD before attempting to deploy to UAT. 
 
 
     - job: 'DeployToUAT'
@@ -148,7 +148,7 @@ stages:
         vmImage: 'ubuntu-latest'
       variables:
         - group: Integration-Build
-      dependsOn: DockerBuildandPush
+      dependsOn: WaitforTDD
       
       steps:
       - task: OctoInstaller@5
