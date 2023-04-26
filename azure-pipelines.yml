@@ -140,7 +140,7 @@ stages:
       steps:
       - task: Delay@1
         inputs:
-          delayForMinutes: '5' #give Octo time to deploy to TDD before attempting to deploy to UAT. 
+          delayForMinutes: '3' #give Octo time to deploy to TDD before attempting to deploy to UAT. 
 
 
     - job: 'DeployToUAT'
@@ -166,3 +166,39 @@ stages:
           Environments: 'Environments-341' #UAT's environment ID, see -342 above for TDD
           AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
           ShowProgress: true
+
+
+
+    - job: WaitforUAT
+      pool: server
+      dependsOn: DeployToUAT
+
+      steps:
+      - task: Delay@1
+        inputs:
+          delayForMinutes: '3' #give Octo time to deploy to UAT before attempting to deploy to UAT. 
+
+
+    - job: 'DeployToProd'
+      pool:
+        vmImage: 'ubuntu-latest'
+      variables:
+        - group: Integration-Build
+      dependsOn: WaitforUAT
+      
+      steps:
+      - task: OctoInstaller@5
+        displayName: 'Install octo cli tools on Linux agent'
+        inputs:
+          version: '*'
+
+      - task: OctopusDeployRelease@5
+        inputs:
+          OctoConnectedServiceName: 'octoServiceConnection'
+          Space: 'Spaces-195'
+          ProjectGroup: 'ProjectGroups-534'
+          Project: 'Projects-541'
+          ReleaseNumber: '$(Build.BuildNumber)'
+          Environments: 'Environments-361' #UAT's environment ID, see -342 above for TDD
+          AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
+          ShowProgress: true          
