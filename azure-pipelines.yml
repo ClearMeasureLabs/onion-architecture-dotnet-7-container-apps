@@ -168,17 +168,6 @@ stages:
           ShowProgress: true
 
 
-
-    - job: WaitforUAT
-      pool: server
-      dependsOn: DeployToUAT
-
-      steps:
-      - task: Delay@1
-        inputs:
-          delayForMinutes: '3' #give Octo time to deploy to UAT before attempting to deploy to UAT. 
-
-
     - job: 'DeployToProd'
       pool:
         vmImage: 'ubuntu-latest'
