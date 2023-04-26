@@ -173,7 +173,7 @@ stages:
         vmImage: 'ubuntu-latest'
       variables:
         - group: Integration-Build
-      dependsOn: WaitforUAT
+      dependsOn: DeployToUAT
       
       steps:
       - task: OctoInstaller@5
