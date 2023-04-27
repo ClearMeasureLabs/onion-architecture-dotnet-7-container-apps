@@ -118,7 +118,7 @@ stages:
       - task: OctopusCreateRelease@6
         name: 'CreateRelease'
         inputs:
-          OctoConnectedServiceName: $(OctoConnection)
+          OctoConnectedServiceName: 'octoServiceConnection'
           Space: 'Onion DevOps'
           Project: 'AzContainerApp'
           ReleaseNumber: '$(Build.BuildNumber)'
@@ -138,7 +138,7 @@ stages:
       - task: OctopusDeployRelease@6
         name: deploytoTDD
         inputs:
-          OctoConnectedServiceName: $(OctoConnection)
+          OctoConnectedServiceName: 'octoServiceConnection'
           Space: 'Onion DevOps'
           Project: 'AzContainerApp'
           ReleaseNumber: '$(Build.BuildNumber)'
@@ -149,7 +149,7 @@ stages:
       - task: OctopusAwaitTask@6
         displayName: 'Await Octopus Deploy Task'
         inputs:
-          OctoConnectedServiceName: $(OctoConnection)
+          OctoConnectedServiceName: 'octoServiceConnection'
           Space: 'TDD'
           Step: deploytoTDD
 
