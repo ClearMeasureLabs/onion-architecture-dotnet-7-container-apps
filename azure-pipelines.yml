@@ -131,12 +131,6 @@ stages:
         - group: Integration-Build
         octoReleaseNumber: $[ dependencies.DockerBuildandPush.outputs['CreateRelease.release_number'] ]
       
-      
-      steps:
-      - task: OctoInstaller@6
-        displayName: 'Install octo cli tools on Linux agent'
-        inputs:
-          version: '*'
 
       - task: OctopusDeployRelease@6
         inputs:
