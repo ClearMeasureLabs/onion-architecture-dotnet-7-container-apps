@@ -118,7 +118,7 @@ stages:
       - task: OctopusCreateRelease@6
         name: 'CreateRelease'
         inputs:
-          OctoConnectedServiceName: 'octoServiceConnection'
+          OctoConnectedServiceName: $(OctoConnection)
           Space: 'Onion DevOps'
           Project: 'AzContainerApp'
           ReleaseNumber: '$(Build.BuildNumber)'
@@ -132,21 +132,25 @@ stages:
       pool:
         vmImage: 'ubuntu-latest'
       variables:
-        octoReleaseNumber: $[ dependencies.DockerBuildandPush.outputs['CreateRelease.release_number'] ]
-      
-
+        - group: Integration-Build    
 
       - task: OctopusDeployRelease@6
+        name: deploytoTDD
         inputs:
-          OctoConnectedServiceName: 'octoServiceConnection'
+          OctoConnectedServiceName: $(OctoConnection)
           Space: 'Onion DevOps'
           Project: 'AzContainerApp'
-          ReleaseNumber: '$(octoReleaseNumber)'
+          ReleaseNumber: '$(Build.BuildNumber)'
           Environments: 'TDD'
           #additional arguments should be supplied as variables
           #AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
 
-
+      - task: OctopusAwaitTask@6
+        displayName: 'Await Octopus Deploy Task'
+        inputs:
+          OctoConnectedServiceName: $(OctoConnection)
+          Space: 'TDD'
+          Step: deploytoTDD
 
 # #Create Release pushes the most recent rev to the TDD environment.  
 # #All we have to do now to promote it is call Deploy with the next 
