@@ -153,6 +153,32 @@ stages:
           Space: 'Onion DevOps'
           Step: deploytoTDD
 
+      - task: DownloadPackage@1
+        displayName: 'Download Acceptance Test Package'
+        inputs:
+          packageType: 'nuget'
+          feed: '$(FeedName)'
+          view: 'Local'
+          definition: 'ChurchBulletin.AcceptanceTests'
+          version: '$(Build.BuildNumber)'
+          downloadPath: '$(System.DefaultWorkingDirectory)/tests'
+          extract: true
+
+      - task: VSTest@2
+        displayName: 'VsTest - AcceptanceTests'
+        inputs:
+          testAssemblyVer2: |
+          **\*AcceptanceTests.dll
+          !**\*TestAdapter.dll
+          !**\obj\**
+          searchFolder: '$(System.DefaultWorkingDirectory)/tests'
+          uiTests: true
+          codeCoverageEnabled: true
+          testRunTitle: 'Acceptance Tests'
+          diagnosticsEnabled: True
+        continueOnError: true
+
+
 # #Create Release pushes the most recent rev to the TDD environment.  
 # #All we have to do now to promote it is call Deploy with the next 
 # #environment up, like so:
