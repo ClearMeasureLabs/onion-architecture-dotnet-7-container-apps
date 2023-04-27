@@ -114,6 +114,7 @@ stages:
           tags: |
             $(Build.BuildNumber)
 
+# added create release to phase 2
       - task: OctopusCreateRelease@6
         name: 'CreateRelease'
         inputs:
@@ -123,15 +124,17 @@ stages:
           ReleaseNumber: '$(Build.BuildNumber)'
           Channel: 'Default'
 
+
+
+
     - job: 'DeployToTDD'
       dependsOn: DockerBuildandPush
       pool:
         vmImage: 'ubuntu-latest'
       variables:
-        - group: Integration-Build
-        - name: octoReleaseNumber 
-          value: $[ dependencies.DockerBuildandPush.outputs['CreateRelease.release_number'] ]
+        octoReleaseNumber: $[ dependencies.DockerBuildandPush.outputs['CreateRelease.release_number'] ]
       
+
 
       - task: OctopusDeployRelease@6
         inputs:
