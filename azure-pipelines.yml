@@ -169,10 +169,10 @@ stages:
         inputs:
           testSelector: 'testAssemblies'
           testAssemblyVer2: |
-          **\*AcceptanceTests.dll
-          !**\*TestAdapter.dll
-          !**\obj\**
-          searchFolder: '$(System.DefaultWorkingDirectory)/tests'
+            **\*AcceptanceTests.dll
+            !**\*TestAdapter.dll
+            !**\obj\**
+            searchFolder: '$(System.DefaultWorkingDirectory)/tests'
           uiTests: true
           codeCoverageEnabled: true
           testRunTitle: 'Acceptance Tests'
