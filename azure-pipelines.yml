@@ -95,7 +95,7 @@ stages:
       dependsOn: Build
  
       steps:
-      - task: OctoInstaller@5
+      - task: OctoInstaller@6
         displayName: 'Install octo cli tools on Linux agent'
         inputs:
           version: '*'
@@ -118,32 +118,15 @@ stages:
           tags: |
             $(Build.BuildNumber)
 
-      - task: OctopusCreateRelease@5
+      - task: OctopusCreateRelease@6
         inputs:
           OctoConnectedServiceName: 'octoServiceConnection'
-          Space: 'Spaces-195'
-          ProjectGroup: 'ProjectGroups-534'
-          ProjectName: 'Projects-541'
+          Space: 'Onion DevOps'
+          Project: 'AzContainerApp'
           ReleaseNumber: '$(Build.BuildNumber)'
-          Channel: 'Channels-561'
-          DeployToEnvironment: 'Environments-342'
-          AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
+          Channel: 'Default'
 
-#Create Release pushes the most recent rev to the TDD environment.  
-#All we have to do now to promote it is call Deploy with the next 
-#environment up, like so:
-
-    - job: WaitforTDD
-      pool: server
-      dependsOn: DockerBuildandPush
-
-      steps:
-      - task: Delay@1
-        inputs:
-          delayForMinutes: '3' #give Octo time to deploy to TDD before attempting to deploy to UAT. 
-
-
-    - job: 'DeployToUAT'
+    - job: 'DeployToTDD'
       pool:
         vmImage: 'ubuntu-latest'
       variables:
@@ -151,43 +134,82 @@ stages:
       dependsOn: WaitforTDD
       
       steps:
-      - task: OctoInstaller@5
+      - task: OctoInstaller@6
         displayName: 'Install octo cli tools on Linux agent'
         inputs:
           version: '*'
 
-      - task: OctopusDeployRelease@5
+      - task: OctopusDeployRelease@6
         inputs:
           OctoConnectedServiceName: 'octoServiceConnection'
-          Space: 'Spaces-195'
-          ProjectGroup: 'ProjectGroups-534'
-          Project: 'Projects-541'
+          Space: 'Onion DevOps'
+          Project: 'AzContainerApp'
           ReleaseNumber: '$(Build.BuildNumber)'
-          Environments: 'Environments-341' #UAT's environment ID, see -342 above for TDD
-          AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
-          ShowProgress: true
+          Environments: 'TDD'
+          #additional arguments should be supplied as variables
+          #AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
 
 
-    - job: 'DeployToProd'
-      pool:
-        vmImage: 'ubuntu-latest'
-      variables:
-        - group: Integration-Build
-      dependsOn: DeployToUAT
+
+# #Create Release pushes the most recent rev to the TDD environment.  
+# #All we have to do now to promote it is call Deploy with the next 
+# #environment up, like so:
+
+#     - job: WaitforTDD
+#       pool: server
+#       dependsOn: DockerBuildandPush
+
+#       steps:
+#       - task: Delay@1
+#         inputs:
+#           delayForMinutes: '3' #give Octo time to deploy to TDD before attempting to deploy to UAT. 
+
+
+#     - job: 'DeployToUAT'
+#       pool:
+#         vmImage: 'ubuntu-latest'
+#       variables:
+#         - group: Integration-Build
+#       dependsOn: WaitforTDD
       
-      steps:
-      - task: OctoInstaller@5
-        displayName: 'Install octo cli tools on Linux agent'
-        inputs:
-          version: '*'
+#       steps:
+#       - task: OctoInstaller@5
+#         displayName: 'Install octo cli tools on Linux agent'
+#         inputs:
+#           version: '*'
 
-      - task: OctopusDeployRelease@5
-        inputs:
-          OctoConnectedServiceName: 'octoServiceConnection'
-          Space: 'Spaces-195'
-          ProjectGroup: 'ProjectGroups-534'
-          Project: 'Projects-541'
-          ReleaseNumber: '$(Build.BuildNumber)'
-          Environments: 'Environments-361' #UAT's environment ID, see -342 above for TDD
-          AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
-          ShowProgress: true          
+#       - task: OctopusDeployRelease@5
+#         inputs:
+#           OctoConnectedServiceName: 'octoServiceConnection'
+#           Space: 'Spaces-195'
+#           ProjectGroup: 'ProjectGroups-534'
+#           Project: 'Projects-541'
+#           ReleaseNumber: '$(Build.BuildNumber)'
+#           Environments: 'Environments-341' #UAT's environment ID, see -342 above for TDD
+#           AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
+#           ShowProgress: true
+
+
+#     - job: 'DeployToProd'
+#       pool:
+#         vmImage: 'ubuntu-latest'
+#       variables:
+#         - group: Integration-Build
+#       dependsOn: DeployToUAT
+      
+#       steps:
+#       - task: OctoInstaller@5
+#         displayName: 'Install octo cli tools on Linux agent'
+#         inputs:
+#           version: '*'
+
+#       - task: OctopusDeployRelease@5
+#         inputs:
+#           OctoConnectedServiceName: 'octoServiceConnection'
+#           Space: 'Spaces-195'
+#           ProjectGroup: 'ProjectGroups-534'
+#           Project: 'Projects-541'
+#           ReleaseNumber: '$(Build.BuildNumber)'
+#           Environments: 'Environments-361' #UAT's environment ID, see -342 above for TDD
+#           AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
+#           ShowProgress: true          
