@@ -167,6 +167,7 @@ stages:
       - task: VSTest@2
         displayName: 'VsTest - AcceptanceTests'
         inputs:
+          testSelector: 'testAssemblies'
           testAssemblyVer2: |
           **\*AcceptanceTests.dll
           !**\*TestAdapter.dll
