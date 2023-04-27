@@ -150,7 +150,7 @@ stages:
         displayName: 'Await Octopus Deploy Task'
         inputs:
           OctoConnectedServiceName: 'octoServiceConnection'
-          Space: 'TDD'
+          Space: 'Onion DevOps'
           Step: deploytoTDD
 
 # #Create Release pushes the most recent rev to the TDD environment.  
