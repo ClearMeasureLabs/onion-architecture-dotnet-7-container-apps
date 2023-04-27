@@ -155,7 +155,6 @@ stages:
 
 
 
-  jobs: 
     - job: 'RunAcceptanceTests'
       displayName: 'Run Acceptance Tests'
       pool:
