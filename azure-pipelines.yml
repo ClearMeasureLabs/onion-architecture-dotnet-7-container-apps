@@ -129,7 +129,8 @@ stages:
         vmImage: 'ubuntu-latest'
       variables:
         - group: Integration-Build
-        octoReleaseNumber: $[ dependencies.DockerBuildandPush.outputs['CreateRelease.release_number'] ]
+        - name: octoReleaseNumber 
+          value: $[ dependencies.DockerBuildandPush.outputs['CreateRelease.release_number'] ]
       
 
       - task: OctopusDeployRelease@6
