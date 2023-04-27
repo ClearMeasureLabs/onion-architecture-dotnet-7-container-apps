@@ -95,10 +95,6 @@ stages:
       dependsOn: Build
  
       steps:
-      - task: OctoInstaller@6
-        displayName: 'Install octo cli tools on Linux agent'
-        inputs:
-          version: '*'
       - task: DownloadPackage@1
         displayName: 'Download UI Package'
         inputs:
