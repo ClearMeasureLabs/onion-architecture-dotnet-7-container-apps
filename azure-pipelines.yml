@@ -119,6 +119,7 @@ stages:
             $(Build.BuildNumber)
 
       - task: OctopusCreateRelease@6
+        name: 'CreateRelease'
         inputs:
           OctoConnectedServiceName: 'octoServiceConnection'
           Space: 'Onion DevOps'
@@ -127,11 +128,13 @@ stages:
           Channel: 'Default'
 
     - job: 'DeployToTDD'
+      dependsOn: DockerBuildandPush
       pool:
         vmImage: 'ubuntu-latest'
       variables:
         - group: Integration-Build
-      dependsOn: DockerBuildandPush
+        octoReleaseNumber: $[ dependencies.DockerBuildandPush.outputs['CreateRelease.release_number'] ]
+      
       
       steps:
       - task: OctoInstaller@6
@@ -144,7 +147,7 @@ stages:
           OctoConnectedServiceName: 'octoServiceConnection'
           Space: 'Onion DevOps'
           Project: 'AzContainerApp'
-          ReleaseNumber: '$(Build.BuildNumber)'
+          ReleaseNumber: '$(octoReleaseNumber)'
           Environments: 'TDD'
           #additional arguments should be supplied as variables
           #AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
