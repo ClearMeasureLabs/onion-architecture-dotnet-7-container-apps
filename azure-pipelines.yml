@@ -131,7 +131,7 @@ stages:
         vmImage: 'ubuntu-latest'
       variables:
         - group: Integration-Build
-      dependsOn: WaitforTDD
+      dependsOn: DockerBuildandPush
       
       steps:
       - task: OctoInstaller@6
