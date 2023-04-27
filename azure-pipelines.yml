@@ -128,12 +128,13 @@ stages:
 
 
     - job: 'DeployToTDD'
-      dependsOn: DockerBuildandPush
       pool:
         vmImage: 'ubuntu-latest'
       variables:
-        - group: Integration-Build    
+        - group: Integration-Build
+      dependsOn: DockerBuildandPush    
 
+      steps:
       - task: OctopusDeployRelease@6
         name: deploytoTDD
         inputs:
