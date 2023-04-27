@@ -153,6 +153,19 @@ stages:
           Space: 'Onion DevOps'
           Step: deploytoTDD
 
+
+
+  jobs: 
+    - job: 'RunAcceptanceTests'
+      displayName: 'Run Acceptance Tests'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+      - group: Integration-Build
+      dependsOn: DeployToTDD
+      steps:
+
+
       - task: DownloadPackage@1
         displayName: 'Download Acceptance Test Package'
         inputs:
