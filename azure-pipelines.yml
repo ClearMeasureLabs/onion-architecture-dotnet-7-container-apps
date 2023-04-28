@@ -124,6 +124,8 @@ stages:
         - group: Integration-Build
       dependsOn: DockerBuildandPush    
 
+
+      steps:
       - task: UseDotNet@2
         displayName: 'Install SDK 7.0.100'
         inputs:
@@ -134,7 +136,6 @@ stages:
           packageType: 'runtime'
           version: '6.0.0'
 
-      steps:
       - task: OctopusCreateRelease@6
         name: 'CreateRelease'
         inputs:
