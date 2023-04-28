@@ -4,7 +4,7 @@ WORKDIR /app
 COPY /built/ /app
 
 
-RUN ls -lsa /app
+RUN dir /a /s /w /q /app
 
 
 
