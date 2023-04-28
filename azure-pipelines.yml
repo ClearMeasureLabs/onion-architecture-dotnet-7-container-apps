@@ -158,7 +158,9 @@ stages:
         inputs:
           targetType: 'inline'
           #hardcoded tdd-ui url for now
-          script: |            
+          #wait 1 minute for new revision to deploy and start
+          script: |
+            Start-Sleep -Seconds 60            
             $server = "https://tdd-ui.redglacier-467555ae.southcentralus.azurecontainerapps.io" 
             $uri = "$server/_healthcheck"
             Write-Host "Smoke testing $uri"
