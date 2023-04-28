@@ -181,7 +181,7 @@ stages:
                         Throw "Incorrect version."
                     }
                     else {
-                        Write-Host "Correct version."
+                        Write-Host "Correct version: $(Build.BuildNumber)"
                     }
                 }
             } 
@@ -197,7 +197,7 @@ stages:
             $uri = "$server/_healthcheck"
             Write-Host "Smoke testing $uri"
             Invoke-WebRequest $uri -UseBasicParsing | Foreach {
-                $_.Content.Contains("Success") | Foreach {
+                $_.Content.Contains("Healthy") | Foreach {
                     if(-Not($_)) {
                         Throw "Web smoke test failed"
                     }
