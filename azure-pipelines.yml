@@ -116,7 +116,9 @@ stages:
 
 
 #DeploytoTDD should be a second stage
-
+- stage: 'TDD'
+  displayName: 'TDD'
+    jobs: 
     - job: 'DeployToTDD'
       pool:
         vmImage: 'windows-latest'
@@ -240,22 +242,64 @@ stages:
         continueOnError: true
 
 
+- stage: 'UAT'
+  displayName: 'UAT'
+  jobs: 
+    - job: 'DeployToUAT'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+        - group: Integration-Build    
 
-# #Create Release pushes the most recent rev to the TDD environment.  
-# #All we have to do now to promote it is call Deploy with the next 
-# #environment up, like so:
+      steps:
+        - task: OctopusDeployRelease@6
+        name: deploytoUAT
+        inputs:
+          OctoConnectedServiceName: 'octoServiceConnection'
+          Space: 'Onion DevOps'
+          Project: 'onion-architecture-dotnet-7-container-apps'
+          ReleaseNumber: '$(Build.BuildNumber)'
+          Environments: 'UAT'
+          #additional arguments should be supplied as variables
+          #AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
 
-#     - job: WaitforTDD
-#       pool: server
-#       dependsOn: DockerBuildandPush
+      - task: OctopusAwaitTask@6
+        displayName: 'Await Octopus Deploy Task'
+        inputs:
+          OctoConnectedServiceName: 'octoServiceConnection'
+          Space: 'Onion DevOps'
+          Step: deploytoUAT
 
-#       steps:
-#       - task: Delay@1
-#         inputs:
-#           delayForMinutes: '3' #give Octo time to deploy to TDD before attempting to deploy to UAT. 
+- stage: 'Production'
+  displayName: 'Prod'  
+  jobs: 
+    - job: 'DeployToProd'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+        - group: Integration-Build    
+
+      steps:
+        - task: OctopusDeployRelease@6
+        name: deploytoProd
+        inputs:
+          OctoConnectedServiceName: 'octoServiceConnection'
+          Space: 'Onion DevOps'
+          Project: 'onion-architecture-dotnet-7-container-apps'
+          ReleaseNumber: '$(Build.BuildNumber)'
+          Environments: 'Prod'
+          #additional arguments should be supplied as variables
+          #AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
+
+      - task: OctopusAwaitTask@6
+        displayName: 'Await Octopus Deploy Task'
+        inputs:
+          OctoConnectedServiceName: 'octoServiceConnection'
+          Space: 'Onion DevOps'
+          Step: deploytoProd
 
 
-#     - job: 'DeployToUAT'
+
 #       pool:
 #         vmImage: 'ubuntu-latest'
 #       variables:
