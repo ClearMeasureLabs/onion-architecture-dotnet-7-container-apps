@@ -89,7 +89,7 @@ stages:
 
     - job: 'DockerBuildandPush'
       pool:
-        vmImage: 'ubuntu-latest'
+        vmImage: 'windows-latest'
       variables:
         - group: Integration-Build
       dependsOn: Build
