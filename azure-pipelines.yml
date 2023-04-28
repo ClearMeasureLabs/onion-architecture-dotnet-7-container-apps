@@ -118,7 +118,7 @@ stages:
 #DeploytoTDD should be a second stage
 - stage: 'TDD'
   displayName: 'TDD'
-    jobs: 
+  jobs: 
     - job: 'DeployToTDD'
       pool:
         vmImage: 'windows-latest'
