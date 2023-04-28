@@ -190,7 +190,6 @@ stages:
         displayName: 'UI Healthcheck'
         inputs:
           #this will fail until the db is deployed as well. For now, continuing on failure
-          continueOnError: true
           targetType: 'inline'
           #hardcoded tdd-ui url for now
           script: |         
@@ -216,6 +215,7 @@ stages:
       - task: DownloadPackage@1
         displayName: 'Download Acceptance Test Package'
         inputs:
+          condition: always()
           packageType: 'nuget'
           feed: '$(FeedName)'
           view: 'Local'
