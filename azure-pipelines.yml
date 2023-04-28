@@ -123,8 +123,7 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-        - group: Integration-Build
-      dependsOn: DockerBuildandPush    
+        - group: Integration-Build   
 
 
       steps:
