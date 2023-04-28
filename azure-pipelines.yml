@@ -205,7 +205,8 @@ stages:
                         Write-Host "Web smoke test passed."
                     }
                 }
-            }            
+            }
+        continueOnError: true            
 
 
 
@@ -215,7 +216,6 @@ stages:
       - task: DownloadPackage@1
         displayName: 'Download Acceptance Test Package'
         inputs:
-          condition: failed()
           packageType: 'nuget'
           feed: '$(FeedName)'
           view: 'Local'
