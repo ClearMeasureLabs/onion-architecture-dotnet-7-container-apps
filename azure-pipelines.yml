@@ -164,13 +164,34 @@ stages:
           Step: deploytoTDD
 
       - task: PowerShell@2
-        displayName: 'UI Healthcheck'
+        displayName: 'Check deployed version'
         inputs:
           targetType: 'inline'
           #hardcoded tdd-ui url for now
           #wait 1 minute for new revision to deploy and start
           script: |
             Start-Sleep -Seconds 60            
+            $server = "https://tdd-ui.redglacier-467555ae.southcentralus.azurecontainerapps.io" 
+            $uri = "$server/version"
+            Write-Host "Getting version $uri"
+            Invoke-WebRequest $uri -UseBasicParsing | Foreach {
+                $_.Content.Contains($(Build.BuildNumber)) | Foreach {
+                    if(-Not($_)) {
+                        Throw "Incorrect version."
+                    }
+                    else {
+                        Write-Host "Correct version."
+                    }
+                }
+            } 
+
+      - task: PowerShell@2
+        displayName: 'UI Healthcheck'
+        inputs:
+          targetType: 'inline'
+          #hardcoded tdd-ui url for now
+          #wait 1 minute for new revision to deploy and start
+          script: |         
             $server = "https://tdd-ui.redglacier-467555ae.southcentralus.azurecontainerapps.io" 
             $uri = "$server/_healthcheck"
             Write-Host "Smoke testing $uri"
