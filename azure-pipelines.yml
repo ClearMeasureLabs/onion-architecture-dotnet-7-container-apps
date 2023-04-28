@@ -114,7 +114,17 @@ stages:
           tags: |
             $(Build.BuildNumber)
 
-# added create release to phase 2
+
+#DeploytoTDD should be a second stage
+
+    - job: 'DeployToTDD'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+        - group: Integration-Build
+      dependsOn: DockerBuildandPush    
+
+      steps:
       - task: OctopusCreateRelease@6
         name: 'CreateRelease'
         inputs:
@@ -125,16 +135,6 @@ stages:
           Channel: 'Default'
 
 
-
-
-    - job: 'DeployToTDD'
-      pool:
-        vmImage: 'ubuntu-latest'
-      variables:
-        - group: Integration-Build
-      dependsOn: DockerBuildandPush    
-
-      steps:
       - task: OctopusDeployRelease@6
         name: deploytoTDD
         inputs:
@@ -153,18 +153,31 @@ stages:
           Space: 'Onion DevOps'
           Step: deploytoTDD
 
+      - task: PowerShell@2
+        displayName: 'UI Healthcheck'
+        inputs:
+          targetType: 'inline'
+          #hardcoded tdd-ui url for now
+          script: |            
+            $server = "https://tdd-ui.redglacier-467555ae.southcentralus.azurecontainerapps.io" 
+            $uri = "$server/_healthcheck"
+            Write-Host "Smoke testing $uri"
+            Invoke-WebRequest $uri -UseBasicParsing | Foreach {
+                $_.Content.Contains("Success") | Foreach {
+                    if(-Not($_)) {
+                        Throw "Web smoke test failed"
+                    }
+                    else {
+                        Write-Host "Web smoke test passed."
+                    }
+                }
+            }            
 
 
-    - job: 'RunAcceptanceTests'
-      displayName: 'Run Acceptance Tests'
-      pool:
-        vmImage: 'windows-latest'
-      variables:
-      - group: Integration-Build
-      dependsOn: DeployToTDD
-      steps:
 
 
+    #TO DO: get container URL to acceptance tests
+    # maybe build container app in pipeline, get url, pass the url to the acceptance test suite, then build and package project
       - task: DownloadPackage@1
         displayName: 'Download Acceptance Test Package'
         inputs:
@@ -190,6 +203,7 @@ stages:
           testRunTitle: 'Acceptance Tests'
           diagnosticsEnabled: True
         continueOnError: true
+
 
 
 # #Create Release pushes the most recent rev to the TDD environment.  
