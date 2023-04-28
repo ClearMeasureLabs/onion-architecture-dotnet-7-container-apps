@@ -197,7 +197,7 @@ stages:
             $uri = "$server/_healthcheck"
             Write-Host "Smoke testing $uri"
             Invoke-WebRequest $uri -UseBasicParsing | Foreach {
-                $_.Content.Contains("Healthy") | Foreach {
+                $_.Content.Contains("Success") | Foreach {
                     if(-Not($_)) {
                         Throw "Web smoke test failed"
                     }
@@ -215,7 +215,7 @@ stages:
       - task: DownloadPackage@1
         displayName: 'Download Acceptance Test Package'
         inputs:
-          condition: always()
+          condition: failed()
           packageType: 'nuget'
           feed: '$(FeedName)'
           view: 'Local'
