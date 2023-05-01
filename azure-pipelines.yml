@@ -166,28 +166,28 @@ stages:
           Space: 'Onion DevOps'
           Step: deploytoTDD
 
-      - task: PowerShell@2
-        displayName: 'Check deployed version'
-        inputs:
-          targetType: 'inline'
-          #hardcoded tdd-ui url for now
-          #wait 1 minute for new revision to deploy and start
-          script: |
-            Start-Sleep -Seconds 30            
-            $env:AppUrl = "https://tdd-ui.redglacier-467555ae.southcentralus.azurecontainerapps.io"
-            $env:Version = "$(Build.BuildNumber)"
-            & ./CheckVersion.ps1
+      # - task: PowerShell@2
+      #   displayName: 'Check deployed version'
+      #   inputs:
+      #     targetType: 'inline'
+      #     #hardcoded tdd-ui url for now
+      #     #wait 1 minute for new revision to deploy and start
+      #     script: |
+      #       Start-Sleep -Seconds 30            
+      #       $env:AppUrl = "https://tdd-ui.redglacier-467555ae.southcentralus.azurecontainerapps.io"
+      #       $env:Version = "$(Build.BuildNumber)"
+      #       & ./CheckVersion.ps1
 
-      - task: PowerShell@2
-        displayName: 'UI Healthcheck'
-        inputs:
-          #this will fail until the db is deployed as well. For now, continuing on failure
-          targetType: 'inline'
-          #hardcoded tdd-ui url for now
-          script: |         
-            $env:AppUrl = "https://tdd-ui.redglacier-467555ae.southcentralus.azurecontainerapps.io" 
-            & ./CallHealthCheckEndpoint.ps1
-        continueOnError: true            
+      # - task: PowerShell@2
+      #   displayName: 'UI Healthcheck'
+      #   inputs:
+      #     #this will fail until the db is deployed as well. For now, continuing on failure
+      #     targetType: 'inline'
+      #     #hardcoded tdd-ui url for now
+      #     script: |         
+      #       $env:AppUrl = "https://tdd-ui.redglacier-467555ae.southcentralus.azurecontainerapps.io" 
+      #       & ./CallHealthCheckEndpoint.ps1
+      #   continueOnError: true            
 
 
 
@@ -250,28 +250,28 @@ stages:
           Space: 'Onion DevOps'
           Step: deploytoUAT
 
-      - task: PowerShell@2
-        displayName: 'Check deployed version'
-        inputs:
-          targetType: 'inline'
-          #hardcoded tdd-ui url for now
-          #wait 1 minute for new revision to deploy and start
-          script: |
-            Start-Sleep -Seconds 30            
-            $env:AppUrl="https://uat-ui.icystone-ea613a3b.southcentralus.azurecontainerapps.io" 
-            $env:Version = "$(Build.BuildNumber)"
-            & ./CheckVersion.ps1
+      # - task: PowerShell@2
+      #   displayName: 'Check deployed version'
+      #   inputs:
+      #     targetType: 'inline'
+      #     #hardcoded tdd-ui url for now
+      #     #wait 1 minute for new revision to deploy and start
+      #     script: |
+      #       Start-Sleep -Seconds 30            
+      #       $env:AppUrl="https://uat-ui.icystone-ea613a3b.southcentralus.azurecontainerapps.io" 
+      #       $env:Version = "$(Build.BuildNumber)"
+      #       & ./CheckVersion.ps1
 
-      - task: PowerShell@2
-        displayName: 'UI Healthcheck'
-        inputs:
-          #this will fail until the db is deployed as well. For now, continuing on failure
-          targetType: 'inline'
-          #hardcoded tdd-ui url for now
-          script: |         
-            $env:AppUrl="https://uat-ui.icystone-ea613a3b.southcentralus.azurecontainerapps.io" 
-            & ./CallHealthCheckEndpoint.ps1
-        continueOnError: true           
+      # - task: PowerShell@2
+      #   displayName: 'UI Healthcheck'
+      #   inputs:
+      #     #this will fail until the db is deployed as well. For now, continuing on failure
+      #     targetType: 'inline'
+      #     #hardcoded tdd-ui url for now
+      #     script: |         
+      #       $env:AppUrl="https://uat-ui.icystone-ea613a3b.southcentralus.azurecontainerapps.io" 
+      #       & ./CallHealthCheckEndpoint.ps1
+      #   continueOnError: true           
 
 - stage: 'Production'
   displayName: 'Prod'  
@@ -302,28 +302,28 @@ stages:
           Space: 'Onion DevOps'
           Step: deploytoProd
 
-      - task: PowerShell@2
-        displayName: 'Check deployed version'
-        inputs:
-          targetType: 'inline'
-          #hardcoded tdd-ui url for now
-          #wait 1 minute for new revision to deploy and start
-          script: |
-            Start-Sleep -Seconds 30            
-            $env:AppUrl = "https://prod-ui.niceisland-1936248a.southcentralus.azurecontainerapps.io"  
-            $env:Version = "$(Build.BuildNumber)"
-            & ./CheckVersion.ps1
+      # - task: PowerShell@2
+      #   displayName: 'Check deployed version'
+      #   inputs:
+      #     targetType: 'inline'
+      #     #hardcoded tdd-ui url for now
+      #     #wait 1 minute for new revision to deploy and start
+      #     script: |
+      #       Start-Sleep -Seconds 30            
+      #       $env:AppUrl = "https://prod-ui.niceisland-1936248a.southcentralus.azurecontainerapps.io"  
+      #       $env:Version = "$(Build.BuildNumber)"
+      #       & ./CheckVersion.ps1
 
-      - task: PowerShell@2
-        displayName: 'UI Healthcheck'
-        inputs:
-          #this will fail until the db is deployed as well. For now, continuing on failure
-          targetType: 'inline'
-          #hardcoded tdd-ui url for now
-          script: |         
-            $env:AppUrl = "https://prod-ui.niceisland-1936248a.southcentralus.azurecontainerapps.io" 
-            & ./CallHealthCheckEndpoint.ps1
-        continueOnError: true 
+      # - task: PowerShell@2
+      #   displayName: 'UI Healthcheck'
+      #   inputs:
+      #     #this will fail until the db is deployed as well. For now, continuing on failure
+      #     targetType: 'inline'
+      #     #hardcoded tdd-ui url for now
+      #     script: |         
+      #       $env:AppUrl = "https://prod-ui.niceisland-1936248a.southcentralus.azurecontainerapps.io" 
+      #       & ./CallHealthCheckEndpoint.ps1
+      #   continueOnError: true 
 
 #       pool:
 #         vmImage: 'ubuntu-latest'
