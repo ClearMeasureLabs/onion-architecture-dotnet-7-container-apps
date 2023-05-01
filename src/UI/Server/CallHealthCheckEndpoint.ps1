@@ -1,4 +1,6 @@
-$server = "$env:AppUrl"
+param(
+    [str]$server
+)
 $uri = "$server/_healthcheck"
 Write-Host "Smoke testing $uri"
 Invoke-WebRequest $uri -UseBasicParsing | Foreach {
