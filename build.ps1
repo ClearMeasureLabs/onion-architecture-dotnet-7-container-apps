@@ -121,7 +121,7 @@ Function PackageUI {
         & dotnet publish $uiProjectPath -nologo --no-restore --no-build -v $verbosity --configuration $projectConfig
     }
 	exec{
-		& dotnet-octo pack --id "$projectName.UI" --version $version --basePath $uiProjectPath\bin\$projectConfig\$framework\publish --outFolder $build_dir --include ..\..\..\..\"*.ps1" --overwrite
+		& dotnet-octo pack --id "$projectName.UI" --version $version --basePath $uiProjectPath\bin\$projectConfig\$framework\publish --outFolder $build_dir  --overwrite
 	}
 }
 
@@ -141,12 +141,22 @@ Function PackageAcceptanceTests {
 	}
 }
 
+Function PackageScript {    
+    exec{
+        & dotnet publish $uiProjectPath -nologo --no-restore --no-build -v $verbosity --configuration $projectConfig
+    }
+	exec{
+		& dotnet-octo pack --id "$projectName.Script" --version $version --basePath $uiProjectPath --include "*.ps1" --outFolder $build_dir  --overwrite
+	}
+}
+
 Function Package{
 	Write-Output "Packaging nuget packages"
 	dotnet tool install --global Octopus.DotNet.Cli | Write-Output $_ -ErrorAction SilentlyContinue #prevents red color is already installed
     PackageUI
     PackageDatabase
     PackageAcceptanceTests
+	PackageScript
 }
 
 Function PrivateBuild{
