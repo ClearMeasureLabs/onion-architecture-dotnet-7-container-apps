@@ -157,6 +157,7 @@ stages:
           Environments: 'TDD'
           #additional arguments should be supplied as variables
           #AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
+          ShowProgress: true
 
       - task: OctopusAwaitTask@6
         displayName: 'Await Octopus Deploy Task'
@@ -261,6 +262,7 @@ stages:
           Environments: 'UAT'
           #additional arguments should be supplied as variables
           #AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
+          ShowProgress: true
 
       - task: OctopusAwaitTask@6
         displayName: 'Await Octopus Deploy Task'
@@ -333,6 +335,7 @@ stages:
           Environments: 'Prod'
           #additional arguments should be supplied as variables
           #AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
+          ShowProgress: true
 
       - task: OctopusAwaitTask@6
         displayName: 'Await Octopus Deploy Task'
