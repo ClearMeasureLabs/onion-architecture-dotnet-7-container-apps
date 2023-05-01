@@ -1,5 +1,5 @@
 param(
-    [str]$server
+    [string]$server
 )
 $uri = "$server/_healthcheck"
 Write-Host "Smoke testing $uri"

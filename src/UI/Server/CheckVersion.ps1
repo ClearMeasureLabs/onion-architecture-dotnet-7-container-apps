@@ -1,6 +1,6 @@
 param(
-    [str]$server,
-    [str]$version
+    [string]$server,
+    [string]$version
 )
 
 $uri = "$server/version"
