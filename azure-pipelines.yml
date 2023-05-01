@@ -173,8 +173,9 @@ stages:
           #hardcoded tdd-ui url for now
           #wait 1 minute for new revision to deploy and start
           script: |
-            Start-Sleep -Seconds 60            
-            $env:AppUrl = "https://tdd-ui.redglacier-467555ae.southcentralus.azurecontainerapps.io" 
+            Start-Sleep -Seconds 30            
+            $env:AppUrl = "https://tdd-ui.redglacier-467555ae.southcentralus.azurecontainerapps.io"
+            $env:buildnumber = $(Build.BuildNumber)
             & ./CheckVersion.ps1
 
       - task: PowerShell@2
@@ -267,8 +268,9 @@ stages:
           #hardcoded tdd-ui url for now
           #wait 1 minute for new revision to deploy and start
           script: |
-            Start-Sleep -Seconds 60            
+            Start-Sleep -Seconds 30            
             $env:AppUrl="https://uat-ui.icystone-ea613a3b.southcentralus.azurecontainerapps.io" 
+            $env:buildnumber = $(Build.BuildNumber)
             & ./CheckVersion.ps1
 
       - task: PowerShell@2
