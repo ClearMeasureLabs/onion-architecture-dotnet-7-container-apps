@@ -175,7 +175,7 @@ stages:
           script: |
             Start-Sleep -Seconds 30            
             $env:AppUrl = "https://tdd-ui.redglacier-467555ae.southcentralus.azurecontainerapps.io"
-            $env:buildnumber = $(Build.BuildNumber)
+            $env:Version = "$(Build.BuildNumber)"
             & ./CheckVersion.ps1
 
       - task: PowerShell@2
@@ -185,19 +185,8 @@ stages:
           targetType: 'inline'
           #hardcoded tdd-ui url for now
           script: |         
-            $server = "https://tdd-ui.redglacier-467555ae.southcentralus.azurecontainerapps.io" 
-            $uri = "$server/_healthcheck"
-            Write-Host "Smoke testing $uri"
-            Invoke-WebRequest $uri -UseBasicParsing | Foreach {
-                $_.Content.Contains("Success") | Foreach {
-                    if(-Not($_)) {
-                        Throw "Web smoke test failed"
-                    }
-                    else {
-                        Write-Host "Web smoke test passed."
-                    }
-                }
-            }
+            $env:AppUrl = "https://tdd-ui.redglacier-467555ae.southcentralus.azurecontainerapps.io" 
+            & ./CallHealthCheckEndpoint.ps1
         continueOnError: true            
 
 
@@ -280,19 +269,8 @@ stages:
           targetType: 'inline'
           #hardcoded tdd-ui url for now
           script: |         
-            $server = "https://uat-ui.icystone-ea613a3b.southcentralus.azurecontainerapps.io" 
-            $uri = "$server/_healthcheck"
-            Write-Host "Smoke testing $uri"
-            Invoke-WebRequest $uri -UseBasicParsing | Foreach {
-                $_.Content.Contains("Success") | Foreach {
-                    if(-Not($_)) {
-                        Throw "Web smoke test failed"
-                    }
-                    else {
-                        Write-Host "Web smoke test passed."
-                    }
-                }
-            }
+            $env:AppUrl="https://uat-ui.icystone-ea613a3b.southcentralus.azurecontainerapps.io" 
+            & ./CallHealthCheckEndpoint.ps1
         continueOnError: true           
 
 - stage: 'Production'
@@ -331,20 +309,10 @@ stages:
           #hardcoded tdd-ui url for now
           #wait 1 minute for new revision to deploy and start
           script: |
-            Start-Sleep -Seconds 60            
-            $server = "https://prod-ui.niceisland-1936248a.southcentralus.azurecontainerapps.io" 
-            $uri = "$server/version"
-            Write-Host "Getting version $uri"
-            Invoke-WebRequest $uri -UseBasicParsing | Foreach {
-                $_.Content.Contains($(Build.BuildNumber)) | Foreach {
-                    if(-Not($_)) {
-                        Throw "Incorrect version."
-                    }
-                    else {
-                        Write-Host "Correct version: $(Build.BuildNumber)"
-                    }
-                }
-            } 
+            Start-Sleep -Seconds 30            
+            $env:AppUrl = "https://prod-ui.niceisland-1936248a.southcentralus.azurecontainerapps.io"  
+            $env:Version = "$(Build.BuildNumber)"
+            & ./CheckVersion.ps1
 
       - task: PowerShell@2
         displayName: 'UI Healthcheck'
@@ -353,19 +321,8 @@ stages:
           targetType: 'inline'
           #hardcoded tdd-ui url for now
           script: |         
-            $server = "https://prod-ui.niceisland-1936248a.southcentralus.azurecontainerapps.io" 
-            $uri = "$server/_healthcheck"
-            Write-Host "Smoke testing $uri"
-            Invoke-WebRequest $uri -UseBasicParsing | Foreach {
-                $_.Content.Contains("Success") | Foreach {
-                    if(-Not($_)) {
-                        Throw "Web smoke test failed"
-                    }
-                    else {
-                        Write-Host "Web smoke test passed."
-                    }
-                }
-            }
+            $env:AppUrl = "https://prod-ui.niceisland-1936248a.southcentralus.azurecontainerapps.io" 
+            & ./CallHealthCheckEndpoint.ps1
         continueOnError: true 
 
 #       pool:
