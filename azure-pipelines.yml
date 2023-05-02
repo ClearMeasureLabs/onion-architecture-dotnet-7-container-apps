@@ -160,6 +160,7 @@ stages:
           #additional arguments should be supplied as variables
           #AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
           ShowProgress: true
+          continueOnError: true
 
       - task: OctopusAwaitTask@6
         displayName: 'Await Octopus Deploy Task'
