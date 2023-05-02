@@ -40,7 +40,8 @@ stages:
             [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
             echo $env:Version
             echo $(Build.BuildNumber)
-            echo $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
+            $branchSourcePath = $(Build.SourceBranch) -replace "refs/heads/", ""
+            echo $branchSourcePath
             $env:DatabaseName = "oniondb"
             $env:DatabaseServer = "onion-architecture-dotnet-7-container-apps-sqlserver.database.windows.net"
             #gci $(Build.SourcesDirectory) -Recurse
