@@ -56,7 +56,7 @@
   },
   "variables": {
     "resourceGroupUniqueString": "[uniqueString(resourceGroup().id,resourceGroup().location,subscription().subscriptionId)]",
-    "databaseserverName": "onion-architecture-dotnet-7-container-apps-sqlserver.database.windows.net"
+    "databaseserverName": "onion-arch-container-apps-sqlserver"
   },
   "resources": [
     {
