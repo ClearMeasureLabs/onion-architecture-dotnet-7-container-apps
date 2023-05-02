@@ -40,7 +40,7 @@ stages:
             [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
             echo $env:Version
             echo $(Build.BuildNumber)
-            echo $(Build.SourceBranch)
+            echo $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
             $env:DatabaseName = "oniondb"
             $env:DatabaseServer = "onion-architecture-dotnet-7-container-apps-sqlserver.database.windows.net"
             #gci $(Build.SourcesDirectory) -Recurse
@@ -81,32 +81,32 @@ stages:
 #With the application already built and packaged in phase 1, all we're doing here is fetching it,
 #extracting, and getting it into the container by way of COPY in the dockerfile.
 
-    - job: 'DockerBuildandPush'
-      pool:
-        vmImage: 'ubuntu-latest'
-      variables:
-        - group: Integration-Build
-      dependsOn: Build
+    # - job: 'DockerBuildandPush'
+    #   pool:
+    #     vmImage: 'ubuntu-latest'
+    #   variables:
+    #     - group: Integration-Build
+    #   dependsOn: Build
  
-      steps:
-      - task: DownloadPackage@1
-        displayName: 'Download UI Package'
-        inputs:
-          packageType: 'nuget'
-          feed: '$(FeedName)'
-          view: 'Local'
-          definition: 'ChurchBulletin.UI'
-          version: '$(Build.BuildNumber)'
-          downloadPath: '$(System.DefaultWorkingDirectory)/built'
-          extract: true
-      - task: Docker@2
-        inputs:
-          containerRegistry: 'OnionArcServiceConnection'
-          repository: 'ChurchBulletin.UI'
-          command: 'buildAndPush'
-          Dockerfile: '**/Dockerfile'
-          tags: |
-            $(Build.BuildNumber)
+    #   steps:
+    #   - task: DownloadPackage@1
+    #     displayName: 'Download UI Package'
+    #     inputs:
+    #       packageType: 'nuget'
+    #       feed: '$(FeedName)'
+    #       view: 'Local'
+    #       definition: 'ChurchBulletin.UI'
+    #       version: '$(Build.BuildNumber)'
+    #       downloadPath: '$(System.DefaultWorkingDirectory)/built'
+    #       extract: true
+    #   - task: Docker@2
+    #     inputs:
+    #       containerRegistry: 'OnionArcServiceConnection'
+    #       repository: 'ChurchBulletin.UI'
+    #       command: 'buildAndPush'
+    #       Dockerfile: '**/Dockerfile'
+    #       tags: |
+    #         $(Build.BuildNumber)
 
 
 #DeploytoTDD should be a second stage
@@ -138,7 +138,7 @@ stages:
           Project: 'onion-architecture-dotnet-7-container-apps'
           ReleaseNumber: '$(Build.BuildNumber)'
           Environments: 'TDD'
-          GitRef: '$(Build.SourceBranch)'
+          GitRef: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
           #additional arguments should be supplied as variables
           #AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
           ShowProgress: true
