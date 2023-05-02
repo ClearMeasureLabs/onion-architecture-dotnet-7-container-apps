@@ -40,40 +40,41 @@ stages:
             [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
             echo $env:Version
             echo $(Build.BuildNumber)
+            echo $(Build.SourceBranch)
             $env:DatabaseName = "oniondb"
             $env:DatabaseServer = "onion-architecture-dotnet-7-container-apps-sqlserver.database.windows.net"
             #gci $(Build.SourcesDirectory) -Recurse
 
-      - task: PowerShell@2
-        displayName: Build.ps1
-        inputs:
-          targetType: filePath
-          filePath: ./build.ps1
-          arguments: '; CIBuild'
+      # - task: PowerShell@2
+      #   displayName: Build.ps1
+      #   inputs:
+      #     targetType: filePath
+      #     filePath: ./build.ps1
+      #     arguments: '; CIBuild'
 
-      - task: PublishTestResults@2
-        displayName: 'Publish Test Results ./build/test/*.trx'
-        inputs:
-          testResultsFormat: VSTest
-          testResultsFiles: 'build/test/**/*.trx'
-          mergeTestResults: true
-          testRunTitle: 'CI Tests'
-        continueOnError: true
-        condition: succeededOrFailed()
+      # - task: PublishTestResults@2
+      #   displayName: 'Publish Test Results ./build/test/*.trx'
+      #   inputs:
+      #     testResultsFormat: VSTest
+      #     testResultsFiles: 'build/test/**/*.trx'
+      #     mergeTestResults: true
+      #     testRunTitle: 'CI Tests'
+      #   continueOnError: true
+      #   condition: succeededOrFailed()
     
-      # The code coverage task only will process a single file. This needs to be enhanced so that all test runs 
-      # are consolidated into a single cobertura summary file. For now, only the first file found will be used.
-      - task: PublishCodeCoverageResults@1
-        displayName: 'Publish code coverage UnitTests'
-        inputs:
-          codeCoverageTool: Cobertura
-          summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/**/In/**/coverage.cobertura.xml'
+      # # The code coverage task only will process a single file. This needs to be enhanced so that all test runs 
+      # # are consolidated into a single cobertura summary file. For now, only the first file found will be used.
+      # - task: PublishCodeCoverageResults@1
+      #   displayName: 'Publish code coverage UnitTests'
+      #   inputs:
+      #     codeCoverageTool: Cobertura
+      #     summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/build/test/**/In/**/coverage.cobertura.xml'
     
-      - task: NuGetCommand@2
-        inputs:
-          command: 'push'
-          packagesToPush: '.\build\*.nupkg'
-          publishVstsFeed: '$(FeedName)'
+      # - task: NuGetCommand@2
+      #   inputs:
+      #     command: 'push'
+      #     packagesToPush: '.\build\*.nupkg'
+      #     publishVstsFeed: '$(FeedName)'
 
      
 #Phase 2:  Build the Docker container and push it to the registry for consumption in Phase 3.
