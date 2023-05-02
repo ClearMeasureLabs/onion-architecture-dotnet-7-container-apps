@@ -30,6 +30,7 @@ stages:
         vmImage: 'windows-latest'
       variables:
       - group: Integration-Build
+      BRANCH_NAME: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
       steps:
 
 
@@ -42,7 +43,7 @@ stages:
             echo $(Build.BuildNumber)
             $branchSource = "$(Build.SourceBranch)"
             $branchSourcePath = $branchSource -replace "refs/heads/", ""
-            echo $branchSourcePath
+            echo $(BRANCH_NAME)
             $env:DatabaseName = "oniondb"
             $env:DatabaseServer = "onion-architecture-dotnet-7-container-apps-sqlserver.database.windows.net"
             #gci $(Build.SourcesDirectory) -Recurse
