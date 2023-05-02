@@ -135,7 +135,7 @@ stages:
           Project: 'onion-architecture-dotnet-7-container-apps'
           ReleaseNumber: '$(Build.BuildNumber)'
           Channel: 'Default'
-          GitRef: 'updated-octopus-build'
+          GitRef: '$(branch)'
 
       
       - task: OctopusDeployRelease@6
