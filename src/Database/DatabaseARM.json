@@ -84,7 +84,7 @@
           },
           "apiVersion": "2014-04-01-preview",
           "dependsOn": [
-            "[resourceId('Microsoft.Sql/servers/', variables('databaseserverName'))]"
+            "[resourceId('Microsoft.Sql/servers/', [parameters('databaseserverName')])]"
           ],
           "properties": {
             "edition": "[parameters('edition')]",
@@ -99,7 +99,7 @@
           "location": "[resourceGroup().location]",
           "apiVersion": "2014-04-01-preview",
           "dependsOn": [
-            "[resourceId('Microsoft.Sql/servers', variables('databaseserverName'))]"
+            "[resourceId('Microsoft.Sql/servers', [parameters('databaseserverName')])]"
           ],
           "properties": {
             "startIpAddress": "0.0.0.0",
