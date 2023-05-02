@@ -3,31 +3,31 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "databaseLogin": {
-            "value": "#(DatabaseUser)"
+            "value": "#{DatabaseUser}"
         },
         "databaseLoginPassword": {
-            "value": "#(DatabasePassword)"
+            "value": "#{DatabasePassword}"
         },
         "skuCapacity": {
             "value": 1
         },
         "databaseName": {
-            "value": "#(DatabaseName)"
+            "value": "#{DatabaseName}"
         },
         "collation": {
             "value": "SQL_Latin1_General_CP1_CI_AS"
         },
         "edition": {
-            "value": "#(DatabaseEdition)"
+            "value": "#{DatabaseEdition}"
         },
         "maxSizeBytes": {
             "value": 1073741824
         },
         "requestedServiceObjectiveName": {
-            "value": "#(DatabasePerformanceLevel)"
+            "value": "#{DatabasePerformanceLevel}"
         },
         "databaseserverName": {
-            "value": "#(DatabaseServer)"
+            "value": "#{DatabaseServer}"
         }
     }
 }
