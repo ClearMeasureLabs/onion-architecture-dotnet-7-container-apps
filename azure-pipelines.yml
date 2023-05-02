@@ -30,7 +30,8 @@ stages:
         vmImage: 'windows-latest'
       variables:
       - group: Integration-Build
-      - branch: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
+      - name: branch
+        value: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
       
       steps:
 
