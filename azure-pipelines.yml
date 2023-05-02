@@ -32,15 +32,6 @@ stages:
       - group: Integration-Build
       steps:
 
-      - task: UseDotNet@2
-        displayName: 'Install SDK 7.0.100'
-        inputs:
-          packageType: 'sdk'
-          version: '7.0.100'
-      - task: UseDotNet@2
-        inputs:
-          packageType: 'runtime'
-          version: '6.0.0'
 
       - task: PowerShell@2
         inputs:
@@ -127,18 +118,6 @@ stages:
       variables:
         - group: Integration-Build   
 
-
-      steps:
-      - task: UseDotNet@2
-        displayName: 'Install SDK 7.0.100'
-        inputs:
-          packageType: 'sdk'
-          version: '7.0.100'
-      - task: UseDotNet@2
-        inputs:
-          packageType: 'runtime'
-          version: '6.0.0'
-
       - task: OctopusCreateRelease@6
         name: 'CreateRelease'
         inputs:
@@ -157,7 +136,7 @@ stages:
           Project: 'onion-architecture-dotnet-7-container-apps'
           ReleaseNumber: '$(Build.BuildNumber)'
           Environments: 'TDD'
-          GitRef: Build.SourceBranch
+          GitRef: '$(Build.SourceBranch)'
           #additional arguments should be supplied as variables
           #AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
           ShowProgress: true
