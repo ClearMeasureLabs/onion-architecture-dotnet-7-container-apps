@@ -135,6 +135,7 @@ stages:
           Project: 'onion-architecture-dotnet-7-container-apps'
           ReleaseNumber: '$(Build.BuildNumber)'
           Channel: 'Default'
+          GitRef: 'updated-octopus-build'
 
       
       - task: OctopusDeployRelease@6
@@ -145,7 +146,6 @@ stages:
           Project: 'onion-architecture-dotnet-7-container-apps'
           ReleaseNumber: '$(Build.BuildNumber)'
           Environments: 'TDD'
-          GitRef: 'updated-octopus-build'
           #additional arguments should be supplied as variables
           #AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
           ShowProgress: true
