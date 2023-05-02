@@ -45,7 +45,7 @@ stages:
             echo $(Build.BuildNumber)
             $branchSource = "$(Build.SourceBranch)"
             $branchSourcePath = $branchSource -replace "refs/heads/", ""
-            echo $(BRANCH_NAME)
+            echo $(branch)
             $env:DatabaseName = "oniondb"
             $env:DatabaseServer = "onion-architecture-dotnet-7-container-apps-sqlserver.database.windows.net"
             #gci $(Build.SourcesDirectory) -Recurse
@@ -122,7 +122,9 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-        - group: Integration-Build   
+      - group: Integration-Build  
+      - name: branch
+        value: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]   
 
       steps:
       - task: OctopusCreateRelease@6
@@ -141,7 +143,7 @@ stages:
           OctoConnectedServiceName: 'octoServiceConnection'
           Space: 'Onion DevOps'
           Project: 'onion-architecture-dotnet-7-container-apps'
-          ReleaseNumber: '$(Build.BuildNumber)'
+          ReleaseNumber: '$(branch)'
           Environments: 'TDD'
           GitRef: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
           #additional arguments should be supplied as variables
