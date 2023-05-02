@@ -52,17 +52,15 @@
       "metadata": {
         "description": "Describes the performance level for Edition"
       }
-    },
-    "databaseserverName":{
-      "type": "string"
     }
   },
   "variables": {
-    "resourceGroupUniqueString": "[uniqueString(resourceGroup().id,resourceGroup().location,subscription().subscriptionId)]"
+    "resourceGroupUniqueString": "[uniqueString(resourceGroup().id,resourceGroup().location,subscription().subscriptionId)]",
+    "databaseserverName": "onion-architecture-dotnet-7-container-apps-sqlserver.database.windows.net"
   },
   "resources": [
     {
-      "name": "[parameters('databaseserverName')]",
+      "name": "[variables('databaseserverName')]",
       "type": "Microsoft.Sql/servers",
       "location": "[resourceGroup().location]",
       "apiVersion": "2014-04-01-preview",
@@ -84,7 +82,7 @@
           },
           "apiVersion": "2014-04-01-preview",
           "dependsOn": [
-            "[resourceId('Microsoft.Sql/servers/', [parameters('databaseserverName')])]"
+            "[resourceId('Microsoft.Sql/servers/', variables('databaseserverName'))]"
           ],
           "properties": {
             "edition": "[parameters('edition')]",
@@ -99,7 +97,7 @@
           "location": "[resourceGroup().location]",
           "apiVersion": "2014-04-01-preview",
           "dependsOn": [
-            "[resourceId('Microsoft.Sql/servers', [parameters('databaseserverName')])]"
+            "[resourceId('Microsoft.Sql/servers', variables('databaseserverName'))]"
           ],
           "properties": {
             "startIpAddress": "0.0.0.0",
