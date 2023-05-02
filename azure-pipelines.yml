@@ -118,6 +118,7 @@ stages:
       variables:
         - group: Integration-Build   
 
+      steps:
       - task: OctopusCreateRelease@6
         name: 'CreateRelease'
         inputs:
@@ -127,7 +128,7 @@ stages:
           ReleaseNumber: '$(Build.BuildNumber)'
           Channel: 'Default'
 
-
+      
       - task: OctopusDeployRelease@6
         name: deploytoTDD
         inputs:
