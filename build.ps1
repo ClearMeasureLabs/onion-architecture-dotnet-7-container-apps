@@ -21,9 +21,9 @@ $test_dir = "$build_dir\test"
 $aliaSql = "$source_dir\Database\scripts\AliaSql.exe"
 $databaseAction = $env:DatabaseAction
 if ([string]::IsNullOrEmpty($databaseAction)) { $databaseAction = "Rebuild"}
-$databaseName = $env:DatabaseName
+$databaseName = $projectName
 if ([string]::IsNullOrEmpty($databaseName)) { $databaseName = $projectName}
-$script:databaseServer = $env:DatabaseServer
+$script:databaseServer = "(LocalDb)\MSSQLLocalDB"
 if ([string]::IsNullOrEmpty($script:databaseServer)) { $script:databaseServer = "(LocalDb)\MSSQLLocalDB"}
 $databaseScripts = "$source_dir\Database\scripts"
 
