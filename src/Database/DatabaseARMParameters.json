@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "databaseLogin": {
+            "value": "$(DatabaseUser)"
+        },
+        "databaseLoginPassword": {
+            "value": "$(DatabasePassword)"
+        },
+        "skuCapacity": {
+            "value": 1
+        },
+        "databaseName": {
+            "value": "$(DatabaseName)"
+        },
+        "collation": {
+            "value": "SQL_Latin1_General_CP1_CI_AS"
+        },
+        "edition": {
+            "value": "$(DatabaseEdition)"
+        },
+        "maxSizeBytes": {
+            "value": 1073741824
+        },
+        "requestedServiceObjectiveName": {
+            "value": "$(DatabasePerformanceLevel)"
+        }
+    }
+}
