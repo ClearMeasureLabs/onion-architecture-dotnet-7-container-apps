@@ -143,9 +143,9 @@ stages:
           OctoConnectedServiceName: 'octoServiceConnection'
           Space: 'Onion DevOps'
           Project: 'onion-architecture-dotnet-7-container-apps'
-          ReleaseNumber: '$(branch)'
+          ReleaseNumber: '$(Build.BuildNumber)'
           Environments: 'TDD'
-          GitRef: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
+          GitRef: '$(branch)'
           #additional arguments should be supplied as variables
           #AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
           ShowProgress: true
