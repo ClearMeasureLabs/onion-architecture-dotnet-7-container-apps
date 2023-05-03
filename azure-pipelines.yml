@@ -30,7 +30,9 @@ stages:
         vmImage: 'windows-latest'
       variables:
       - group: Integration-Build
+      
       steps:
+
 
       - task: PowerShell@2
         inputs:
@@ -39,12 +41,9 @@ stages:
             [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
             echo $env:Version
             echo $(Build.BuildNumber)
+            $env:DatabaseName = "oniondb"
+            $env:DatabaseServer = "onion-architecture-dotnet-7-container-apps-sqlserver.database.windows.net"
             #gci $(Build.SourcesDirectory) -Recurse
-
-      - task: OctoInstaller@5
-        displayName: 'Install octo cli tools on Windows agent'
-        inputs:
-          version: '*'
 
       - task: PowerShell@2
         displayName: Build.ps1
@@ -109,3 +108,254 @@ stages:
           tags: |
             $(Build.BuildNumber)
 
+
+#DeploytoTDD should be a second stage
+- stage: 'TDD'
+  displayName: 'TDD'
+  jobs: 
+    - job: 'DeployToTDD'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+      - group: Integration-Build  
+      - name: branch
+        value: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]   
+
+      steps:
+      - task: OctopusCreateRelease@6
+        name: 'CreateRelease'
+        inputs:
+          OctoConnectedServiceName: 'octoServiceConnection'
+          Space: 'Onion DevOps'
+          Project: 'onion-architecture-dotnet-7-container-apps'
+          ReleaseNumber: '$(Build.BuildNumber)'
+          Channel: 'Default'
+          GitRef: '$(branch)'
+
+      
+      - task: OctopusDeployRelease@6
+        name: deploytoTDD
+        inputs:
+          OctoConnectedServiceName: 'octoServiceConnection'
+          Space: 'Onion DevOps'
+          Project: 'onion-architecture-dotnet-7-container-apps'
+          ReleaseNumber: '$(Build.BuildNumber)'
+          Environments: 'TDD'
+          #additional arguments should be supplied as variables
+          #AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
+          ShowProgress: true
+          continueOnError: true
+
+      - task: OctopusAwaitTask@6
+        displayName: 'Await Octopus Deploy Task'
+        inputs:
+          OctoConnectedServiceName: 'octoServiceConnection'
+          Space: 'Onion DevOps'
+          Step: deploytoTDD
+
+      # - task: PowerShell@2
+      #   displayName: 'Check deployed version'
+      #   inputs:
+      #     targetType: 'inline'
+      #     #hardcoded tdd-ui url for now
+      #     #wait 1 minute for new revision to deploy and start
+      #     script: |
+      #       Start-Sleep -Seconds 30            
+      #       $env:AppUrl = "https://tdd-ui.redglacier-467555ae.southcentralus.azurecontainerapps.io"
+      #       $env:Version = "$(Build.BuildNumber)"
+      #       & ./CheckVersion.ps1
+
+      # - task: PowerShell@2
+      #   displayName: 'UI Healthcheck'
+      #   inputs:
+      #     #this will fail until the db is deployed as well. For now, continuing on failure
+      #     targetType: 'inline'
+      #     #hardcoded tdd-ui url for now
+      #     script: |         
+      #       $env:AppUrl = "https://tdd-ui.redglacier-467555ae.southcentralus.azurecontainerapps.io" 
+      #       & ./CallHealthCheckEndpoint.ps1
+      #   continueOnError: true            
+
+
+
+
+    #TO DO: get container URL to acceptance tests
+    # maybe build container app in pipeline, get url, pass the url to the acceptance test suite, then build and package project
+      - task: DownloadPackage@1
+        displayName: 'Download Acceptance Test Package'
+        inputs:
+          packageType: 'nuget'
+          feed: '$(FeedName)'
+          view: 'Local'
+          definition: 'ChurchBulletin.AcceptanceTests'
+          version: '$(Build.BuildNumber)'
+          downloadPath: '$(System.DefaultWorkingDirectory)/tests'
+          extract: true
+
+      - task: VSTest@2
+        displayName: 'VsTest - AcceptanceTests'
+        inputs:
+          testSelector: 'testAssemblies'
+          testAssemblyVer2: |
+            **\*AcceptanceTests.dll
+            !**\*TestAdapter.dll
+            !**\obj\**
+            searchFolder: '$(System.DefaultWorkingDirectory)/tests'
+          uiTests: true
+          codeCoverageEnabled: true
+          testRunTitle: 'Acceptance Tests'
+          diagnosticsEnabled: True
+        continueOnError: true
+
+
+- stage: 'UAT'
+  displayName: 'UAT'
+  jobs: 
+    - job: 'DeployToUAT'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+        - group: Integration-Build    
+
+      steps:
+      - task: OctopusDeployRelease@6
+        name: deploytoUAT
+        inputs:
+          OctoConnectedServiceName: 'octoServiceConnection'
+          Space: 'Onion DevOps'
+          Project: 'onion-architecture-dotnet-7-container-apps'
+          ReleaseNumber: '$(Build.BuildNumber)'
+          Environments: 'UAT'
+          #additional arguments should be supplied as variables
+          #AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
+          ShowProgress: true
+
+      - task: OctopusAwaitTask@6
+        displayName: 'Await Octopus Deploy Task'
+        inputs:
+          OctoConnectedServiceName: 'octoServiceConnection'
+          Space: 'Onion DevOps'
+          Step: deploytoUAT
+
+      # - task: PowerShell@2
+      #   displayName: 'Check deployed version'
+      #   inputs:
+      #     targetType: 'inline'
+      #     #hardcoded tdd-ui url for now
+      #     #wait 1 minute for new revision to deploy and start
+      #     script: |
+      #       Start-Sleep -Seconds 30            
+      #       $env:AppUrl="https://uat-ui.icystone-ea613a3b.southcentralus.azurecontainerapps.io" 
+      #       $env:Version = "$(Build.BuildNumber)"
+      #       & ./CheckVersion.ps1
+
+      # - task: PowerShell@2
+      #   displayName: 'UI Healthcheck'
+      #   inputs:
+      #     #this will fail until the db is deployed as well. For now, continuing on failure
+      #     targetType: 'inline'
+      #     #hardcoded tdd-ui url for now
+      #     script: |         
+      #       $env:AppUrl="https://uat-ui.icystone-ea613a3b.southcentralus.azurecontainerapps.io" 
+      #       & ./CallHealthCheckEndpoint.ps1
+      #   continueOnError: true           
+
+- stage: 'Production'
+  displayName: 'Prod'  
+  jobs: 
+    - job: 'DeployToProd'
+      pool:
+        vmImage: 'windows-latest'
+      variables:
+        - group: Integration-Build    
+
+      steps:
+      - task: OctopusDeployRelease@6
+        name: deploytoProd
+        inputs:
+          OctoConnectedServiceName: 'octoServiceConnection'
+          Space: 'Onion DevOps'
+          Project: 'onion-architecture-dotnet-7-container-apps'
+          ReleaseNumber: '$(Build.BuildNumber)'
+          Environments: 'Prod'
+          #additional arguments should be supplied as variables
+          #AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
+          ShowProgress: true
+
+      - task: OctopusAwaitTask@6
+        displayName: 'Await Octopus Deploy Task'
+        inputs:
+          OctoConnectedServiceName: 'octoServiceConnection'
+          Space: 'Onion DevOps'
+          Step: deploytoProd
+
+      # - task: PowerShell@2
+      #   displayName: 'Check deployed version'
+      #   inputs:
+      #     targetType: 'inline'
+      #     #hardcoded tdd-ui url for now
+      #     #wait 1 minute for new revision to deploy and start
+      #     script: |
+      #       Start-Sleep -Seconds 30            
+      #       $env:AppUrl = "https://prod-ui.niceisland-1936248a.southcentralus.azurecontainerapps.io"  
+      #       $env:Version = "$(Build.BuildNumber)"
+      #       & ./CheckVersion.ps1
+
+      # - task: PowerShell@2
+      #   displayName: 'UI Healthcheck'
+      #   inputs:
+      #     #this will fail until the db is deployed as well. For now, continuing on failure
+      #     targetType: 'inline'
+      #     #hardcoded tdd-ui url for now
+      #     script: |         
+      #       $env:AppUrl = "https://prod-ui.niceisland-1936248a.southcentralus.azurecontainerapps.io" 
+      #       & ./CallHealthCheckEndpoint.ps1
+      #   continueOnError: true 
+
+#       pool:
+#         vmImage: 'ubuntu-latest'
+#       variables:
+#         - group: Integration-Build
+#       dependsOn: WaitforTDD
+      
+#       steps:
+#       - task: OctoInstaller@5
+#         displayName: 'Install octo cli tools on Linux agent'
+#         inputs:
+#           version: '*'
+
+#       - task: OctopusDeployRelease@5
+#         inputs:
+#           OctoConnectedServiceName: 'octoServiceConnection'
+#           Space: 'Spaces-195'
+#           ProjectGroup: 'ProjectGroups-534'
+#           Project: 'Projects-541'
+#           ReleaseNumber: '$(Build.BuildNumber)'
+#           Environments: 'Environments-341' #UAT's environment ID, see -342 above for TDD
+#           AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
+#           ShowProgress: true
+
+
+#     - job: 'DeployToProd'
+#       pool:
+#         vmImage: 'ubuntu-latest'
+#       variables:
+#         - group: Integration-Build
+#       dependsOn: DeployToUAT
+      
+#       steps:
+#       - task: OctoInstaller@5
+#         displayName: 'Install octo cli tools on Linux agent'
+#         inputs:
+#           version: '*'
+
+#       - task: OctopusDeployRelease@5
+#         inputs:
+#           OctoConnectedServiceName: 'octoServiceConnection'
+#           Space: 'Spaces-195'
+#           ProjectGroup: 'ProjectGroups-534'
+#           Project: 'Projects-541'
+#           ReleaseNumber: '$(Build.BuildNumber)'
+#           Environments: 'Environments-361' #UAT's environment ID, see -342 above for TDD
+#           AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
+#           ShowProgress: true          
