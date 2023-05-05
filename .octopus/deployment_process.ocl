@@ -377,10 +377,7 @@ step "checkversion" {
             Octopus.Action.Package.PackageId = "ChurchBulletin.Script"
             Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptFileName = "CheckVersion.ps1"
-            Octopus.Action.Script.ScriptParameters = <<-EOT
-                -server #{Octopus.Action[Get Container App FQDN].Output.app_fqdn}
-                 -version #{Octopus.Release.Number}
-                EOT
+            Octopus.Action.Script.ScriptParameters = "-server #{Octopus.Action[Get Container App FQDN].Output.app_fqdn} -version #{Octopus.Release.Number}"
             Octopus.Action.Script.ScriptSource = "Package"
         }
         worker_pool = "hosted-windows"
