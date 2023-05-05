@@ -148,7 +148,7 @@ stages:
           OctoConnectedServiceName: 'octoServiceConnection'
           Space: 'Onion DevOps'
           Project: 'onion-architecture-dotnet-7-container-apps'
-          ReleaseNumber: '$(Build.BuildNumber)'
+          ReleaseNumber: '$(CreateRelease.release_number)'
           Environments: 'TDD'
           #additional arguments should be supplied as variables
           #AdditionalArguments: '-v=DatabaseAction:$(dbAction),-v=DatabaseServer:$(dbserver),-v=DatabaseName:$(dbname), -v=DatabaseUser:$(dbuser), -v=DatabasePassword:$(dbpass) '
