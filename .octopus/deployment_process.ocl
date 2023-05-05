@@ -1,3 +1,29 @@
+step "create-db-schema" {
+    name = "Create DB Schema"
+
+    action {
+        action_type = "Octopus.Script"
+        properties = {
+            Octopus.Action.Package.DownloadOnTentacle = "False"
+            Octopus.Action.Package.FeedId = "onion-arch-dotnet-7"
+            Octopus.Action.Package.PackageId = "ChurchBulletin.Database"
+            Octopus.Action.RunOnServer = "true"
+            Octopus.Action.Script.ScriptFileName = "Scripts\\UpdateAzureSql.ps1"
+            Octopus.Action.Script.ScriptSource = "Package"
+        }
+        worker_pool = "hosted-windows"
+
+        packages {
+            acquisition_location = "Server"
+            feed = "onion-arch-dotnet-7"
+            package_id = "ChurchBulletin.Database"
+            properties = {
+                SelectionMode = "immediate"
+            }
+        }
+    }
+}
+
 step "add-revision-to-container-app" {
     name = "Add Revision to Container App"
 
@@ -80,34 +106,6 @@ step "checkversion" {
             Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptFileName = "CheckVersion.ps1"
             Octopus.Action.Script.ScriptParameters = "-server #{AppURL} -version #{Octopus.Release.Number}"
-            Octopus.Action.Script.ScriptSource = "Package"
-        }
-        worker_pool = "hosted-windows"
-
-        packages {
-            acquisition_location = "Server"
-            feed = "onion-arch-dotnet-7"
-            package_id = "ChurchBulletin.Script"
-            properties = {
-                SelectionMode = "immediate"
-            }
-        }
-    }
-}
-
-step "healthcheck" {
-    name = "HealthCheck"
-
-    action {
-        action_type = "Octopus.Script"
-        is_disabled = true
-        properties = {
-            Octopus.Action.Package.DownloadOnTentacle = "False"
-            Octopus.Action.Package.FeedId = "onion-arch-dotnet-7"
-            Octopus.Action.Package.PackageId = "ChurchBulletin.Script"
-            Octopus.Action.RunOnServer = "true"
-            Octopus.Action.Script.ScriptFileName = "CallHealthCheckEndpoint.ps1"
-            Octopus.Action.Script.ScriptParameters = "-server #{AppURL}"
             Octopus.Action.Script.ScriptSource = "Package"
         }
         worker_pool = "hosted-windows"
