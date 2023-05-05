@@ -221,8 +221,7 @@ step "get-container-app-fqdn" {
                 #All of that to get to this.  This the actual revision
                 #update - fetches the latest container image, creates a 
                 #new revision in the container app, and sets it active.
-                Write-Host "Name $container_app_name"
-                & $fqdn = az containerapp show --name $container_app_name --resource-group $ResourceGroupName --query properties.configuration.ingress.fqdn
+                $fqdn = az containerapp show --name $container_app_name --resource-group $ResourceGroupName --query properties.configuration.ingress.fqdn
                 Set-OctopusVariable -name "app_fqdn" -value $fqdn
                 ###################################################################
                 
