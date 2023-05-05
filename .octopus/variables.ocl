@@ -119,13 +119,13 @@ variable "DatabaseServer" {
         environment = ["staging"]
     }
 
-    value "onion-architecture-dotnet-7-container-apps-sqlserver.database.windows.net" {
-        environment = ["development"]
-    }
-
     value "onion-architecture-dotnet-7-containers-prod.database.windows.net" {
         description = ""
         environment = ["prod"]
+    }
+
+    value "onion-arch-container-apps-sqlserver.database.windows.net" {
+        environment = ["development"]
     }
 }
 
