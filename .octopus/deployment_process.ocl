@@ -132,7 +132,7 @@ step "deploy-an-azure-resource-manager-template-2" {
                           ]
                         },
                         "template": {
-                          "revisionSuffix": "#{Octopus.Release.Number}",
+                          "revisionSuffix": "#{environment_name}",
                           "containers": [
                             {
                               "name": "main",
