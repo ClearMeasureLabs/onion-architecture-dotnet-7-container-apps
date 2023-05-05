@@ -418,19 +418,3 @@ step "healthcheck" {
         }
     }
 }
-
-step "delete-tdd-resource-group" {
-    name = "Delete TDD Resource Group"
-
-    action {
-        action_type = "Octopus.AzurePowerShell"
-        properties = {
-            Octopus.Action.Azure.AccountId = "mvpazure"
-            Octopus.Action.Script.ScriptBody = "Remove-AzResourceGroup -Name $ResourceGroupName"
-            Octopus.Action.Script.ScriptSource = "Inline"
-            Octopus.Action.Script.Syntax = "PowerShell"
-            OctopusUseBundledTooling = "False"
-        }
-        worker_pool_variable = ""
-    }
-}
