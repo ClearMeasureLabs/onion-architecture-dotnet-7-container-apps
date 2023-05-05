@@ -111,7 +111,14 @@ step "deploy-an-azure-resource-manager-template-2" {
                                 "weight": 100
                               }
                             ]
-                          }
+                          },
+                          "registries": [
+                            {
+                              "server": "onionarchitecturedotnet7containers.azurecr.io",
+                              "username": "#{az_login_appid}",
+                              "passwordSecretRef": "#{az_login_appkey}"
+                            }
+                          ]
                         },
                         "template": {
                           "revisionSuffix": "myrevision",
