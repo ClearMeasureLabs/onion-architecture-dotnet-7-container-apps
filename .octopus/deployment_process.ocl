@@ -143,10 +143,6 @@ step "deploy-an-azure-resource-manager-template-2" {
                                   "value": "80"
                                 }
                               ],
-                              "command": [
-                                "npm",
-                                "start"
-                              ],
                               "resources": {
                                 "cpu": 0.25,
                                 "memory": "0.5Gi"
