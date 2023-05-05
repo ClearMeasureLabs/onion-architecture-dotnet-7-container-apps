@@ -30,6 +30,7 @@ stages:
         vmImage: 'windows-latest'
       variables:
       - group: Integration-Build
+      
       steps:
 
       - task: UseDotNet@2
@@ -125,20 +126,11 @@ stages:
       pool:
         vmImage: 'windows-latest'
       variables:
-        - group: Integration-Build   
-
+      - group: Integration-Build  
+      - name: branch
+        value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]   
 
       steps:
-      - task: UseDotNet@2
-        displayName: 'Install SDK 7.0.100'
-        inputs:
-          packageType: 'sdk'
-          version: '7.0.100'
-      - task: UseDotNet@2
-        inputs:
-          packageType: 'runtime'
-          version: '6.0.0'
-
       - task: OctopusCreateRelease@6
         name: 'CreateRelease'
         inputs:
@@ -147,8 +139,9 @@ stages:
           Project: 'onion-architecture-dotnet-7-container-apps'
           ReleaseNumber: '$(Build.BuildNumber)'
           Channel: 'Default'
+          GitRef: '$(branch)'
 
-
+      
       - task: OctopusDeployRelease@6
         name: deploytoTDD
         inputs:
@@ -220,7 +213,6 @@ stages:
           codeCoverageEnabled: true
           testRunTitle: 'Acceptance Tests'
           diagnosticsEnabled: True
-        continueOnError: true
 
 
 - stage: 'UAT'
