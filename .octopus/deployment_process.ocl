@@ -3,7 +3,6 @@ step "create-tdd-resource-group" {
 
     action {
         environments = ["development"]
-        is_disabled = true
         properties = {
             CreateResourceGroup.AzureAccount = "#{AzureAccount}"
             CreateResourceGroup.Location = "South Central US"
@@ -20,7 +19,6 @@ step "deploy-an-azure-resource-manager-template-1" {
 
     action {
         action_type = "Octopus.AzureResourceGroup"
-        is_disabled = true
         properties = {
             Octopus.Action.Azure.AccountId = "mvpazure"
             Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
@@ -65,7 +63,6 @@ step "deploy-an-azure-resource-manager-template-2" {
 
     action {
         action_type = "Octopus.AzureResourceGroup"
-        is_disabled = true
         properties = {
             Octopus.Action.Azure.AccountId = "mvpazure"
             Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
