@@ -119,7 +119,7 @@ stages:
       variables:
       - group: Integration-Build  
       - name: branch
-        value: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]   
+        value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]   
 
       steps:
       - task: OctopusCreateRelease@6
