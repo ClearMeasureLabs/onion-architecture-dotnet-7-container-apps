@@ -242,7 +242,6 @@ step "deploy-an-azure-resource-manager-template" {
     action {
         action_type = "Octopus.AzureResourceGroup"
         environments = ["development"]
-        is_disabled = true
         properties = {
             Octopus.Action.Azure.AccountId = "mvpazure"
             Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
@@ -273,7 +272,6 @@ step "create-db-schema" {
 
     action {
         action_type = "Octopus.Script"
-        is_disabled = true
         properties = {
             Octopus.Action.Package.DownloadOnTentacle = "False"
             Octopus.Action.Package.FeedId = "onion-arch-dotnet-7"
@@ -398,6 +396,7 @@ step "healthcheck" {
 
     action {
         action_type = "Octopus.Script"
+        is_disabled = true
         properties = {
             Octopus.Action.Package.DownloadOnTentacle = "False"
             Octopus.Action.Package.FeedId = "onion-arch-dotnet-7"
