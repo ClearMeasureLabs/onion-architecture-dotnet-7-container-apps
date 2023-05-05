@@ -169,6 +169,26 @@ step "deploy-an-azure-resource-manager-template-2" {
     }
 }
 
+step "get-container-app-fqdn" {
+    name = "Get Container APP FQDN"
+
+    action {
+        action_type = "Octopus.AzurePowerShell"
+        properties = {
+            Octopus.Action.Azure.AccountId = "mvpazure"
+            Octopus.Action.Script.ScriptBody = <<-EOT
+                $fqdn = (Get-AzContainerApp -Name $container_app_name -ResourceGroupName $ResourceGroupName).IngressFqdn
+                Set-OctopusVariable -name "app_fqdn" -value $fqdn
+                
+                EOT
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool_variable = ""
+    }
+}
+
 step "deploy-an-azure-resource-manager-template" {
     name = "Create AZ DB"
 
@@ -309,7 +329,10 @@ step "checkversion" {
             Octopus.Action.Package.PackageId = "ChurchBulletin.Script"
             Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptFileName = "CheckVersion.ps1"
-            Octopus.Action.Script.ScriptParameters = "-server #{AppURL} -version #{Octopus.Release.Number}"
+            Octopus.Action.Script.ScriptParameters = <<-EOT
+                -server #{Octopus.Action[Step4].Output.app_fqdn}
+                 -version #{Octopus.Release.Number}
+                EOT
             Octopus.Action.Script.ScriptSource = "Package"
         }
         worker_pool = "hosted-windows"
@@ -336,7 +359,7 @@ step "healthcheck" {
             Octopus.Action.Package.PackageId = "ChurchBulletin.Script"
             Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptFileName = "CallHealthCheckEndpoint.ps1"
-            Octopus.Action.Script.ScriptParameters = "-server #{AppURL}"
+            Octopus.Action.Script.ScriptParameters = "-server #{Octopus.Action[Step4].Output.app_fqdn}"
             Octopus.Action.Script.ScriptSource = "Package"
         }
         worker_pool = "hosted-windows"
