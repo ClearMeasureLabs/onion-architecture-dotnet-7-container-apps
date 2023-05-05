@@ -19,6 +19,7 @@ step "deploy-an-azure-resource-manager-template-1" {
 
     action {
         action_type = "Octopus.AzureResourceGroup"
+        environments = ["development"]
         properties = {
             Octopus.Action.Azure.AccountId = "mvpazure"
             Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
@@ -63,6 +64,7 @@ step "deploy-an-azure-resource-manager-template-2" {
 
     action {
         action_type = "Octopus.AzureResourceGroup"
+        environments = ["development"]
         properties = {
             Octopus.Action.Azure.AccountId = "mvpazure"
             Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
@@ -302,6 +304,7 @@ step "add-revision-to-container-app" {
 
     action {
         action_type = "Octopus.AzurePowerShell"
+        environments = ["staging", "prod"]
         properties = {
             Octopus.Action.Azure.AccountId = "mvpazure"
             Octopus.Action.RunOnServer = "true"
