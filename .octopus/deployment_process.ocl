@@ -86,6 +86,9 @@ step "deploy-an-azure-resource-manager-template-2" {
                     },
                     "container_image": {
                       "type": "String"
+                    },
+                    "registry_password": {
+                      "type": "SecureString"
                     }
                   },
                   "variables": {},
@@ -101,6 +104,12 @@ step "deploy-an-azure-resource-manager-template-2" {
                       "properties": {
                         "managedEnvironmentId": "[resourceId('Microsoft.App/managedEnvironments', parameters('environment_name'))]",
                         "configuration": {
+                          "secrets": [
+                            {
+                              "name": "registrypassword",
+                              "value": "[parameters('registry_password')]"
+                            }
+                          ],          
                           "ingress": {
                             "external": true,
                             "targetPort": 80,
@@ -116,7 +125,7 @@ step "deploy-an-azure-resource-manager-template-2" {
                             {
                               "server": "onionarchitecturedotnet7containers.azurecr.io",
                               "username": "#{az_login_appid}",
-                              "passwordSecretRef": "#{az_login_appkey}"
+                              "passwordSecretRef": "registrypassword"
                             }
                           ]
                         },
@@ -152,7 +161,7 @@ step "deploy-an-azure-resource-manager-template-2" {
                   ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"containerappName\":{\"value\":\"#{container_app_name}\"},\"location\":{\"value\":\"#{az_location}\"},\"environment_name\":{\"value\":\"#{container_app_environment_name}\"},\"container_image\":{\"value\":\"#{container_image}\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"containerappName\":{\"value\":\"#{container_app_name}\"},\"location\":{\"value\":\"#{az_location}\"},\"environment_name\":{\"value\":\"#{container_app_environment_name}\"},\"container_image\":{\"value\":\"#{container_image}\"},\"registry_password\":{\"value\":\"#{az_login_appkey}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
