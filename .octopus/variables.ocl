@@ -196,7 +196,7 @@ variable "ResourceGroupName" {
         environment = ["prod"]
     }
 
-    value "onion-architecture-dotnet-7-containers" {
+    value "onion-architecture-dotnet-7-containers-tdd" {
         environment = ["development"]
     }
 }
