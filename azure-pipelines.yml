@@ -193,6 +193,7 @@ stages:
           scriptType: 'bash'
           scriptLocation: 'inlineScript'
           inlineScript: |
+            az config set extension.use_dynamic_install=yes_without_prompt
             containerAppURL=$(az containerapp show --resource-group onion-architecture-dotnet-7-containers-tdd --name tdd-ui --query properties.configuration.ingress.fqdn -o tsv)
             echo "##vso[task.setvariable variable=containerAppURL]$containerAppURL"      
       
