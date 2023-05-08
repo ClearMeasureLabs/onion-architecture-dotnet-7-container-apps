@@ -190,11 +190,12 @@ stages:
       - task: AzureCLI@2
         inputs:
           azureSubscription: 'dotnet-7-containerapp'
-          scriptType: 'bash'
+          scriptType: 'ps'
           scriptLocation: 'inlineScript'
           inlineScript: |
             az config set extension.use_dynamic_install=yes_without_prompt
-            $env:containerAppURL=$(az containerapp show --resource-group onion-architecture-dotnet-7-containers-tdd --name tdd-ui --query properties.configuration.ingress.fqdn -o tsv)
+            $containerAppURL = az containerapp show --resource-group onion-architecture-dotnet-7-containers-tdd --name tdd-ui --query properties.configuration.ingress.fqdn
+            [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL)
             echo "container app url $env:containerAppURL" 
 
       
