@@ -187,13 +187,24 @@ stages:
 
     #TO DO: get container URL to acceptance tests
     # maybe build container app in pipeline, get url, pass the url to the acceptance test suite, then build and package project
-      - task: PowerShell@2
+      - task: AzureCLI@2
         inputs:
-          targetType: 'inline'
-          script: |
-            az config set extension.use_dynamic_install=yes_without_prompt
-            $env:containerAppURL = az containerapp show --name tdd-ui --resource-group onion-architecture-dotnet-7-containers-tdd --query properties.configuration.ingress.fqdn
-            Write-Host "containerAppURL $env:ContainerAppURL"
+          azureSubscription: 'dotnet-7-containerapp'
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            containerAppURL=$(az containerapp show --resource-group onion-architecture-dotnet-7-containers-tdd --name tdd-ui --query properties.configuration.ingress.fqdn -o tsv)
+            echo "##vso[task.setvariable variable=containerAppURL]$containerAppURL"      
+      
+      # - task: AzureCLI@2
+      #     inputs:
+      #       azureSubscription: '<SERVICE_CONNECTION_NAME>'
+      #       scriptType: 'pscore'
+      #       scriptLocation: 'inlineScript'
+      #       inlineScript: 'az group list'
+      #       az config set extension.use_dynamic_install=yes_without_prompt
+      #       $env:containerAppURL = az containerapp show --name tdd-ui --resource-group onion-architecture-dotnet-7-containers-tdd --query properties.configuration.ingress.fqdn
+      #       Write-Host "containerAppURL $env:ContainerAppURL"
 
       - task: DownloadPackage@1
         displayName: 'Download Acceptance Test Package'
