@@ -195,19 +195,14 @@ stages:
           inlineScript: |
             az config set extension.use_dynamic_install=yes_without_prompt
             $containerAppURL = az containerapp show --resource-group onion-architecture-dotnet-7-containers-tdd --name tdd-ui --query properties.configuration.ingress.fqdn
-            [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL)
+            [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "Machine")
             echo "container app url $env:containerAppURL" 
 
-      
-      # - task: AzureCLI@2
-      #     inputs:
-      #       azureSubscription: '<SERVICE_CONNECTION_NAME>'
-      #       scriptType: 'pscore'
-      #       scriptLocation: 'inlineScript'
-      #       inlineScript: 'az group list'
-      #       az config set extension.use_dynamic_install=yes_without_prompt
-      #       $env:containerAppURL = az containerapp show --name tdd-ui --resource-group onion-architecture-dotnet-7-containers-tdd --query properties.configuration.ingress.fqdn
-      #       Write-Host "containerAppURL $env:ContainerAppURL"
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: |
+            echo "checking url again: $env:containerAppURL"
 
       - task: DownloadPackage@1
         displayName: 'Download Acceptance Test Package'
