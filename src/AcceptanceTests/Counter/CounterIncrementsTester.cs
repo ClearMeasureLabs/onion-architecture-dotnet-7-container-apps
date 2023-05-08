@@ -27,6 +27,7 @@ public class CounterIncrementsTester
     {
         //arrange
         var hostAddress = System.Environment.GetEnvironmentVariable("containerAppURL"); //these environmental keys get refactored out
+        Console.WriteLine("Host address:" + hostAddress);
         _driver.Navigate().GoToUrl($"{hostAddress}/counter");
         var xPathForButton = By.CssSelector("button[ref='clickMeButton2']");
 
