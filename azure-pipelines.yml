@@ -191,6 +191,7 @@ stages:
         inputs:
           targetType: 'inline'
           script: |
+            az config set extension.use_dynamic_install=yes_without_prompt
             $env:containerAppURL = az containerapp show --name tdd-ui --resource-group onion-architecture-dotnet-7-containers-tdd --query properties.configuration.ingress.fqdn
             Write-Host "containerAppURL $env:ContainerAppURL"
 
