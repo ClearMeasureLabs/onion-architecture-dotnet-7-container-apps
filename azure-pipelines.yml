@@ -191,8 +191,8 @@ stages:
         inputs:
           targetType: 'inline'
           script: |
-          $env:containerAppURL = az containerapp show --name tdd-ui --resource-group onion-architecture-dotnet-7-containers-tdd --query properties.configuration.ingress.fqdn
-          Write-Host "containerAppURL $env:ContainerAppURL"
+            $env:containerAppURL = az containerapp show --name tdd-ui --resource-group onion-architecture-dotnet-7-containers-tdd --query properties.configuration.ingress.fqdn
+            Write-Host "containerAppURL $env:ContainerAppURL"
 
       - task: DownloadPackage@1
         displayName: 'Download Acceptance Test Package'
