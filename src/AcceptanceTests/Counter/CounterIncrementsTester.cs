@@ -26,7 +26,7 @@ public class CounterIncrementsTester
     public void ShouldIncrementOnPress(int numberOfButtonPresses, int expectedFinalCount)
     {
         //arrange
-        var hostAddress = "https://tdd-ui.redglacier-467555ae.southcentralus.azurecontainerapps.io"; //these environmental keys get refactored out
+        var hostAddress = System.Environment.GetEnvironmentVariable("containerAppURL"); //these environmental keys get refactored out
         _driver.Navigate().GoToUrl($"{hostAddress}/counter");
         var xPathForButton = By.CssSelector("button[ref='clickMeButton2']");
 

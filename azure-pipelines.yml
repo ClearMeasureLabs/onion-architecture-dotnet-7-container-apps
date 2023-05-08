@@ -50,8 +50,6 @@ stages:
             [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
             echo $env:Version
             echo $(Build.BuildNumber)
-            $env:DatabaseName = "oniondb"
-            $env:DatabaseServer = "onion-architecture-dotnet-7-container-apps-sqlserver.database.windows.net"
             #gci $(Build.SourcesDirectory) -Recurse
 
       - task: PowerShell@2
@@ -189,6 +187,13 @@ stages:
 
     #TO DO: get container URL to acceptance tests
     # maybe build container app in pipeline, get url, pass the url to the acceptance test suite, then build and package project
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: |
+          $env:containerAppURL = az containerapp show --name tdd-ui --resource-group onion-architecture-dotnet-7-containers-tdd --query properties.configuration.ingress.fqdn
+          Write-Host "containerAppURL $env.ContainerAppURL"
+
       - task: DownloadPackage@1
         displayName: 'Download Acceptance Test Package'
         inputs:
