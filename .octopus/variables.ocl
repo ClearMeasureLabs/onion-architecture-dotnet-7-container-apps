@@ -216,3 +216,21 @@ variable "subscriptionId" {
 variable "containerAppURL" {
     value "#{Octopus.Action[Get Container App FQDN].Output.app_fqdn}" {}
 }
+
+variable "connection_string" {
+    value "#{Octopus.Action[Get DB Connection String].Output.connstring}" {}
+}
+
+variable "DatabaseServerName" {
+    value "onion-architecture-dotnet-7-containers-prod" {
+        environment = ["prod"]
+    }
+
+    value "onion-arch-container-apps-sqlserver" {
+        environment = ["development"]
+    }
+
+    value "onion-architecture-dotnet-7-containers-uat" {
+        environment = ["staging"]
+    }
+}

@@ -14,6 +14,133 @@ step "create-tdd-resource-group" {
     }
 }
 
+step "deploy-an-azure-resource-manager-template" {
+    name = "Create AZ DB"
+
+    action {
+        action_type = "Octopus.AzureResourceGroup"
+        environments = ["development"]
+        properties = {
+            Octopus.Action.Azure.AccountId = "mvpazure"
+            Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
+            Octopus.Action.Azure.ResourceGroupName = "#{ResourceGroupName}"
+            Octopus.Action.Azure.ResourceGroupTemplate = "DatabaseARM.json"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "DatabaseARMParameters.json"
+            Octopus.Action.Azure.TemplateSource = "Package"
+            Octopus.Action.Package.DownloadOnTentacle = "False"
+            Octopus.Action.Package.FeedId = "onion-arch-dotnet-7"
+            Octopus.Action.Package.PackageId = "ChurchBulletin.Database"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool_variable = ""
+
+        packages {
+            acquisition_location = "Server"
+            feed = "onion-arch-dotnet-7"
+            package_id = "ChurchBulletin.Database"
+            properties = {
+                SelectionMode = "immediate"
+            }
+        }
+    }
+}
+
+step "create-db-schema" {
+    name = "Create DB Schema"
+
+    action {
+        action_type = "Octopus.Script"
+        properties = {
+            Octopus.Action.Package.DownloadOnTentacle = "False"
+            Octopus.Action.Package.FeedId = "onion-arch-dotnet-7"
+            Octopus.Action.Package.PackageId = "ChurchBulletin.Database"
+            Octopus.Action.RunOnServer = "true"
+            Octopus.Action.Script.ScriptFileName = "Scripts\\UpdateAzureSql.ps1"
+            Octopus.Action.Script.ScriptSource = "Package"
+        }
+        worker_pool = "hosted-windows"
+
+        packages {
+            acquisition_location = "Server"
+            feed = "onion-arch-dotnet-7"
+            package_id = "ChurchBulletin.Database"
+            properties = {
+                SelectionMode = "immediate"
+            }
+        }
+    }
+}
+
+step "get-db-connection-string" {
+    name = "Get DB Connection String"
+
+    action {
+        action_type = "Octopus.AzurePowerShell"
+        properties = {
+            Octopus.Action.Azure.AccountId = "mvpazure"
+            Octopus.Action.Script.ScriptBody = <<-EOT
+                #$azPath = "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin"
+                ###################################################################
+                #Octopus Deploy's default Hosted Windows install includes
+                #az cli, but the version doesn't include the containerapp
+                #extension or the upgrade extension.  That's the reason for
+                #all the az cli installation work here.  Starting with a
+                #fresh agent and fresh install gives us some flexibility
+                #in extensions.
+                #
+                #That also means that the agent doesn't inherit the
+                #credentials from Octopus Deploy, so we also have to
+                #set up az cli with the relevant information for az
+                #login.  Those details are stored as Project Variables
+                #for ease of reference and secrecy.
+                ###################################################################
+                
+                ###################################################################
+                #Intalls az cli latest version from Microsoft. Essentially 
+                #a copy/paste from MS documentation.
+                $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; rm .\AzureCLI.msi
+                ###################################################################
+                
+                ###################################################################
+                #az cli installer doesn't consistently add the install
+                #directory to PATH.  This is here to make sure we can run
+                #from whatever default directory the agent lands on.
+                $Env:PATH += ";C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\"
+                Write-Host $env:PATH -Split ';'
+                ###################################################################
+                
+                ###################################################################
+                #They heavy lifting.  With the cli installed and PATH set
+                #all that's left to do is configure it for the subscription.
+                & az extension add --name containerapp
+                & az login --service-principal -u $az_login_appid -p $az_login_appkey --tenant $az_login_tenant
+                & az account set --subscription $subscriptionId
+                ###################################################################
+                
+                ###################################################################
+                #All of that to get to this.  This the actual revision
+                #update - fetches the latest container image, creates a 
+                #new revision in the container app, and sets it active.
+                $connstring = az sql db show-connection-string --server $DatabaseServerName --name $DatabaseName --client ado.net
+                $connstring = $connstring -replace '<username>', $DatabaseUser -replace '<password>', $DatabasePassword -replace '"', ''
+                Write-Host "Connection String: $connstring"
+                Set-OctopusVariable -name "connstring" -value $connstring
+                ###################################################################
+                
+                
+                
+                
+                
+                
+                EOT
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool_variable = ""
+    }
+}
+
 step "deploy-an-azure-resource-manager-template-1" {
     name = "Create Container App Environment"
 
@@ -91,6 +218,9 @@ step "deploy-an-azure-resource-manager-template-2" {
                     },
                     "registry_password": {
                       "type": "SecureString"
+                    },
+                    "connection_string": {
+                      "type": "SecureString"
                     }
                   },
                   "variables": {},
@@ -141,6 +271,10 @@ step "deploy-an-azure-resource-manager-template-2" {
                                 {
                                   "name": "HTTP_PORT",
                                   "value": "80"
+                                },
+                                {
+                                  "name": "ConnectionStrings__SqlConnectionString",
+                                  "value": "[parameters('connection_string')]"
                                 }
                               ],
                               "resources": {
@@ -159,7 +293,7 @@ step "deploy-an-azure-resource-manager-template-2" {
                   ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"containerappName\":{\"value\":\"#{container_app_name}\"},\"location\":{\"value\":\"#{az_location}\"},\"environment_name\":{\"value\":\"#{container_app_environment_name}\"},\"container_image\":{\"value\":\"#{container_image}\"},\"registry_password\":{\"value\":\"#{az_login_appkey}\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"containerappName\":{\"value\":\"#{container_app_name}\"},\"location\":{\"value\":\"#{az_location}\"},\"environment_name\":{\"value\":\"#{container_app_environment_name}\"},\"container_image\":{\"value\":\"#{container_image}\"},\"registry_password\":{\"value\":\"#{az_login_appkey}\"},\"connection_string\":{\"value\":\"#{connection_string}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
@@ -236,63 +370,6 @@ step "get-container-app-fqdn" {
     }
 }
 
-step "deploy-an-azure-resource-manager-template" {
-    name = "Create AZ DB"
-
-    action {
-        action_type = "Octopus.AzureResourceGroup"
-        environments = ["development"]
-        properties = {
-            Octopus.Action.Azure.AccountId = "mvpazure"
-            Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
-            Octopus.Action.Azure.ResourceGroupName = "#{ResourceGroupName}"
-            Octopus.Action.Azure.ResourceGroupTemplate = "DatabaseARM.json"
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "DatabaseARMParameters.json"
-            Octopus.Action.Azure.TemplateSource = "Package"
-            Octopus.Action.Package.DownloadOnTentacle = "False"
-            Octopus.Action.Package.FeedId = "onion-arch-dotnet-7"
-            Octopus.Action.Package.PackageId = "ChurchBulletin.Database"
-            OctopusUseBundledTooling = "False"
-        }
-        worker_pool_variable = ""
-
-        packages {
-            acquisition_location = "Server"
-            feed = "onion-arch-dotnet-7"
-            package_id = "ChurchBulletin.Database"
-            properties = {
-                SelectionMode = "immediate"
-            }
-        }
-    }
-}
-
-step "create-db-schema" {
-    name = "Create DB Schema"
-
-    action {
-        action_type = "Octopus.Script"
-        properties = {
-            Octopus.Action.Package.DownloadOnTentacle = "False"
-            Octopus.Action.Package.FeedId = "onion-arch-dotnet-7"
-            Octopus.Action.Package.PackageId = "ChurchBulletin.Database"
-            Octopus.Action.RunOnServer = "true"
-            Octopus.Action.Script.ScriptFileName = "Scripts\\UpdateAzureSql.ps1"
-            Octopus.Action.Script.ScriptSource = "Package"
-        }
-        worker_pool = "hosted-windows"
-
-        packages {
-            acquisition_location = "Server"
-            feed = "onion-arch-dotnet-7"
-            package_id = "ChurchBulletin.Database"
-            properties = {
-                SelectionMode = "immediate"
-            }
-        }
-    }
-}
-
 step "add-revision-to-container-app" {
     name = "Add Revision to Container App"
 
@@ -348,6 +425,7 @@ step "add-revision-to-container-app" {
                 #new revision in the container app, and sets it active.
                 Write-Host "Name $container_app_name"
                 & az containerapp update --name $container_app_name --resource-group $ResourceGroupName --image $container_image
+                & az containerapp update --name $container_app_name --resource-group $ResourceGroupName --set-env-vars ConnectionStrings__SqlConnectionString=$connection_string
                 ###################################################################
                 
                 
@@ -396,7 +474,6 @@ step "healthcheck" {
 
     action {
         action_type = "Octopus.Script"
-        is_disabled = true
         properties = {
             Octopus.Action.Package.DownloadOnTentacle = "False"
             Octopus.Action.Package.FeedId = "onion-arch-dotnet-7"
