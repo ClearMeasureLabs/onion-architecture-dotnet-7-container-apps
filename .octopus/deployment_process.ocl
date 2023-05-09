@@ -474,7 +474,6 @@ step "healthcheck" {
 
     action {
         action_type = "Octopus.Script"
-        is_disabled = true
         properties = {
             Octopus.Action.Package.DownloadOnTentacle = "False"
             Octopus.Action.Package.FeedId = "onion-arch-dotnet-7"
