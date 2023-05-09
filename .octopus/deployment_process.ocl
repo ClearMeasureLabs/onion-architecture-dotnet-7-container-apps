@@ -270,8 +270,8 @@ step "deploy-an-azure-resource-manager-template-2" {
                                   "value": "80"
                                 },
                                 {
-                                	"name": "ConnectionStrings__SqlConnectionString",
-                                  	"value": "#{connection_string}"
+                                  "name": "ConnectionStrings__SqlConnectionString",
+                                  "value": "#{connection_string}"
                                 }
                               ],
                               "resources": {
