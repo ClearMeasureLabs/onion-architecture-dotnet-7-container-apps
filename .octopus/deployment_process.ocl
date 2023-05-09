@@ -122,6 +122,7 @@ step "get-db-connection-string" {
                 #update - fetches the latest container image, creates a 
                 #new revision in the container app, and sets it active.
                 $connstring = az sql db show-connection-string --server $DatabaseServer --name $DatabaseName --client ado.net
+                $connstring = $connstring -replace '<username>', $DatabaseUser -replace '<password>', $DatabasePassword
                 Write-Host "Connection String: $connstring"
                 Set-OctopusVariable -name "connstring" -value $connstring
                 ###################################################################
