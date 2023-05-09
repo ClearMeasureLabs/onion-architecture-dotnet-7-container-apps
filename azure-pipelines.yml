@@ -50,8 +50,6 @@ stages:
             [System.Environment]::SetEnvironmentVariable('Version','$(Build.BuildNumber)')
             echo $env:Version
             echo $(Build.BuildNumber)
-            $env:DatabaseName = "oniondb"
-            $env:DatabaseServer = "onion-architecture-dotnet-7-container-apps-sqlserver.database.windows.net"
             #gci $(Build.SourcesDirectory) -Recurse
 
       - task: PowerShell@2
@@ -189,6 +187,17 @@ stages:
 
     #TO DO: get container URL to acceptance tests
     # maybe build container app in pipeline, get url, pass the url to the acceptance test suite, then build and package project
+      - task: AzureCLI@2
+        inputs:
+          azureSubscription: 'dotnet-7-containerapp'
+          scriptType: 'ps'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            az config set extension.use_dynamic_install=yes_without_prompt
+            $containerAppURL = az containerapp show --resource-group onion-architecture-dotnet-7-containers-tdd --name tdd-ui --query properties.configuration.ingress.fqdn
+            $containerAppURL = $containerAppURL -replace '"', ''
+            [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "Machine")
+
       - task: DownloadPackage@1
         displayName: 'Download Acceptance Test Package'
         inputs:

@@ -212,3 +212,7 @@ variable "subscriptionId" {
         environment = ["development", "staging", "prod"]
     }
 }
+
+variable "containerAppURL" {
+    value "#{Octopus.Action[Get Container App FQDN].Output.app_fqdn}" {}
+}
