@@ -230,7 +230,7 @@ stages:
           scriptType: 'ps'
           scriptLocation: 'inlineScript'
           inlineScript: |
-            az group delete -n onion-architecture-dotnet-7-containers-tdd
+            az group delete -n onion-architecture-dotnet-7-containers-tdd --yes
 
 - stage: 'UAT'
   displayName: 'UAT'
