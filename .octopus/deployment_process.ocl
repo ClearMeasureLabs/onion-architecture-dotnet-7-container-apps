@@ -14,6 +14,63 @@ step "create-tdd-resource-group" {
     }
 }
 
+step "deploy-an-azure-resource-manager-template" {
+    name = "Create AZ DB"
+
+    action {
+        action_type = "Octopus.AzureResourceGroup"
+        environments = ["development"]
+        properties = {
+            Octopus.Action.Azure.AccountId = "mvpazure"
+            Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
+            Octopus.Action.Azure.ResourceGroupName = "#{ResourceGroupName}"
+            Octopus.Action.Azure.ResourceGroupTemplate = "DatabaseARM.json"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "DatabaseARMParameters.json"
+            Octopus.Action.Azure.TemplateSource = "Package"
+            Octopus.Action.Package.DownloadOnTentacle = "False"
+            Octopus.Action.Package.FeedId = "onion-arch-dotnet-7"
+            Octopus.Action.Package.PackageId = "ChurchBulletin.Database"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool_variable = ""
+
+        packages {
+            acquisition_location = "Server"
+            feed = "onion-arch-dotnet-7"
+            package_id = "ChurchBulletin.Database"
+            properties = {
+                SelectionMode = "immediate"
+            }
+        }
+    }
+}
+
+step "create-db-schema" {
+    name = "Create DB Schema"
+
+    action {
+        action_type = "Octopus.Script"
+        properties = {
+            Octopus.Action.Package.DownloadOnTentacle = "False"
+            Octopus.Action.Package.FeedId = "onion-arch-dotnet-7"
+            Octopus.Action.Package.PackageId = "ChurchBulletin.Database"
+            Octopus.Action.RunOnServer = "true"
+            Octopus.Action.Script.ScriptFileName = "Scripts\\UpdateAzureSql.ps1"
+            Octopus.Action.Script.ScriptSource = "Package"
+        }
+        worker_pool = "hosted-windows"
+
+        packages {
+            acquisition_location = "Server"
+            feed = "onion-arch-dotnet-7"
+            package_id = "ChurchBulletin.Database"
+            properties = {
+                SelectionMode = "immediate"
+            }
+        }
+    }
+}
+
 step "deploy-an-azure-resource-manager-template-1" {
     name = "Create Container App Environment"
 
@@ -233,63 +290,6 @@ step "get-container-app-fqdn" {
             OctopusUseBundledTooling = "False"
         }
         worker_pool_variable = ""
-    }
-}
-
-step "deploy-an-azure-resource-manager-template" {
-    name = "Create AZ DB"
-
-    action {
-        action_type = "Octopus.AzureResourceGroup"
-        environments = ["development"]
-        properties = {
-            Octopus.Action.Azure.AccountId = "mvpazure"
-            Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
-            Octopus.Action.Azure.ResourceGroupName = "#{ResourceGroupName}"
-            Octopus.Action.Azure.ResourceGroupTemplate = "DatabaseARM.json"
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "DatabaseARMParameters.json"
-            Octopus.Action.Azure.TemplateSource = "Package"
-            Octopus.Action.Package.DownloadOnTentacle = "False"
-            Octopus.Action.Package.FeedId = "onion-arch-dotnet-7"
-            Octopus.Action.Package.PackageId = "ChurchBulletin.Database"
-            OctopusUseBundledTooling = "False"
-        }
-        worker_pool_variable = ""
-
-        packages {
-            acquisition_location = "Server"
-            feed = "onion-arch-dotnet-7"
-            package_id = "ChurchBulletin.Database"
-            properties = {
-                SelectionMode = "immediate"
-            }
-        }
-    }
-}
-
-step "create-db-schema" {
-    name = "Create DB Schema"
-
-    action {
-        action_type = "Octopus.Script"
-        properties = {
-            Octopus.Action.Package.DownloadOnTentacle = "False"
-            Octopus.Action.Package.FeedId = "onion-arch-dotnet-7"
-            Octopus.Action.Package.PackageId = "ChurchBulletin.Database"
-            Octopus.Action.RunOnServer = "true"
-            Octopus.Action.Script.ScriptFileName = "Scripts\\UpdateAzureSql.ps1"
-            Octopus.Action.Script.ScriptSource = "Package"
-        }
-        worker_pool = "hosted-windows"
-
-        packages {
-            acquisition_location = "Server"
-            feed = "onion-arch-dotnet-7"
-            package_id = "ChurchBulletin.Database"
-            properties = {
-                SelectionMode = "immediate"
-            }
-        }
     }
 }
 
