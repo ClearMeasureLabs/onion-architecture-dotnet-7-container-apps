@@ -216,3 +216,7 @@ variable "subscriptionId" {
 variable "containerAppURL" {
     value "#{Octopus.Action[Get Container App FQDN].Output.app_fqdn}" {}
 }
+
+variable "connection_string" {
+    value "#{Octopus.Action[Get DB Connection String].Output.connstring}" {}
+}
