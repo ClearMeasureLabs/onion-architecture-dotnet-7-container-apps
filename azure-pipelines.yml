@@ -223,6 +223,14 @@ stages:
           testRunTitle: 'Acceptance Tests'
           diagnosticsEnabled: True
 
+      - task: AzureCLI@2
+        isplayName: 'Delete TDD Resources'
+        inputs:
+          azureSubscription: 'dotnet-7-containerapp'
+          scriptType: 'ps'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            az group delete -n onion-architecture-dotnet-7-containers-tdd
 
 - stage: 'UAT'
   displayName: 'UAT'
