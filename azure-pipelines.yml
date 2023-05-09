@@ -224,7 +224,7 @@ stages:
           diagnosticsEnabled: True
 
       - task: AzureCLI@2
-        isplayName: 'Delete TDD Resources'
+        displayName: 'Delete TDD Resources'
         inputs:
           azureSubscription: 'dotnet-7-containerapp'
           scriptType: 'ps'
