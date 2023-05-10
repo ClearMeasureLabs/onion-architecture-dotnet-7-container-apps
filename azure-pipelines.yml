@@ -83,16 +83,16 @@ stages:
           packagesToPush: '.\build\*.nupkg'
           publishVstsFeed: '$(FeedName)'
     
-      - task: AzureCLI@2
-        displayName: 'Create Azure Container Registry'
-        inputs:
-          azureSubscription: 'dotnet-7-containerapp'
-          scriptType: 'ps'
-          scriptLocation: 'inlineScript'
-          inlineScript: |
-            az config set extension.use_dynamic_install=yes_without_prompt
-            az group create --name onion-architecture-dotnet-7-containers-acr --location southcentralus
-            az acr create -n onionarchitecturedotnet7containers -g onion-architecture-dotnet-7-containers-acr --sku Basic
+      # - task: AzureCLI@2
+      #   displayName: 'Create Azure Container Registry'
+      #   inputs:
+      #     azureSubscription: 'dotnet-7-containerapp'
+      #     scriptType: 'ps'
+      #     scriptLocation: 'inlineScript'
+      #     inlineScript: |
+      #       az config set extension.use_dynamic_install=yes_without_prompt
+      #       az group create --name onion-architecture-dotnet-7-containers-acr --location southcentralus
+      #       az acr create -n onionarchitecturedotnet7containers -g onion-architecture-dotnet-7-containers-acr --sku Basic
 
       # - task: AzureCLI@2
       #   inputs:
