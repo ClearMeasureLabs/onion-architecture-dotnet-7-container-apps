@@ -244,3 +244,7 @@ variable "container_app_environment_name" {
         environment = ["prod"]
     }
 }
+
+variable "EnsureEnvironmentsExist" {
+    value "True" {}
+}
