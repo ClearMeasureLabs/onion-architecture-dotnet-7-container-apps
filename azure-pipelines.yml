@@ -106,10 +106,10 @@ stages:
           version: '$(Build.BuildNumber)'
           downloadPath: '$(System.DefaultWorkingDirectory)/built'
           extract: true
-          
+
       - task: Docker@2
         inputs:
-          containerRegistry: 'OnionArcServiceConnection'
+          containerRegistry: 'OnionArchACRServiceConnection'
           repository: 'ChurchBulletin.UI'
           command: 'buildAndPush'
           Dockerfile: '**/Dockerfile'
