@@ -1,11 +1,14 @@
 step "create-tdd-resource-group" {
-    name = "Create TDD Resource Group"
+    condition = "Variable"
+    name = "Create Resource Group"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if #{EnsureEnvironmentsExist}  == \"True\"}true#{/if}"
+    }
 
     action {
-        environments = ["development"]
         properties = {
             CreateResourceGroup.AzureAccount = "#{AzureAccount}"
-            CreateResourceGroup.Location = "South Central US"
+            CreateResourceGroup.Location = "#{az_location}"
             CreateResourceGroup.ResourceGroupName = "#{ResourceGroupName}"
             Octopus.Action.Template.Id = "ActionTemplates-241"
             Octopus.Action.Template.Version = "28"
@@ -15,11 +18,14 @@ step "create-tdd-resource-group" {
 }
 
 step "deploy-an-azure-resource-manager-template" {
+    condition = "Variable"
     name = "Create AZ DB"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if #{EnsureEnvironmentsExist}  == \"True\"}true#{/if}"
+    }
 
     action {
         action_type = "Octopus.AzureResourceGroup"
-        environments = ["development"]
         properties = {
             Octopus.Action.Azure.AccountId = "mvpazure"
             Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
@@ -46,7 +52,11 @@ step "deploy-an-azure-resource-manager-template" {
 }
 
 step "create-db-schema" {
+    condition = "Variable"
     name = "Create DB Schema"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if #{EnsureEnvironmentsExist}  == \"True\"}true#{/if}"
+    }
 
     action {
         action_type = "Octopus.Script"
@@ -142,11 +152,14 @@ step "get-db-connection-string" {
 }
 
 step "deploy-an-azure-resource-manager-template-1" {
+    condition = "Variable"
     name = "Create Container App Environment"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if #{EnsureEnvironmentsExist}  == \"True\"}true#{/if}"
+    }
 
     action {
         action_type = "Octopus.AzureResourceGroup"
-        environments = ["development"]
         properties = {
             Octopus.Action.Azure.AccountId = "mvpazure"
             Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
@@ -187,11 +200,14 @@ step "deploy-an-azure-resource-manager-template-1" {
 }
 
 step "deploy-an-azure-resource-manager-template-2" {
+    condition = "Variable"
     name = "Create Container App"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if #{EnsureEnvironmentsExist}  == \"True\"}true#{/if}"
+    }
 
     action {
         action_type = "Octopus.AzureResourceGroup"
-        environments = ["development"]
         properties = {
             Octopus.Action.Azure.AccountId = "mvpazure"
             Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
@@ -371,7 +387,11 @@ step "get-container-app-fqdn" {
 }
 
 step "add-revision-to-container-app" {
+    condition = "Variable"
     name = "Add Revision to Container App"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if #{EnsureEnvironmentsExist}  != \"True\"}true#{/if}"
+    }
 
     action {
         action_type = "Octopus.AzurePowerShell"

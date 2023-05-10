@@ -30,12 +30,6 @@ variable "AzureAccount" {
     value "mvpazure" {}
 }
 
-variable "container_app_environment_name" {
-    value "onion-architecture-dotnet-7-container-apps-cae" {
-        environment = ["development"]
-    }
-}
-
 variable "container_app_name" {
     value "tdd-ui" {
         description = ""
@@ -232,5 +226,27 @@ variable "DatabaseServerName" {
 
     value "onion-architecture-dotnet-7-containers-uat" {
         environment = ["staging"]
+    }
+}
+
+variable "container_app_environment_name" {
+    value "onion-architecture-dotnet-7-container-apps-tdd-cae" {
+        environment = ["development"]
+    }
+
+    value "onion-architecture-dotnet-7-container-apps-uat-cae" {
+        description = ""
+        environment = ["staging"]
+    }
+
+    value "onion-architecture-dotnet-7-container-apps-prod-cae" {
+        description = ""
+        environment = ["prod"]
+    }
+}
+
+variable "EnsureEnvironmentsExist" {
+    value "True" {
+        environment = ["staging", "prod"]
     }
 }
