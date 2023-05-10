@@ -58,7 +58,7 @@
     }
   },
   "variables": {
-    "resourceGroupUniqueString": "[uniqueString(resourceGroup().id,resourceGroup().location,subscription().subscriptionId)]",
+    "resourceGroupUniqueString": "[uniqueString(resourceGroup().id,resourceGroup().location,subscription().subscriptionId)]"
   },
   "resources": [
     {
