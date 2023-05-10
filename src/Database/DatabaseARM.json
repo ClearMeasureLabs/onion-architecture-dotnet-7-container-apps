@@ -51,10 +51,10 @@
       ],
       "metadata": {
         "description": "Describes the performance level for Edition"
-      },
-      "databaseserverName": {
-        "type": "string"
       }
+    },
+    "databaseserverName": {
+      "type": "string"
     }
   },
   "variables": {
