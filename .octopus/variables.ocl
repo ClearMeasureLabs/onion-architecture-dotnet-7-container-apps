@@ -247,6 +247,11 @@ variable "container_app_environment_name" {
 
 variable "EnsureEnvironmentsExist" {
     value "True" {
-        environment = ["staging", "prod", "development"]
+        environment = ["development"]
+    }
+
+    value "False" {
+        description = ""
+        environment = ["prod", "staging"]
     }
 }
