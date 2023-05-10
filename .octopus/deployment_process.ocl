@@ -1,5 +1,9 @@
 step "create-tdd-resource-group" {
+    condition = "Variable"
     name = "Create Resource Group"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if #{EnsureEnvironmentsExist}  == \"True\"}true#{/if}"
+    }
 
     action {
         properties = {
@@ -14,7 +18,11 @@ step "create-tdd-resource-group" {
 }
 
 step "deploy-an-azure-resource-manager-template" {
+    condition = "Variable"
     name = "Create AZ DB"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if #{EnsureEnvironmentsExist}  == \"True\"}true#{/if}"
+    }
 
     action {
         action_type = "Octopus.AzureResourceGroup"
@@ -44,7 +52,11 @@ step "deploy-an-azure-resource-manager-template" {
 }
 
 step "create-db-schema" {
+    condition = "Variable"
     name = "Create DB Schema"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if #{EnsureEnvironmentsExist}  == \"True\"}true#{/if}"
+    }
 
     action {
         action_type = "Octopus.Script"
@@ -140,7 +152,11 @@ step "get-db-connection-string" {
 }
 
 step "deploy-an-azure-resource-manager-template-1" {
+    condition = "Variable"
     name = "Create Container App Environment"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if #{EnsureEnvironmentsExist}  == \"True\"}true#{/if}"
+    }
 
     action {
         action_type = "Octopus.AzureResourceGroup"
@@ -184,7 +200,11 @@ step "deploy-an-azure-resource-manager-template-1" {
 }
 
 step "deploy-an-azure-resource-manager-template-2" {
+    condition = "Variable"
     name = "Create Container App"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if #{EnsureEnvironmentsExist}  == \"True\"}true#{/if}"
+    }
 
     action {
         action_type = "Octopus.AzureResourceGroup"
@@ -367,7 +387,11 @@ step "get-container-app-fqdn" {
 }
 
 step "add-revision-to-container-app" {
+    condition = "Variable"
     name = "Add Revision to Container App"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if #{EnsureEnvironmentsExist}  != \"True\"}true#{/if}"
+    }
 
     action {
         action_type = "Octopus.AzurePowerShell"
