@@ -94,40 +94,40 @@ stages:
             az group create --name onion-architecture-dotnet-7-containers-acr --location southcentralus
             az acr create -n onionarchitecturedotnet7containers -g onion-architecture-dotnet-7-containers-acr --sku Basic
 
-      - task: AzureCLI@2
-        inputs:
-          azureSubscription: 'dotnet-7-containerapp'
-          scriptType: 'pscore'
-          scriptLocation: 'inlineScript'
-          inlineScript: |
-            $connectionName = "OnionArchACRServiceConnection"
-            $registryName = "onionarchitecturedotnet7containers"
-            $subscriptionId = $(AzSubscriptionId)'
-            $tenantId = '$(AzTenant)'
-            $servicePrincipalId = '$(AzServicePrincipalId)'
-            $servicePrincipalKey = '$(AzServicePrincipalKey)'
+      # - task: AzureCLI@2
+      #   inputs:
+      #     azureSubscription: 'dotnet-7-containerapp'
+      #     scriptType: 'pscore'
+      #     scriptLocation: 'inlineScript'
+      #     inlineScript: |
+      #       $connectionName = "OnionArchACRServiceConnection"
+      #       $registryName = "onionarchitecturedotnet7containers"
+      #       $subscriptionId = $(AzSubscriptionId)'
+      #       $tenantId = '$(AzTenant)'
+      #       $servicePrincipalId = '$(AzServicePrincipalId)'
+      #       $servicePrincipalKey = '$(AzServicePrincipalKey)'
 
-            az devops service-endpoint create --service-endpoint-configuration @(
-              @{
-                name = $connectionName
-                type = "dockerregistry"
-                authorization = @{
-                  scheme = "ServicePrincipal"
-                  parameters = @{
-                    serviceprincipalid = $servicePrincipalId
-                    serviceprincipalkey = $servicePrincipalKey
-                    tenantid = $tenantId
-                  }
-                }
-                data = @{
-                  subscriptionId = $subscriptionId
-                  subscriptionName = ""
-                  registryId = "/subscriptions/$subscriptionId/resourceGroups/$registryName/providers/Microsoft.ContainerRegistry/registries/$registryName"
-                  registrytype = "ACR"
-                  loginServerUrl = "$registryName.azurecr.io"
-                }
-              } | ConvertTo-Json -Compress -Depth 10
-            )
+      #       az devops service-endpoint create --service-endpoint-configuration @(
+      #         @{
+      #           name = $connectionName
+      #           type = "dockerregistry"
+      #           authorization = @{
+      #             scheme = "ServicePrincipal"
+      #             parameters = @{
+      #               serviceprincipalid = $servicePrincipalId
+      #               serviceprincipalkey = $servicePrincipalKey
+      #               tenantid = $tenantId
+      #             }
+      #           }
+      #           data = @{
+      #             subscriptionId = $subscriptionId
+      #             subscriptionName = ""
+      #             registryId = "/subscriptions/$subscriptionId/resourceGroups/$registryName/providers/Microsoft.ContainerRegistry/registries/$registryName"
+      #             registrytype = "ACR"
+      #             loginServerUrl = "$registryName.azurecr.io"
+      #           }
+      #         } | ConvertTo-Json -Compress -Depth 10
+      #       )
 
      
 #Phase 2:  Build the Docker container and push it to the registry for consumption in Phase 3.
