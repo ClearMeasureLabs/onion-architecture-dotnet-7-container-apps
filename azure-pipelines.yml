@@ -82,6 +82,17 @@ stages:
           command: 'push'
           packagesToPush: '.\build\*.nupkg'
           publishVstsFeed: '$(FeedName)'
+    
+      - task: AzureCLI@2
+        displayName: 'Create Azure Container Registry'
+        inputs:
+          azureSubscription: 'dotnet-7-containerapp'
+          scriptType: 'ps'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            az config set extension.use_dynamic_install=yes_without_prompt
+            az group create --name onion-architecture-dotnet-7-containers-acr --location southcentralus
+            az acr create -n onionarchitecturedotnet7containers -g onion-architecture-dotnet-7-containers-acr --sku Basic
 
      
 #Phase 2:  Build the Docker container and push it to the registry for consumption in Phase 3.
@@ -164,7 +175,7 @@ stages:
           scriptLocation: 'inlineScript'
           inlineScript: |
             az config set extension.use_dynamic_install=yes_without_prompt
-            $containerAppURL = az containerapp show --resource-group onion-architecture-dotnet-7-containers-tdd --name tdd-ui --query properties.configuration.ingress.fqdn
+            $containerAppURL = az containerapp show --resource-group onion-architecture-dotnet-7-containers --name tdd-ui --query properties.configuration.ingress.fqdn
             $containerAppURL = $containerAppURL -replace '"', ''
             [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "Machine")
 
@@ -200,7 +211,7 @@ stages:
           scriptType: 'ps'
           scriptLocation: 'inlineScript'
           inlineScript: |
-            az group delete -n onion-architecture-dotnet-7-containers-tdd --yes
+            az group delete -n onion-architecture-dotnet-7-containers --yes
 
 - stage: 'UAT'
   displayName: 'UAT'
