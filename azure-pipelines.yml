@@ -109,7 +109,7 @@ stages:
 
       - task: Docker@2
         inputs:
-          containerRegistry: 'OnionArchACRServiceConnection'
+          containerRegistry: 'OnionArchACRDaleServiceConnection'
           repository: 'ChurchBulletin.UI'
           command: 'buildAndPush'
           Dockerfile: '**/Dockerfile'
@@ -171,7 +171,7 @@ stages:
 
       - task: AzureCLI@2
         inputs:
-          azureSubscription: 'dotnet-7-containerapp'
+          azureSubscription: 'dotnet-7-containerapp-dale'
           scriptType: 'ps'
           scriptLocation: 'inlineScript'
           inlineScript: |
@@ -208,7 +208,7 @@ stages:
       - task: AzureCLI@2
         displayName: 'Delete TDD Resources'
         inputs:
-          azureSubscription: 'dotnet-7-containerapp'
+          azureSubscription: 'dotnet-7-containerapp-dale'
           scriptType: 'ps'
           scriptLocation: 'inlineScript'
           inlineScript: |
