@@ -97,22 +97,6 @@ variable "DatabasePerformanceLevel" {
     }
 }
 
-variable "DatabaseServer" {
-    value "onion-architecture-dotnet-7-containers-uat.database.windows.net" {
-        description = ""
-        environment = ["staging"]
-    }
-
-    value "onion-architecture-dotnet-7-containers-prod.database.windows.net" {
-        description = ""
-        environment = ["prod"]
-    }
-
-    value "onion-arch-container-apps-sqlserver.database.windows.net" {
-        environment = ["development"]
-    }
-}
-
 variable "DatabaseUser" {
     value "cappsAdmin" {
         environment = ["development"]
@@ -205,20 +189,6 @@ variable "connection_string" {
     value "#{Octopus.Action[Get DB Connection String].Output.connstring}" {}
 }
 
-variable "DatabaseServerName" {
-    value "onion-architecture-dotnet-7-containers-prod" {
-        environment = ["prod"]
-    }
-
-    value "onion-arch-container-apps-sqlserver" {
-        environment = ["development"]
-    }
-
-    value "onion-architecture-dotnet-7-containers-uat" {
-        environment = ["staging"]
-    }
-}
-
 variable "container_app_environment_name" {
     value "onion-architecture-dotnet-7-container-apps-tdd-cae" {
         environment = ["development"]
@@ -254,4 +224,34 @@ variable "AzureAccount" {
     type = "AzureAccount"
 
     value "dale-vsenterprise" {}
+}
+
+variable "DatabaseServer" {
+    value "onion-architecture-dotnet-7-containers-uat-dale.database.windows.net" {
+        description = ""
+        environment = ["staging"]
+    }
+
+    value "onion-architecture-dotnet-7-containers-prod-dale.database.windows.net" {
+        description = ""
+        environment = ["prod"]
+    }
+
+    value "onion-arch-container-apps-sqlserver.database-dale.windows.net" {
+        environment = ["development"]
+    }
+}
+
+variable "DatabaseServerName" {
+    value "onion-architecture-dotnet-7-containers-prod-dale" {
+        environment = ["prod"]
+    }
+
+    value "onion-arch-container-apps-sqlserver-dale" {
+        environment = ["development"]
+    }
+
+    value "onion-architecture-dotnet-7-containers-uat-dale" {
+        environment = ["staging"]
+    }
 }
