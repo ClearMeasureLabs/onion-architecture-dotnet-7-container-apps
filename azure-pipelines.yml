@@ -129,36 +129,42 @@ stages:
       - name: branch
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]   
 
+      - task: OctoInstaller@5
+        displayName: 'Install octo cli tools on Windows agent'
+        inputs:
+          version: '*'
+
       steps:
-      - task: OctopusCreateRelease@6
+      - task: OctopusCreateRelease@5
         name: 'CreateRelease'
         inputs:
           OctoConnectedServiceName: 'octoServiceConnection'
           Space: 'Onion DevOps'
+          ProjectGroup: 'Default Project Group'
           Project: 'onion-architecture-dotnet-7-container-apps'
           ReleaseNumber: '$(Build.BuildNumber)'
           Channel: 'Default'
           GitRef: '$(branch)'
-          ShowProgress: true
-
-      
-      - task: OctopusDeployRelease@6
-        name: deploytoTDD
-        inputs:
-          OctoConnectedServiceName: 'octoServiceConnection'
-          Space: 'Onion DevOps'
-          Project: 'onion-architecture-dotnet-7-container-apps'
-          ReleaseNumber: '$(CreateRelease.release_number)'
-          Environments: 'TDD'
+          DeployToEnvironment: 'TDD'
           DeploymentProgress: true
+      
+      # - task: OctopusDeployRelease@6
+      #   name: deploytoTDD
+      #   inputs:
+      #     OctoConnectedServiceName: 'octoServiceConnection'
+      #     Space: 'Onion DevOps'
+      #     Project: 'onion-architecture-dotnet-7-container-apps'
+      #     ReleaseNumber: '$(CreateRelease.release_number)'
+      #     Environments: 'TDD'
+      #     DeploymentProgress: true
 
-      - task: OctopusAwaitTask@6
-        displayName: 'Await Octopus Deploy Task'
-        inputs:
-          OctoConnectedServiceName: 'octoServiceConnection'
-          Space: 'Onion DevOps'
-          Step: deploytoTDD
-          ShowProgress: true
+      # - task: OctopusAwaitTask@6
+      #   displayName: 'Await Octopus Deploy Task'
+      #   inputs:
+      #     OctoConnectedServiceName: 'octoServiceConnection'
+      #     Space: 'Onion DevOps'
+      #     Step: deploytoTDD
+      #     ShowProgress: true
 
       - task: AzureCLI@2
         inputs:
