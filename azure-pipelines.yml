@@ -139,6 +139,7 @@ stages:
           ReleaseNumber: '$(Build.BuildNumber)'
           Channel: 'Default'
           GitRef: '$(branch)'
+          ShowProgress: true
 
       
       - task: OctopusDeployRelease@6
@@ -149,6 +150,7 @@ stages:
           Project: 'onion-architecture-dotnet-7-container-apps'
           ReleaseNumber: '$(CreateRelease.release_number)'
           Environments: 'TDD'
+          ShowProgress: true
 
       - task: OctopusAwaitTask@6
         displayName: 'Await Octopus Deploy Task'
@@ -156,6 +158,7 @@ stages:
           OctoConnectedServiceName: 'octoServiceConnection'
           Space: 'Onion DevOps'
           Step: deploytoTDD
+          ShowProgress: true
 
       - task: AzureCLI@2
         inputs:
