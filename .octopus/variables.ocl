@@ -16,18 +16,8 @@ variable "az_location" {
     value "southcentralus" {}
 }
 
-variable "az_login_appid" {
-    value "69b51cb6-8098-45dc-8af7-7090b7609556" {}
-}
-
 variable "az_login_tenant" {
     value "27312afb-009f-4fed-a8bb-9737425cc42a" {}
-}
-
-variable "AzureAccount" {
-    type = "AzureAccount"
-
-    value "mvpazure" {}
 }
 
 variable "container_app_name" {
@@ -254,4 +244,14 @@ variable "EnsureEnvironmentsExist" {
         description = ""
         environment = ["prod", "staging"]
     }
+}
+
+variable "az_login_appid" {
+    value "f533c8d3-9676-4062-afe4-62626792c850" {}
+}
+
+variable "AzureAccount" {
+    type = "AzureAccount"
+
+    value "dale-vsenterprise" {}
 }
