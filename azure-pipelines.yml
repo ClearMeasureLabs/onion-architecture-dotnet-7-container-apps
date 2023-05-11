@@ -129,12 +129,15 @@ stages:
       - name: branch
         value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]   
 
+
+
+      steps:
+
       - task: OctoInstaller@5
         displayName: 'Install octo cli tools on Windows agent'
         inputs:
           version: '*'
 
-      steps:
       - task: OctopusCreateRelease@5
         name: 'CreateRelease'
         inputs:
