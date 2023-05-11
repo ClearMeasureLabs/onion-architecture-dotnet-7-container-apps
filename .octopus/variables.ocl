@@ -147,12 +147,6 @@ variable "managed_environment_name" {
     }
 }
 
-variable "registry_login_server" {
-    value "cmonionacr.azurecr.io" {
-        environment = ["development", "staging", "prod"]
-    }
-}
-
 variable "ResourceGroupName" {
     value "onion-architecture-dotnet-7-containers-uat" {
         description = ""
@@ -253,5 +247,11 @@ variable "DatabaseServerName" {
 
     value "onion-architecture-dotnet-7-containers-uat-dale" {
         environment = ["staging"]
+    }
+}
+
+variable "registry_login_server" {
+    value "onionarchitecturedotnet7containersdale.azurecr.io" {
+        environment = ["development", "staging", "prod"]
     }
 }
