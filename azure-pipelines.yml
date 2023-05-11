@@ -150,7 +150,7 @@ stages:
           Project: 'onion-architecture-dotnet-7-container-apps'
           ReleaseNumber: '$(CreateRelease.release_number)'
           Environments: 'TDD'
-          ShowProgress: true
+          DeploymentProgress: true
 
       - task: OctopusAwaitTask@6
         displayName: 'Await Octopus Deploy Task'
