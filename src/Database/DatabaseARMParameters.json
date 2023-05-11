@@ -25,6 +25,9 @@
         },
         "requestedServiceObjectiveName": {
             "value": "#{DatabasePerformanceLevel}"
+        },
+        "databaseserverName": {
+            "value": "#{DatabaseServerName}"
         }
     }
 }

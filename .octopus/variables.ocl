@@ -30,12 +30,6 @@ variable "AzureAccount" {
     value "mvpazure" {}
 }
 
-variable "container_app_environment_name" {
-    value "onion-architecture-dotnet-7-container-apps-cae" {
-        environment = ["development"]
-    }
-}
-
 variable "container_app_name" {
     value "tdd-ui" {
         description = ""
@@ -119,13 +113,13 @@ variable "DatabaseServer" {
         environment = ["staging"]
     }
 
-    value "onion-architecture-dotnet-7-container-apps-sqlserver.database.windows.net" {
-        environment = ["development"]
-    }
-
     value "onion-architecture-dotnet-7-containers-prod.database.windows.net" {
         description = ""
         environment = ["prod"]
+    }
+
+    value "onion-arch-container-apps-sqlserver.database.windows.net" {
+        environment = ["development"]
     }
 }
 
@@ -196,7 +190,7 @@ variable "ResourceGroupName" {
         environment = ["prod"]
     }
 
-    value "onion-architecture-dotnet-7-containers" {
+    value "onion-architecture-dotnet-7-containers-tdd" {
         environment = ["development"]
     }
 }
@@ -210,5 +204,54 @@ variable "revisionSuffix" {
 variable "subscriptionId" {
     value "7077ad68-92ba-412e-9bf8-67eb78f9481b" {
         environment = ["development", "staging", "prod"]
+    }
+}
+
+variable "containerAppURL" {
+    value "#{Octopus.Action[Get Container App FQDN].Output.app_fqdn}" {}
+}
+
+variable "connection_string" {
+    value "#{Octopus.Action[Get DB Connection String].Output.connstring}" {}
+}
+
+variable "DatabaseServerName" {
+    value "onion-architecture-dotnet-7-containers-prod" {
+        environment = ["prod"]
+    }
+
+    value "onion-arch-container-apps-sqlserver" {
+        environment = ["development"]
+    }
+
+    value "onion-architecture-dotnet-7-containers-uat" {
+        environment = ["staging"]
+    }
+}
+
+variable "container_app_environment_name" {
+    value "onion-architecture-dotnet-7-container-apps-tdd-cae" {
+        environment = ["development"]
+    }
+
+    value "onion-architecture-dotnet-7-container-apps-uat-cae" {
+        description = ""
+        environment = ["staging"]
+    }
+
+    value "onion-architecture-dotnet-7-container-apps-prod-cae" {
+        description = ""
+        environment = ["prod"]
+    }
+}
+
+variable "EnsureEnvironmentsExist" {
+    value "True" {
+        environment = ["development"]
+    }
+
+    value "False" {
+        description = ""
+        environment = ["prod", "staging"]
     }
 }
