@@ -390,7 +390,7 @@ step "add-revision-to-container-app" {
     condition = "Variable"
     name = "Add Revision to Container App"
     properties = {
-        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist}  == \"True\"}false#{/if}"
+        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist}  != \"True\"}true#{/if}"
     }
 
     action {
