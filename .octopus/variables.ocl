@@ -198,7 +198,7 @@ variable "EnsureEnvironmentsExist" {
         environment = ["development"]
     }
 
-    value "True" {
+    value "False" {
         description = ""
         environment = ["prod", "staging"]
     }
