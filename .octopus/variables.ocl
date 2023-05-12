@@ -37,12 +37,6 @@ variable "container_app_name" {
     }
 }
 
-variable "container_image" {
-    value "onionarchitecturedotnet7containers.azurecr.io/churchbulletin.ui:#{Octopus.Release.Number}" {
-        environment = ["development", "staging", "prod"]
-    }
-}
-
 variable "DatabaseAction" {
     value "Update" {
         environment = ["development", "staging", "prod"]
@@ -252,6 +246,12 @@ variable "DatabaseServerName" {
 
 variable "registry_login_server" {
     value "onionarchitecturedotnet7containersdale.azurecr.io" {
+        environment = ["development", "staging", "prod"]
+    }
+}
+
+variable "container_image" {
+    value "#{registry_login_server}/churchbulletin.ui:#{Octopus.Release.Number}" {
         environment = ["development", "staging", "prod"]
     }
 }
