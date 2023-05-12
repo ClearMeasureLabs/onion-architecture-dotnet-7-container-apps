@@ -16,10 +16,6 @@ variable "az_location" {
     value "southcentralus" {}
 }
 
-variable "az_login_appid" {
-    value "69b51cb6-8098-45dc-8af7-7090b7609556" {}
-}
-
 variable "az_login_tenant" {
     value "27312afb-009f-4fed-a8bb-9737425cc42a" {}
 }
@@ -28,12 +24,6 @@ variable "AzureAccount" {
     type = "AzureAccount"
 
     value "mvpazure" {}
-}
-
-variable "container_app_environment_name" {
-    value "onion-architecture-dotnet-7-container-apps-cae" {
-        environment = ["development"]
-    }
 }
 
 variable "container_app_name" {
@@ -233,4 +223,35 @@ variable "DatabaseServerName" {
     value "onion-architecture-dotnet-7-containers-uat" {
         environment = ["staging"]
     }
+}
+
+variable "container_app_environment_name" {
+    value "onion-architecture-dotnet-7-container-apps-tdd-cae" {
+        environment = ["development"]
+    }
+
+    value "onion-architecture-dotnet-7-container-apps-uat-cae" {
+        description = ""
+        environment = ["staging"]
+    }
+
+    value "onion-architecture-dotnet-7-container-apps-prod-cae" {
+        description = ""
+        environment = ["prod"]
+    }
+}
+
+variable "EnsureEnvironmentsExist" {
+    value "True" {
+        environment = ["development"]
+    }
+
+    value "False" {
+        description = ""
+        environment = ["prod", "staging"]
+    }
+}
+
+variable "az_login_appid" {
+    value "84f6e34d-a600-46d3-a430-f8e0bc527a2f" {}
 }
