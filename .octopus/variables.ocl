@@ -231,7 +231,7 @@ variable "DatabaseServer" {
         environment = ["prod"]
     }
 
-    value "onion-arch-container-apps-sqlserver.database-dale.windows.net" {
+    value "onion-arch-container-apps-sqlserver-dale.database.windows.net" {
         environment = ["development"]
     }
 }
