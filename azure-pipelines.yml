@@ -109,7 +109,7 @@ stages:
 
       - task: Docker@2
         inputs:
-          containerRegistry: '$(ACRServiceConnection)'
+          containerRegistry: 'OnionArchACRServiceConnection'
           repository: 'ChurchBulletin.UI'
           command: 'buildAndPush'
           Dockerfile: '**/Dockerfile'
@@ -141,7 +141,7 @@ stages:
       - task: OctopusCreateRelease@5
         name: 'CreateRelease'
         inputs:
-          OctoConnectedServiceName: '$(OctoServiceConnection)'
+          OctoConnectedServiceName: 'octoServiceConnection'
           Space: 'Onion DevOps'
           ProjectGroup: 'Default Project Group'
           ProjectName: 'onion-architecture-dotnet-7-container-apps'
@@ -216,7 +216,7 @@ stages:
       - task: OctopusDeployRelease@5
         name: deploytoUAT
         inputs:
-          OctoConnectedServiceName: '$(OctoServiceConnection)'
+          OctoConnectedServiceName: 'octoServiceConnection'
           Space: 'Onion DevOps'
           ProjectGroup: 'Default Project Group'
           Project: 'onion-architecture-dotnet-7-container-apps'
@@ -244,7 +244,7 @@ stages:
       - task: OctopusDeployRelease@5
         name: deploytoProd
         inputs:
-          OctoConnectedServiceName: '$(OctoServiceConnection)'
+          OctoConnectedServiceName: 'octoServiceConnection'
           Space: 'Onion DevOps'
           ProjectGroup: 'Default Project Group'
           Project: 'onion-architecture-dotnet-7-container-apps'
