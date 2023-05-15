@@ -244,14 +244,14 @@ variable "DatabaseServerName" {
     }
 }
 
-variable "registry_login_server" {
-    value "onionarchitecturedotnet7containersdale.azurecr.io" {
+variable "container_image" {
+    value "#{registry_login_server}/churchbulletin.ui:#{Octopus.Release.Number}" {
         environment = ["development", "staging", "prod"]
     }
 }
 
-variable "container_image" {
-    value "#{registry_login_server}/churchbulletin.ui:#{Octopus.Release.Number}" {
+variable "registry_login_server" {
+    value "onionarchitecturedotnet7containers.azurecr.io" {
         environment = ["development", "staging", "prod"]
     }
 }
