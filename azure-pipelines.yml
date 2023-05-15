@@ -153,7 +153,7 @@ stages:
 
       - task: AzureCLI@2
         inputs:
-          azureSubscription: 'dotnet-7-containerapp-dale'
+          azureSubscription: 'dotnet-7-containerapp'
           scriptType: 'ps'
           scriptLocation: 'inlineScript'
           inlineScript: |
@@ -190,7 +190,7 @@ stages:
       - task: AzureCLI@2
         displayName: 'Delete TDD Resources'
         inputs:
-          azureSubscription: 'dotnet-7-containerapp-dale'
+          azureSubscription: 'dotnet-7-containerapp'
           scriptType: 'ps'
           scriptLocation: 'inlineScript'
           inlineScript: |
