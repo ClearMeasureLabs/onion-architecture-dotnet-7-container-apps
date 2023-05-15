@@ -109,7 +109,7 @@ stages:
 
       - task: Docker@2
         inputs:
-          containerRegistry: 'OnionArchACRDaleServiceConnection'
+          containerRegistry: '$(ACRServiceConnection)'
           repository: 'ChurchBulletin.UI'
           command: 'buildAndPush'
           Dockerfile: '**/Dockerfile'
@@ -141,7 +141,7 @@ stages:
       - task: OctopusCreateRelease@5
         name: 'CreateRelease'
         inputs:
-          OctoConnectedServiceName: 'octoServiceConnection'
+          OctoConnectedServiceName: '$(OctoServiceConnection)'
           Space: 'Onion DevOps'
           ProjectGroup: 'Default Project Group'
           ProjectName: 'onion-architecture-dotnet-7-container-apps'
@@ -150,24 +150,6 @@ stages:
           GitRef: '$(branch)'
           DeployToEnvironment: 'TDD'
           DeploymentProgress: true
-      
-      # - task: OctopusDeployRelease@6
-      #   name: deploytoTDD
-      #   inputs:
-      #     OctoConnectedServiceName: 'octoServiceConnection'
-      #     Space: 'Onion DevOps'
-      #     Project: 'onion-architecture-dotnet-7-container-apps'
-      #     ReleaseNumber: '$(CreateRelease.release_number)'
-      #     Environments: 'TDD'
-      #     DeploymentProgress: true
-
-      # - task: OctopusAwaitTask@6
-      #   displayName: 'Await Octopus Deploy Task'
-      #   inputs:
-      #     OctoConnectedServiceName: 'octoServiceConnection'
-      #     Space: 'Onion DevOps'
-      #     Step: deploytoTDD
-      #     ShowProgress: true
 
       - task: AzureCLI@2
         inputs:
@@ -234,7 +216,7 @@ stages:
       - task: OctopusDeployRelease@5
         name: deploytoUAT
         inputs:
-          OctoConnectedServiceName: 'octoServiceConnection'
+          OctoConnectedServiceName: '$(OctoServiceConnection)'
           Space: 'Onion DevOps'
           ProjectGroup: 'Default Project Group'
           Project: 'onion-architecture-dotnet-7-container-apps'
@@ -262,7 +244,7 @@ stages:
       - task: OctopusDeployRelease@5
         name: deploytoProd
         inputs:
-          OctoConnectedServiceName: 'octoServiceConnection'
+          OctoConnectedServiceName: '$(OctoServiceConnection)'
           Space: 'Onion DevOps'
           ProjectGroup: 'Default Project Group'
           Project: 'onion-architecture-dotnet-7-container-apps'
