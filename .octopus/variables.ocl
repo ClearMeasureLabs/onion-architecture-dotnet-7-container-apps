@@ -6,45 +6,6 @@ variable "az_login_tenant" {
     value "27312afb-009f-4fed-a8bb-9737425cc42a" {}
 }
 
-variable "container_app_name" {
-    value "tdd-ui" {
-        description = ""
-        environment = ["development"]
-    }
-
-    value "uat-ui" {
-        description = ""
-        environment = ["staging"]
-    }
-
-    value "prod-ui" {
-        description = ""
-        environment = ["prod"]
-    }
-}
-
-variable "DatabaseAction" {
-    value "Update" {
-        environment = ["development", "staging", "prod"]
-    }
-}
-
-variable "DatabaseEdition" {
-    value "Basic" {
-        environment = ["development"]
-    }
-
-    value "Basic" {
-        description = ""
-        environment = ["staging"]
-    }
-
-    value "Basic" {
-        description = ""
-        environment = ["prod"]
-    }
-}
-
 variable "DatabaseName" {
     value "oniondb" {
         environment = ["development"]
@@ -56,22 +17,6 @@ variable "DatabaseName" {
     }
 
     value "oniondb-prod" {
-        description = ""
-        environment = ["prod"]
-    }
-}
-
-variable "DatabasePerformanceLevel" {
-    value "Basic" {
-        environment = ["development"]
-    }
-
-    value "Basic" {
-        description = ""
-        environment = ["staging"]
-    }
-
-    value "Basic" {
         description = ""
         environment = ["prod"]
     }
@@ -99,22 +44,6 @@ variable "location" {
     }
 }
 
-variable "ResourceGroupName" {
-    value "onion-architecture-dotnet-7-containers-uat" {
-        description = ""
-        environment = ["staging"]
-    }
-
-    value "onion-architecture-dotnet-7-containers-prod" {
-        description = ""
-        environment = ["prod"]
-    }
-
-    value "onion-architecture-dotnet-7-containers-tdd" {
-        environment = ["development"]
-    }
-}
-
 variable "revisionSuffix" {
     value "#{Octopus.Release.Number}" {
         environment = ["development", "staging", "prod"]
@@ -127,22 +56,6 @@ variable "containerAppURL" {
 
 variable "connection_string" {
     value "#{Octopus.Action[Get DB Connection String].Output.connstring}" {}
-}
-
-variable "container_app_environment_name" {
-    value "onion-architecture-dotnet-7-container-apps-tdd-cae" {
-        environment = ["development"]
-    }
-
-    value "onion-architecture-dotnet-7-container-apps-uat-cae" {
-        description = ""
-        environment = ["staging"]
-    }
-
-    value "onion-architecture-dotnet-7-container-apps-prod-cae" {
-        description = ""
-        environment = ["prod"]
-    }
 }
 
 variable "EnsureEnvironmentsExist" {
@@ -196,4 +109,38 @@ variable "DatabaseServerName" {
 
 variable "az_login_appid" {
     value "84f6e34d-a600-46d3-a430-f8e0bc527a2f" {}
+}
+
+variable "container_app_environment_name" {
+    value "onion-architecture-dotnet-7-container-apps-#{Octopus.Environment.Name}-cae" {
+        description = ""
+    }
+}
+
+variable "container_app_name" {
+    value "#{Octopus.Environment.Name}-ui" {
+        description = ""
+    }
+}
+
+variable "DatabaseAction" {
+    value "Update" {}
+}
+
+variable "DatabaseEdition" {
+    value "Basic" {
+        description = ""
+    }
+}
+
+variable "DatabasePerformanceLevel" {
+    value "Basic" {
+        description = ""
+    }
+}
+
+variable "ResourceGroupName" {
+    value "onion-architecture-dotnet-7-containers-#{Octopus.Environment.Name}" {
+        description = ""
+    }
 }
