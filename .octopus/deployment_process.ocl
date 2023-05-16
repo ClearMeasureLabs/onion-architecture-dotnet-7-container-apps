@@ -124,7 +124,7 @@ step "get-db-connection-string" {
                 #all that's left to do is configure it for the subscription.
                 & az extension add --name containerapp
                 & az login --service-principal -u $az_login_appid -p $az_login_appkey --tenant $az_login_tenant
-                & az account set --subscription $subscriptionId
+                
                 ###################################################################
                 
                 ###################################################################
@@ -360,7 +360,7 @@ step "get-container-app-fqdn" {
                 #all that's left to do is configure it for the subscription.
                 & az extension add --name containerapp
                 & az login --service-principal -u $az_login_appid -p $az_login_appkey --tenant $az_login_tenant
-                & az account set --subscription $subscriptionId
+                
                 ###################################################################
                 
                 ###################################################################
@@ -436,7 +436,7 @@ step "add-revision-to-container-app" {
                 #all that's left to do is configure it for the subscription.
                 & az extension add --name containerapp
                 & az login --service-principal -u $az_login_appid -p $az_login_appkey --tenant $az_login_tenant
-                & az account set --subscription $subscriptionId
+                
                 ###################################################################
                 
                 ###################################################################
