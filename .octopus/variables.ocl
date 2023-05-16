@@ -1,17 +1,3 @@
-variable "AppURL" {
-    value "https://tdd-ui.redglacier-467555ae.southcentralus.azurecontainerapps.io" {
-        environment = ["development"]
-    }
-
-    value "https://uat-ui.icystone-ea613a3b.southcentralus.azurecontainerapps.io" {
-        environment = ["staging"]
-    }
-
-    value "https://prod-ui.niceisland-1936248a.southcentralus.azurecontainerapps.io" {
-        environment = ["prod"]
-    }
-}
-
 variable "az_location" {
     value "southcentralus" {}
 }
@@ -170,10 +156,6 @@ variable "EnsureEnvironmentsExist" {
     }
 }
 
-variable "az_login_appid" {
-    value "f533c8d3-9676-4062-afe4-62626792c850" {}
-}
-
 variable "container_image" {
     value "#{registry_login_server}/churchbulletin.ui:#{Octopus.Release.Number}" {
         environment = ["development", "staging", "prod"]
@@ -210,4 +192,8 @@ variable "DatabaseServerName" {
     value "onion-architecture-dotnet-7-containers-uat" {
         environment = ["staging"]
     }
+}
+
+variable "az_login_appid" {
+    value "84f6e34d-a600-46d3-a430-f8e0bc527a2f" {}
 }
