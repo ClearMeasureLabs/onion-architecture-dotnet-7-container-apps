@@ -117,12 +117,6 @@ variable "container_app_environment_name" {
     }
 }
 
-variable "container_app_name" {
-    value "#{Octopus.Environment.Name}-ui" {
-        description = ""
-    }
-}
-
 variable "DatabaseAction" {
     value "Update" {}
 }
@@ -142,5 +136,22 @@ variable "DatabasePerformanceLevel" {
 variable "ResourceGroupName" {
     value "onion-architecture-dotnet-7-containers-#{Octopus.Environment.Name}" {
         description = ""
+    }
+}
+
+variable "container_app_name" {
+    value "tdd-ui" {
+        description = ""
+        environment = ["development"]
+    }
+
+    value "uat-ui" {
+        description = ""
+        environment = ["staging"]
+    }
+
+    value "prod-ui" {
+        description = ""
+        environment = ["prod"]
     }
 }
