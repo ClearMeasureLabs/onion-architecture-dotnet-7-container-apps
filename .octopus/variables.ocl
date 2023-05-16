@@ -107,36 +107,8 @@ variable "DatabaseUser" {
     }
 }
 
-variable "environment_name" {
-    value "tdd" {
-        environment = ["development"]
-    }
-
-    value "uat" {
-        description = ""
-        environment = ["staging"]
-    }
-
-    value "prod" {
-        description = ""
-        environment = ["prod"]
-    }
-}
-
 variable "location" {
     value "southcentralus" {
-        environment = ["development", "staging", "prod"]
-    }
-}
-
-variable "managed_environment_id" {
-    value "/subscriptions/#{subscriptionId}/resourceGroups/tf-ContainerApp-RG/providers/Microsoft.App/managedEnvironments/#{managed_environment_name}" {
-        environment = ["development", "staging", "prod"]
-    }
-}
-
-variable "managed_environment_name" {
-    value "managedEnvironment-tfContainerAppR-a67a" {
         environment = ["development", "staging", "prod"]
     }
 }
@@ -159,12 +131,6 @@ variable "ResourceGroupName" {
 
 variable "revisionSuffix" {
     value "#{Octopus.Release.Number}" {
-        environment = ["development", "staging", "prod"]
-    }
-}
-
-variable "subscriptionId" {
-    value "7077ad68-92ba-412e-9bf8-67eb78f9481b" {
         environment = ["development", "staging", "prod"]
     }
 }
@@ -198,7 +164,7 @@ variable "EnsureEnvironmentsExist" {
         environment = ["development"]
     }
 
-    value "False" {
+    value "True" {
         description = ""
         environment = ["prod", "staging"]
     }
@@ -206,36 +172,6 @@ variable "EnsureEnvironmentsExist" {
 
 variable "az_login_appid" {
     value "f533c8d3-9676-4062-afe4-62626792c850" {}
-}
-
-variable "DatabaseServer" {
-    value "onion-architecture-dotnet-7-containers-uat-dale.database.windows.net" {
-        description = ""
-        environment = ["staging"]
-    }
-
-    value "onion-architecture-dotnet-7-containers-prod-dale.database.windows.net" {
-        description = ""
-        environment = ["prod"]
-    }
-
-    value "onion-arch-container-apps-sqlserver-dale.database.windows.net" {
-        environment = ["development"]
-    }
-}
-
-variable "DatabaseServerName" {
-    value "onion-architecture-dotnet-7-containers-prod-dale" {
-        environment = ["prod"]
-    }
-
-    value "onion-arch-container-apps-sqlserver-dale" {
-        environment = ["development"]
-    }
-
-    value "onion-architecture-dotnet-7-containers-uat-dale" {
-        environment = ["staging"]
-    }
 }
 
 variable "container_image" {
@@ -254,4 +190,24 @@ variable "AzureAccount" {
     type = "AzureAccount"
 
     value "mvpazure" {}
+}
+
+variable "DatabaseServer" {
+    value "#{DatabaseServerName}.database.windows.net" {
+        description = ""
+    }
+}
+
+variable "DatabaseServerName" {
+    value "onion-architecture-dotnet-7-containers-prod" {
+        environment = ["prod"]
+    }
+
+    value "onion-arch-container-apps-sqlserver" {
+        environment = ["development"]
+    }
+
+    value "onion-architecture-dotnet-7-containers-uat" {
+        environment = ["staging"]
+    }
 }
