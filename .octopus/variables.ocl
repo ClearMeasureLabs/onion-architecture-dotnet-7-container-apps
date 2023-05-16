@@ -1,74 +1,9 @@
-variable "AppURL" {
-    value "https://tdd-ui.redglacier-467555ae.southcentralus.azurecontainerapps.io" {
-        environment = ["development"]
-    }
-
-    value "https://uat-ui.icystone-ea613a3b.southcentralus.azurecontainerapps.io" {
-        environment = ["staging"]
-    }
-
-    value "https://prod-ui.niceisland-1936248a.southcentralus.azurecontainerapps.io" {
-        environment = ["prod"]
-    }
-}
-
 variable "az_location" {
     value "southcentralus" {}
 }
 
 variable "az_login_tenant" {
     value "27312afb-009f-4fed-a8bb-9737425cc42a" {}
-}
-
-variable "AzureAccount" {
-    type = "AzureAccount"
-
-    value "mvpazure" {}
-}
-
-variable "container_app_name" {
-    value "tdd-ui" {
-        description = ""
-        environment = ["development"]
-    }
-
-    value "uat-ui" {
-        description = ""
-        environment = ["staging"]
-    }
-
-    value "prod-ui" {
-        description = ""
-        environment = ["prod"]
-    }
-}
-
-variable "container_image" {
-    value "onionarchitecturedotnet7containers.azurecr.io/churchbulletin.ui:#{Octopus.Release.Number}" {
-        environment = ["development", "staging", "prod"]
-    }
-}
-
-variable "DatabaseAction" {
-    value "Update" {
-        environment = ["development", "staging", "prod"]
-    }
-}
-
-variable "DatabaseEdition" {
-    value "Basic" {
-        environment = ["development"]
-    }
-
-    value "Basic" {
-        description = ""
-        environment = ["staging"]
-    }
-
-    value "Basic" {
-        description = ""
-        environment = ["prod"]
-    }
 }
 
 variable "DatabaseName" {
@@ -84,38 +19,6 @@ variable "DatabaseName" {
     value "oniondb-prod" {
         description = ""
         environment = ["prod"]
-    }
-}
-
-variable "DatabasePerformanceLevel" {
-    value "Basic" {
-        environment = ["development"]
-    }
-
-    value "Basic" {
-        description = ""
-        environment = ["staging"]
-    }
-
-    value "Basic" {
-        description = ""
-        environment = ["prod"]
-    }
-}
-
-variable "DatabaseServer" {
-    value "onion-architecture-dotnet-7-containers-uat.database.windows.net" {
-        description = ""
-        environment = ["staging"]
-    }
-
-    value "onion-architecture-dotnet-7-containers-prod.database.windows.net" {
-        description = ""
-        environment = ["prod"]
-    }
-
-    value "onion-arch-container-apps-sqlserver.database.windows.net" {
-        environment = ["development"]
     }
 }
 
@@ -135,70 +38,14 @@ variable "DatabaseUser" {
     }
 }
 
-variable "environment_name" {
-    value "tdd" {
-        environment = ["development"]
-    }
-
-    value "uat" {
-        description = ""
-        environment = ["staging"]
-    }
-
-    value "prod" {
-        description = ""
-        environment = ["prod"]
-    }
-}
-
 variable "location" {
     value "southcentralus" {
         environment = ["development", "staging", "prod"]
     }
 }
 
-variable "managed_environment_id" {
-    value "/subscriptions/#{subscriptionId}/resourceGroups/tf-ContainerApp-RG/providers/Microsoft.App/managedEnvironments/#{managed_environment_name}" {
-        environment = ["development", "staging", "prod"]
-    }
-}
-
-variable "managed_environment_name" {
-    value "managedEnvironment-tfContainerAppR-a67a" {
-        environment = ["development", "staging", "prod"]
-    }
-}
-
-variable "registry_login_server" {
-    value "cmonionacr.azurecr.io" {
-        environment = ["development", "staging", "prod"]
-    }
-}
-
-variable "ResourceGroupName" {
-    value "onion-architecture-dotnet-7-containers-uat" {
-        description = ""
-        environment = ["staging"]
-    }
-
-    value "onion-architecture-dotnet-7-containers-prod" {
-        description = ""
-        environment = ["prod"]
-    }
-
-    value "onion-architecture-dotnet-7-containers-tdd" {
-        environment = ["development"]
-    }
-}
-
 variable "revisionSuffix" {
     value "#{Octopus.Release.Number}" {
-        environment = ["development", "staging", "prod"]
-    }
-}
-
-variable "subscriptionId" {
-    value "7077ad68-92ba-412e-9bf8-67eb78f9481b" {
         environment = ["development", "staging", "prod"]
     }
 }
@@ -209,6 +56,41 @@ variable "containerAppURL" {
 
 variable "connection_string" {
     value "#{Octopus.Action[Get DB Connection String].Output.connstring}" {}
+}
+
+variable "EnsureEnvironmentsExist" {
+    value "True" {
+        environment = ["development"]
+    }
+
+    value "False" {
+        description = ""
+        environment = ["prod", "staging"]
+    }
+}
+
+variable "container_image" {
+    value "#{registry_login_server}/churchbulletin.ui:#{Octopus.Release.Number}" {
+        environment = ["development", "staging", "prod"]
+    }
+}
+
+variable "registry_login_server" {
+    value "onionarchitecturedotnet7containers.azurecr.io" {
+        environment = ["development", "staging", "prod"]
+    }
+}
+
+variable "AzureAccount" {
+    type = "AzureAccount"
+
+    value "mvpazure" {}
+}
+
+variable "DatabaseServer" {
+    value "#{DatabaseServerName}.database.windows.net" {
+        description = ""
+    }
 }
 
 variable "DatabaseServerName" {
@@ -225,33 +107,51 @@ variable "DatabaseServerName" {
     }
 }
 
+variable "az_login_appid" {
+    value "84f6e34d-a600-46d3-a430-f8e0bc527a2f" {}
+}
+
 variable "container_app_environment_name" {
-    value "onion-architecture-dotnet-7-container-apps-tdd-cae" {
+    value "onion-architecture-dotnet-7-container-apps-#{Octopus.Environment.Name}-cae" {
+        description = ""
+    }
+}
+
+variable "DatabaseAction" {
+    value "Update" {}
+}
+
+variable "DatabaseEdition" {
+    value "Basic" {
+        description = ""
+    }
+}
+
+variable "DatabasePerformanceLevel" {
+    value "Basic" {
+        description = ""
+    }
+}
+
+variable "ResourceGroupName" {
+    value "onion-architecture-dotnet-7-containers-#{Octopus.Environment.Name}" {
+        description = ""
+    }
+}
+
+variable "container_app_name" {
+    value "tdd-ui" {
+        description = ""
         environment = ["development"]
     }
 
-    value "onion-architecture-dotnet-7-container-apps-uat-cae" {
+    value "uat-ui" {
         description = ""
         environment = ["staging"]
     }
 
-    value "onion-architecture-dotnet-7-container-apps-prod-cae" {
+    value "prod-ui" {
         description = ""
         environment = ["prod"]
     }
-}
-
-variable "EnsureEnvironmentsExist" {
-    value "True" {
-        environment = ["development"]
-    }
-
-    value "False" {
-        description = ""
-        environment = ["prod", "staging"]
-    }
-}
-
-variable "az_login_appid" {
-    value "84f6e34d-a600-46d3-a430-f8e0bc527a2f" {}
 }

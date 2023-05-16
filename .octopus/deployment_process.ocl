@@ -2,7 +2,7 @@ step "create-tdd-resource-group" {
     condition = "Variable"
     name = "Create Resource Group"
     properties = {
-        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist}  == \"True\"}true#{/if}"
+        Octopus.Step.ConditionVariableExpression = "#{EnsureEnvironmentsExist}"
     }
 
     action {
@@ -21,13 +21,13 @@ step "deploy-an-azure-resource-manager-template" {
     condition = "Variable"
     name = "Create AZ DB"
     properties = {
-        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist}  == \"True\"}true#{/if}"
+        Octopus.Step.ConditionVariableExpression = "#{EnsureEnvironmentsExist}"
     }
 
     action {
         action_type = "Octopus.AzureResourceGroup"
         properties = {
-            Octopus.Action.Azure.AccountId = "mvpazure"
+            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
             Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
             Octopus.Action.Azure.ResourceGroupName = "#{ResourceGroupName}"
             Octopus.Action.Azure.ResourceGroupTemplate = "DatabaseARM.json"
@@ -55,7 +55,7 @@ step "create-db-schema" {
     condition = "Variable"
     name = "Create DB Schema"
     properties = {
-        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist}  == \"True\"}true#{/if}"
+        Octopus.Step.ConditionVariableExpression = "#{EnsureEnvironmentsExist}"
     }
 
     action {
@@ -87,7 +87,7 @@ step "get-db-connection-string" {
     action {
         action_type = "Octopus.AzurePowerShell"
         properties = {
-            Octopus.Action.Azure.AccountId = "mvpazure"
+            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
             Octopus.Action.Script.ScriptBody = <<-EOT
                 #$azPath = "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin"
                 ###################################################################
@@ -124,7 +124,7 @@ step "get-db-connection-string" {
                 #all that's left to do is configure it for the subscription.
                 & az extension add --name containerapp
                 & az login --service-principal -u $az_login_appid -p $az_login_appkey --tenant $az_login_tenant
-                & az account set --subscription $subscriptionId
+                
                 ###################################################################
                 
                 ###################################################################
@@ -155,13 +155,13 @@ step "deploy-an-azure-resource-manager-template-1" {
     condition = "Variable"
     name = "Create Container App Environment"
     properties = {
-        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist}  == \"True\"}true#{/if}"
+        Octopus.Step.ConditionVariableExpression = "#{EnsureEnvironmentsExist}"
     }
 
     action {
         action_type = "Octopus.AzureResourceGroup"
         properties = {
-            Octopus.Action.Azure.AccountId = "mvpazure"
+            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
             Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
             Octopus.Action.Azure.ResourceGroupName = "#{ResourceGroupName}"
             Octopus.Action.Azure.ResourceGroupTemplate = <<-EOT
@@ -203,13 +203,13 @@ step "deploy-an-azure-resource-manager-template-2" {
     condition = "Variable"
     name = "Create Container App"
     properties = {
-        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist}  == \"True\"}true#{/if}"
+        Octopus.Step.ConditionVariableExpression = "#{EnsureEnvironmentsExist}"
     }
 
     action {
         action_type = "Octopus.AzureResourceGroup"
         properties = {
-            Octopus.Action.Azure.AccountId = "mvpazure"
+            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
             Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
             Octopus.Action.Azure.ResourceGroupName = "#{ResourceGroupName}"
             Octopus.Action.Azure.ResourceGroupTemplate = <<-EOT
@@ -271,7 +271,7 @@ step "deploy-an-azure-resource-manager-template-2" {
                           },
                           "registries": [
                             {
-                              "server": "onionarchitecturedotnet7containers.azurecr.io",
+                              "server": "#{registry_login_server}",
                               "username": "#{az_login_appid}",
                               "passwordSecretRef": "registrypassword"
                             }
@@ -323,7 +323,7 @@ step "get-container-app-fqdn" {
     action {
         action_type = "Octopus.AzurePowerShell"
         properties = {
-            Octopus.Action.Azure.AccountId = "mvpazure"
+            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
             Octopus.Action.Script.ScriptBody = <<-EOT
                 #$azPath = "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin"
                 ###################################################################
@@ -360,7 +360,7 @@ step "get-container-app-fqdn" {
                 #all that's left to do is configure it for the subscription.
                 & az extension add --name containerapp
                 & az login --service-principal -u $az_login_appid -p $az_login_appkey --tenant $az_login_tenant
-                & az account set --subscription $subscriptionId
+                
                 ###################################################################
                 
                 ###################################################################
@@ -390,14 +390,14 @@ step "add-revision-to-container-app" {
     condition = "Variable"
     name = "Add Revision to Container App"
     properties = {
-        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist  != \"True\"}true#{/if}"
+        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist != \"True\"}true#{/if}"
     }
 
     action {
         action_type = "Octopus.AzurePowerShell"
         environments = ["staging", "prod"]
         properties = {
-            Octopus.Action.Azure.AccountId = "mvpazure"
+            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
             Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptBody = <<-EOT
                 
@@ -436,7 +436,7 @@ step "add-revision-to-container-app" {
                 #all that's left to do is configure it for the subscription.
                 & az extension add --name containerapp
                 & az login --service-principal -u $az_login_appid -p $az_login_appkey --tenant $az_login_tenant
-                & az account set --subscription $subscriptionId
+                
                 ###################################################################
                 
                 ###################################################################
