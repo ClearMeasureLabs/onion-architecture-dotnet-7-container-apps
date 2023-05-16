@@ -253,5 +253,5 @@ variable "registry_login_server" {
 variable "AzureAccount" {
     type = "AzureAccount"
 
-    value "tfazure" {}
+    value "mvpazure" {}
 }
