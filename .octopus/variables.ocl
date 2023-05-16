@@ -208,12 +208,6 @@ variable "az_login_appid" {
     value "f533c8d3-9676-4062-afe4-62626792c850" {}
 }
 
-variable "AzureAccount" {
-    type = "AzureAccount"
-
-    value "dale-vsenterprise" {}
-}
-
 variable "DatabaseServer" {
     value "onion-architecture-dotnet-7-containers-uat-dale.database.windows.net" {
         description = ""
@@ -254,4 +248,10 @@ variable "registry_login_server" {
     value "onionarchitecturedotnet7containers.azurecr.io" {
         environment = ["development", "staging", "prod"]
     }
+}
+
+variable "AzureAccount" {
+    type = "AzureAccount"
+
+    value "tfazure" {}
 }
