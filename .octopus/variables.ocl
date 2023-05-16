@@ -155,7 +155,3 @@ variable "container_app_name" {
         environment = ["prod"]
     }
 }
-
-variable "az_login_appid" {
-    value "84f6e34d-a600-46d3-a430-f8e0bc527a2f" {}
-}
