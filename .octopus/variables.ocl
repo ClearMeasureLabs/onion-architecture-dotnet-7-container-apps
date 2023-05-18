@@ -143,15 +143,15 @@ variable "container_app_name" {
 }
 
 variable "DatabaseServerName" {
-    value "$OctopusParameters[\"Octopus.Action[Create AZ DB].Package.PackageId\"]-sqlserver-prod" {
+    value "#{Octopus.Release.Number}-sqlserver-prod" {
         environment = ["prod"]
     }
 
-    value "$OctopusParameters[\"Octopus.Action[Create AZ DB].Package.PackageId\"]-sqlserver" {
+    value "#{Octopus.Release.Number}-sqlserver" {
         environment = ["development"]
     }
 
-    value "$OctopusParameters[\"Octopus.Action[Create AZ DB].Package.PackageId\"]-sqlserver-uat" {
+    value "#{Octopus.Release.Number}-sqlserver-uat" {
         environment = ["staging"]
     }
 }
