@@ -147,11 +147,11 @@ variable "DatabaseServerName" {
         environment = ["prod"]
     }
 
-    value "#{Octopus.Release.Number}-sqlserver" {
-        environment = ["development"]
-    }
-
     value "#{Octopus.Release.Number}-sqlserver-uat" {
         environment = ["staging"]
+    }
+
+    value "#{Octopus.Release.Created}-sqlserver" {
+        environment = ["development"]
     }
 }
