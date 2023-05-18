@@ -93,20 +93,6 @@ variable "DatabaseServer" {
     }
 }
 
-variable "DatabaseServerName" {
-    value "onion-architecture-dotnet-7-containers-prod" {
-        environment = ["prod"]
-    }
-
-    value "onion-arch-container-apps-sqlserver" {
-        environment = ["development"]
-    }
-
-    value "onion-architecture-dotnet-7-containers-uat" {
-        environment = ["staging"]
-    }
-}
-
 variable "az_login_appid" {
     value "84f6e34d-a600-46d3-a430-f8e0bc527a2f" {}
 }
@@ -153,5 +139,19 @@ variable "container_app_name" {
     value "prod-ui" {
         description = ""
         environment = ["prod"]
+    }
+}
+
+variable "DatabaseServerName" {
+    value "#{commit.CommitId}-sqlserver-prod" {
+        environment = ["prod"]
+    }
+
+    value "#{commit.CommitId}-sqlserver" {
+        environment = ["development"]
+    }
+
+    value "#{commit.CommitId}-sqlserver-uat" {
+        environment = ["staging"]
     }
 }
