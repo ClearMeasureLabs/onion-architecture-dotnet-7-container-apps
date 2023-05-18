@@ -143,15 +143,15 @@ variable "container_app_name" {
 }
 
 variable "DatabaseServerName" {
-    value "#{Octopus.Release.Number}-sqlserver-prod" {
+    value "#{Octopus.Release.Git.CommitHash}-sqlserver-prod" {
         environment = ["prod"]
     }
 
-    value "#{Octopus.Release.Number}-sqlserver-uat" {
+    value "#{Octopus.Release.Git.CommitHash}-sqlserver-uat" {
         environment = ["staging"]
     }
 
-    value "#{Octopus.Action[Create AZ DB].Package.PackageId}-sqlserver" {
+    value "#{Octopus.Release.Git.CommitHash}-sqlserver" {
         environment = ["development"]
     }
 }
