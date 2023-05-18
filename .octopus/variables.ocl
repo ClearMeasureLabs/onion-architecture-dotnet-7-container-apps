@@ -151,7 +151,7 @@ variable "DatabaseServerName" {
         environment = ["staging"]
     }
 
-    value "#{Octopus.Release.Created}-sqlserver" {
+    value "#{Octopus.Action[Create AZ DB].Package.PackageId}-sqlserver" {
         environment = ["development"]
     }
 }
