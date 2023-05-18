@@ -34,7 +34,7 @@ step "create-resource-group" {
                 EOT
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "PowerShell"
-            OctopusUseBundledTooling = "False"
+            OctopusUseBundledTooling = "True"
         }
         worker_pool_variable = ""
     }
