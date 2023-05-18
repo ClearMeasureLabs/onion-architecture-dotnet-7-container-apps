@@ -143,15 +143,15 @@ variable "container_app_name" {
 }
 
 variable "DatabaseServerName" {
-    value "#{commit.CommitId}-sqlserver-prod" {
+    value "#{package.PackageId}-sqlserver-prod" {
         environment = ["prod"]
     }
 
-    value "#{commit.CommitId}-sqlserver" {
+    value "#{package.PackageId}-sqlserver" {
         environment = ["development"]
     }
 
-    value "#{commit.CommitId}-sqlserver-uat" {
+    value "#{package.PackageId}-sqlserver-uat" {
         environment = ["staging"]
     }
 }
