@@ -31,6 +31,8 @@ step "create-resource-group" {
                 if ($null -eq $AzureResourceGroup ){
                 Throw "Failed to create resource group $AzureResourceGroupName"
                 }
+                
+                Write-Output "Server name $DatabaseServer"
                 EOT
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "PowerShell"
