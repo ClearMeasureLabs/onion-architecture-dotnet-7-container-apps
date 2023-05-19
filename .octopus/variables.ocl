@@ -142,20 +142,16 @@ variable "container_app_name" {
     }
 }
 
-variable "subscriptionID" {
-    value " 7077ad68-92ba-412e-9bf8-67eb78f9481b" {}
-}
-
 variable "DatabaseServerName" {
-    value "#{subscriptionID}-sqlserver-prod" {
+    value "#{az_login_appid}-sqlserver-prod" {
         environment = ["prod"]
     }
 
-    value "#{subscriptionID}-sqlserver-uat" {
+    value "#{az_login_appid}-sqlserver-uat" {
         environment = ["staging"]
     }
 
-    value "#{subscriptionID}-sqlserver" {
+    value "#{az_login_appid}-sqlserver" {
         environment = ["development"]
     }
 }
