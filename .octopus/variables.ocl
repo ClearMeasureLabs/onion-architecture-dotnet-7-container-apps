@@ -63,7 +63,7 @@ variable "EnsureEnvironmentsExist" {
         environment = ["development"]
     }
 
-    value "False" {
+    value "True" {
         description = ""
         environment = ["prod", "staging"]
     }
@@ -142,16 +142,20 @@ variable "container_app_name" {
     }
 }
 
+variable "subscriptionID" {
+    value " 7077ad68-92ba-412e-9bf8-67eb78f9481b" {}
+}
+
 variable "DatabaseServerName" {
-    value "#{Octopus.Release.Git.CommitHash}-sqlserver-prod" {
+    value "#{subscriptionID}-sqlserver-prod" {
         environment = ["prod"]
     }
 
-    value "#{Octopus.Release.Git.CommitHash}-sqlserver-uat" {
+    value "#{subscriptionID}-sqlserver-uat" {
         environment = ["staging"]
     }
 
-    value "#{Octopus.Release.Git.CommitHash}-sqlserver" {
+    value "#{subscriptionID}-sqlserver" {
         environment = ["development"]
     }
 }
