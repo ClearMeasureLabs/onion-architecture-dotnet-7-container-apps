@@ -8,12 +8,12 @@ variable "az_login_tenant" {
 
 variable "DatabaseName" {
     value "oniondb" {
-        environment = ["development"]
+        environment = ["tdd"]
     }
 
     value "oniondb-uat" {
         description = ""
-        environment = ["staging"]
+        environment = ["uat"]
     }
 
     value "oniondb-prod" {
@@ -24,12 +24,12 @@ variable "DatabaseName" {
 
 variable "DatabaseUser" {
     value "cappsAdmin" {
-        environment = ["development"]
+        environment = ["tdd"]
     }
 
     value "cappsUAT" {
         description = ""
-        environment = ["staging"]
+        environment = ["uat"]
     }
 
     value "cappsPROD" {
@@ -40,13 +40,13 @@ variable "DatabaseUser" {
 
 variable "location" {
     value "southcentralus" {
-        environment = ["development", "staging", "prod"]
+        environment = ["tdd", "uat", "prod"]
     }
 }
 
 variable "revisionSuffix" {
     value "#{Octopus.Release.Number}" {
-        environment = ["development", "staging", "prod"]
+        environment = ["tdd", "uat", "prod"]
     }
 }
 
@@ -60,24 +60,24 @@ variable "connection_string" {
 
 variable "EnsureEnvironmentsExist" {
     value "True" {
-        environment = ["development"]
+        environment = ["tdd"]
     }
 
     value "False" {
         description = ""
-        environment = ["prod", "staging"]
+        environment = ["prod", "uat"]
     }
 }
 
 variable "container_image" {
     value "#{registry_login_server}/churchbulletin.ui:#{Octopus.Release.Number}" {
-        environment = ["development", "staging", "prod"]
+        environment = ["tdd", "uat", "prod"]
     }
 }
 
 variable "registry_login_server" {
     value "onionarchitecturedotnet7containers.azurecr.io" {
-        environment = ["development", "staging", "prod"]
+        environment = ["tdd", "uat", "prod"]
     }
 }
 
@@ -128,12 +128,12 @@ variable "ResourceGroupName" {
 variable "container_app_name" {
     value "tdd-ui" {
         description = ""
-        environment = ["development"]
+        environment = ["tdd"]
     }
 
     value "uat-ui" {
         description = ""
-        environment = ["staging"]
+        environment = ["uat"]
     }
 
     value "prod-ui" {
@@ -148,10 +148,10 @@ variable "DatabaseServerName" {
     }
 
     value "#{az_login_appid}-sqlserver-uat" {
-        environment = ["staging"]
+        environment = ["uat"]
     }
 
     value "#{az_login_appid}-sqlserver" {
-        environment = ["development"]
+        environment = ["tdd"]
     }
 }
