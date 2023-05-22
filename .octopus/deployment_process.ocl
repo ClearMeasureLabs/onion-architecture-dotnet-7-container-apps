@@ -1,17 +1,44 @@
-step "create-tdd-resource-group" {
+step "create-resource-group" {
     condition = "Variable"
     name = "Create Resource Group"
     properties = {
-        Octopus.Step.ConditionVariableExpression = "#{EnsureEnvironmentsExist}"
+        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist == \"True\"}true#{/if}"
     }
 
     action {
+        action_type = "Octopus.AzurePowerShell"
         properties = {
-            CreateResourceGroup.AzureAccount = "#{AzureAccount}"
-            CreateResourceGroup.Location = "#{az_location}"
-            CreateResourceGroup.ResourceGroupName = "#{ResourceGroupName}"
-            Octopus.Action.Template.Id = "ActionTemplates-241"
-            Octopus.Action.Template.Version = "28"
+            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
+            Octopus.Action.Script.ScriptBody = <<-EOT
+                $ResourceGroupName = $ResourceGroupName
+                $Location = $az_location
+                 
+                 Write-Output "Variables:"
+                 Write-Output "ResourceGroupName: $ResourceGroupName"
+                 Write-Output "Location: $Location"
+                
+                Write-Output '###############################################'
+                Write-Output '##Step1: Create Resource Group '
+                $AzureResourceGroup = Get-AzureRmResourceGroup -Name $ResourceGroupName -ErrorAction SilentlyContinue
+                if ( $null -eq $AzureResourceGroup)
+                {
+                Write-Output "Resource Group $ResourceGroupName does not exist, creating one ..."
+                $AzureResourceGroup =New-AzureRmResourceGroup -Name $ResourceGroupName -Location $Location
+                } 
+                else{
+                Write-Output "Resource Group $ResourceGroupName already exists ..."
+                }
+                
+                Write-Output '###############################################'
+                Write-Output '##Step2: Validate Resource Group '
+                
+                if ($null -eq $AzureResourceGroup ){
+                Throw "Failed to create resource group $AzureResourceGroupName"
+                }
+                EOT
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+            OctopusUseBundledTooling = "True"
         }
         worker_pool_variable = ""
     }
@@ -21,7 +48,7 @@ step "deploy-an-azure-resource-manager-template" {
     condition = "Variable"
     name = "Create AZ DB"
     properties = {
-        Octopus.Step.ConditionVariableExpression = "#{EnsureEnvironmentsExist}"
+        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist == \"True\"}true#{/if}"
     }
 
     action {
@@ -55,7 +82,7 @@ step "create-db-schema" {
     condition = "Variable"
     name = "Create DB Schema"
     properties = {
-        Octopus.Step.ConditionVariableExpression = "#{EnsureEnvironmentsExist}"
+        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist == \"True\"}true#{/if}"
     }
 
     action {
@@ -155,7 +182,7 @@ step "deploy-an-azure-resource-manager-template-1" {
     condition = "Variable"
     name = "Create Container App Environment"
     properties = {
-        Octopus.Step.ConditionVariableExpression = "#{EnsureEnvironmentsExist}"
+        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist == \"True\"}true#{/if}"
     }
 
     action {
@@ -203,7 +230,7 @@ step "deploy-an-azure-resource-manager-template-2" {
     condition = "Variable"
     name = "Create Container App"
     properties = {
-        Octopus.Step.ConditionVariableExpression = "#{EnsureEnvironmentsExist}"
+        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist == \"True\"}true#{/if}"
     }
 
     action {
