@@ -84,7 +84,7 @@ variable "registry_login_server" {
 variable "AzureAccount" {
     type = "AzureAccount"
 
-    value "mvpazure" {}
+    value "azure-onion-containers" {}
 }
 
 variable "DatabaseServer" {
