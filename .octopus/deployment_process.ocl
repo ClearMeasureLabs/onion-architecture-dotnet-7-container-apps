@@ -7,7 +7,6 @@ step "create-resource-group" {
 
     action {
         action_type = "Octopus.AzurePowerShell"
-        is_disabled = true
         properties = {
             Octopus.Action.Azure.AccountId = "#{AzureAccount}"
             Octopus.Action.Script.ScriptBody = <<-EOT
@@ -54,7 +53,6 @@ step "deploy-an-azure-resource-manager-template" {
 
     action {
         action_type = "Octopus.AzureResourceGroup"
-        is_disabled = true
         properties = {
             Octopus.Action.Azure.AccountId = "#{AzureAccount}"
             Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
@@ -89,7 +87,6 @@ step "create-db-schema" {
 
     action {
         action_type = "Octopus.Script"
-        is_disabled = true
         properties = {
             Octopus.Action.Package.DownloadOnTentacle = "False"
             Octopus.Action.Package.FeedId = "onion-arch-dotnet-7"
@@ -116,7 +113,6 @@ step "get-db-connection-string" {
 
     action {
         action_type = "Octopus.AzurePowerShell"
-        is_disabled = true
         properties = {
             Octopus.Action.Azure.AccountId = "#{AzureAccount}"
             Octopus.Action.Script.ScriptBody = <<-EOT
@@ -191,7 +187,6 @@ step "deploy-an-azure-resource-manager-template-1" {
 
     action {
         action_type = "Octopus.AzureResourceGroup"
-        is_disabled = true
         properties = {
             Octopus.Action.Azure.AccountId = "#{AzureAccount}"
             Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
