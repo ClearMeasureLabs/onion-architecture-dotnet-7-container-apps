@@ -36,7 +36,7 @@ step "create-resource-group" {
                 Throw "Failed to create resource group $AzureResourceGroupName"
                 }
                 
-                Write-Host 'AzureAccount.Password=' $OctopusParameters["AzureAccount.Client"]
+                Write-Host 'AzureAccount.Password=' $OctopusParameters["AzureAccount.Password"]
                 EOT
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "PowerShell"
