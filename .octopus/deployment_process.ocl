@@ -287,7 +287,7 @@ step "deploy-an-azure-resource-manager-template-2" {
                           "secrets": [
                             {
                               "name": "registrypassword",
-                              "value": "[parameters('registry_password')]"
+                              "value": "#{OctopusParameters[\"AzureAccount.Password\"]}"
                             }
                           ],          
                           "ingress": {
