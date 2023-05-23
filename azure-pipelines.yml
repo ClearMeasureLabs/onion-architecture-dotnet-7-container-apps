@@ -142,14 +142,15 @@ stages:
         name: 'CreateRelease'
         inputs:
           OctoConnectedServiceName: 'octoServiceConnection'
-          Space: 'Onion DevOps'
-          ProjectGroup: 'Default Project Group'
-          ProjectName: 'onion-architecture-dotnet-7-container-apps'
+          Space: '$(OctoSpace)'
+          ProjectGroup: '$(OctoProjectGroup)'
+          ProjectName: '$(OctoProjectName)'
           ReleaseNumber: '$(Build.BuildNumber)'
           Channel: 'Default'
           GitRef: '$(branch)'
           DeployToEnvironment: 'TDD'
           DeploymentProgress: true
+          AdditionalArguments: '--deploymenttimeout=00:30:00'
 
       - task: AzureCLI@2
         inputs:
@@ -217,12 +218,13 @@ stages:
         name: deploytoUAT
         inputs:
           OctoConnectedServiceName: 'octoServiceConnection'
-          Space: 'Onion DevOps'
-          ProjectGroup: 'Default Project Group'
-          Project: 'onion-architecture-dotnet-7-container-apps'
+          Space: '$(OctoSpace)'
+          ProjectGroup: '$(OctoProjectGroup)'
+          Project: '$(OctoProjectName)'
           ReleaseNumber: '$(Build.BuildNumber)'
           Environments: 'UAT'
           ShowProgress: true
+          AdditionalArguments: '--deploymenttimeout=00:30:00'
           
 
 - stage: 'Production'
@@ -245,9 +247,10 @@ stages:
         name: deploytoProd
         inputs:
           OctoConnectedServiceName: 'octoServiceConnection'
-          Space: 'Onion DevOps'
-          ProjectGroup: 'Default Project Group'
-          Project: 'onion-architecture-dotnet-7-container-apps'
+          Space: '$(OctoSpace)'
+          ProjectGroup: '$(OctoProjectGroup)'
+          Project: '$(OctoProjectName)'
           ReleaseNumber: '$(Build.BuildNumber)'
           Environments: 'Prod'
-          ShowProgress: true      
+          ShowProgress: true 
+          AdditionalArguments: '--deploymenttimeout=00:30:00'
