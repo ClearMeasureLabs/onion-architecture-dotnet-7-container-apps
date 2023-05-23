@@ -341,7 +341,7 @@ step "deploy-an-azure-resource-manager-template-2" {
                   ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"containerappName\":{\"value\":\"#{container_app_name}\"},\"location\":{\"value\":\"#{az_location}\"},\"environment_name\":{\"value\":\"#{container_app_environment_name}\"},\"container_image\":{\"value\":\"#{container_image}\"},\"registry_password\":{\"value\":\"az_login_appkey\"},\"connection_string\":{\"value\":\"#{connection_string}\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"containerappName\":{\"value\":\"#{container_app_name}\"},\"location\":{\"value\":\"#{az_location}\"},\"environment_name\":{\"value\":\"#{container_app_environment_name}\"},\"container_image\":{\"value\":\"#{container_image}\"},\"registry_password\":{\"value\":\"#{az_login_appkey}\"},\"connection_string\":{\"value\":\"#{connection_string}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
