@@ -151,5 +151,5 @@ variable "az_login_appkey" {
 }
 
 variable "az_login_tenant" {
-    value "#{AzureAccount.Tenant}" {}
+    value "#{AzureAccount.TenantId}" {}
 }
