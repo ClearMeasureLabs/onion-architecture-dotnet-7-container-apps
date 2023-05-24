@@ -2,10 +2,6 @@ variable "az_location" {
     value "southcentralus" {}
 }
 
-variable "az_login_tenant" {
-    value "27312afb-009f-4fed-a8bb-9737425cc42a" {}
-}
-
 variable "DatabaseName" {
     value "oniondb" {
         environment = ["tdd"]
@@ -35,12 +31,6 @@ variable "DatabaseUser" {
     value "cappsPROD" {
         description = ""
         environment = ["prod"]
-    }
-}
-
-variable "location" {
-    value "southcentralus" {
-        environment = ["tdd", "uat", "prod"]
     }
 }
 
@@ -91,10 +81,6 @@ variable "DatabaseServer" {
     value "#{DatabaseServerName}.database.windows.net" {
         description = ""
     }
-}
-
-variable "az_login_appid" {
-    value "84f6e34d-a600-46d3-a430-f8e0bc527a2f" {}
 }
 
 variable "container_app_environment_name" {
@@ -154,4 +140,16 @@ variable "DatabaseServerName" {
     value "#{az_login_appid}-sqlserver" {
         environment = ["tdd"]
     }
+}
+
+variable "az_login_appid" {
+    value "#{AzureAccount.Client}" {}
+}
+
+variable "az_login_appkey" {
+    value "#{AzureAccount.Password}" {}
+}
+
+variable "az_login_tenant" {
+    value "#{AzureAccount.TenantId}" {}
 }
