@@ -2,6 +2,24 @@
 TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
 
 # Onion Architecture .NET 7 Container Apps Getting Started
+- [Github Setup:](#github-setup)
+- [Azure](#azure)
+  - [Create an Azure Container Registry](#create-an-azure-container-registry)
+  - [Connect Azure to Octopus Deploy](#connect-azure-to-octopus-deploy)
+- [Octopus Deploy Environment Setup:](#octopus-deploy-environment-setup)
+- [Octopus Deploy Project Setup:](#octopus-deploy-project-setup)
+  - [Connect Octopus to GitHub](#connect-octopus-to-github)
+  - [Create a new Version Controlled Project:](#create-a-new-version-controlled-project)
+  - [Create and Update Project Variables](#create-and-update-project-variables)
+- [Azure DevOps Setup:](#azure-devops-setup)
+  - [Create Service Connections](#create-service-connections)
+  - [Create an artifact feed](#create-an-artifact-feed)
+  - [Authorize the Pipeline to push packages to the feed](#authorize-the-pipeline-to-push-packages-to-the-feed)
+  - [Add the Azure DevOps Feed to Octopus](#add-the-azure-devops-feed-to-octopus)
+  - [Create the Library Variable Group](#create-the-library-variable-group)
+  - [Grant the pipeline access to the variable group](#grant-the-pipeline-access-to-the-variable-group)
+  - [Create a Pipeline](#create-a-pipeline)
+
 Requirements:
 
 - Octopus Deploy
