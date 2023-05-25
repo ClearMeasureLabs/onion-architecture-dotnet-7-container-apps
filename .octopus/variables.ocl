@@ -65,12 +65,6 @@ variable "container_image" {
     }
 }
 
-variable "registry_login_server" {
-    value "onionarchitecturedotnet7containers.azurecr.io" {
-        environment = ["tdd", "uat", "prod"]
-    }
-}
-
 variable "AzureAccount" {
     type = "AzureAccount"
 
@@ -152,4 +146,10 @@ variable "az_login_appkey" {
 
 variable "az_login_tenant" {
     value "#{AzureAccount.TenantId}" {}
+}
+
+variable "registry_login_server" {
+    value "dotnet7containerapps.azurecr.io" {
+        environment = ["tdd", "uat", "prod"]
+    }
 }
