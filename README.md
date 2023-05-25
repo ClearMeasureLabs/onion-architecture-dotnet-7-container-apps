@@ -37,10 +37,11 @@ Fork the [onion-architecture-dotnet-7-container-apps](https://github.com/ClearMe
 
 [https://learn.microsoft.com/en-us/azure/container-registry/container-registry-get-started-portal?tabs=azure-cli](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-get-started-portal?tabs=azure-cli)
 
-Name the resource group something identifiable and different than the application environments. onion-architecture-container-apps-acr for example.
+Name the resource group something identifiable and different than the application environments. 
+e.g. onion-architecture-container-apps-acr
 The resource groups for the application environments will be created and destroyed programatically, the container registry should be kept separate.
 
-When creating the container registry, a Basic SKU is sufficient. Name the container registry something identifiable. onion-architecture-container-apps for example.
+When creating the container registry, a Basic SKU is sufficient. Name the container registry something identifiable. e.g. onion-architecture-container-apps
 
 ## Connect Azure to Octopus Deploy
 
@@ -52,7 +53,7 @@ When creating the container registry, a Basic SKU is sufficient. Name the contai
 
 ### Select New Registration
 
-- Name the Registration
+- Name the Registration something identifiable. e.g. Onion-Containers-Octo
 - A Redirect URI is not needed
 - Select Register
 
