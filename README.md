@@ -86,17 +86,16 @@ When creating the container registry, a Basic SKU is sufficient. Name the contai
 
 - In Octopus Deploy navigate to Infrastructure -\> Accounts
 - Add an Azure Subscription Account
-
-        1. Name the account Azure-Onion-Containers
-        2. Fill in the Subscription ID
-          i. This can be found in the Subscription Overview page in the Azure web portal
-        3. Leave the Authentication Method as 'Use a Service Principal'
-        4. Fill in the Tenant ID
-          i. This can be found in the Overview page of the App Registration in the Azure web portal
-        5. Fill in the Application ID
-          i. This is the Application (client) ID from the App registration that was just created. This can be found in the Overview page in the Azure web portal
-        6. Fill in the Application Password / Key
-          i. This is the client secret value that was created previously
+    1. Name the account Azure-Onion-Containers
+    2. Fill in the Subscription ID
+        i. This can be found in the Subscription Overview page in the Azure web portal
+    3. Leave the Authentication Method as 'Use a Service Principal'
+    4. Fill in the Tenant ID
+        i. This can be found in the Overview page of the App Registration in the Azure web portal
+    5. Fill in the Application ID
+        i. This is the Application (client) ID from the App registration that was just created. This can be found in the Overview page in the Azure web portal
+    6. Fill in the Application Password / Key
+        i. This is the client secret value that was created previously
 
 ![Alt text](images/Create%20azure%20app%20registration%206.png)
 
@@ -118,8 +117,7 @@ Create a Lifecycle that uses those three environments promoting from TDD -\> UAT
 
 ### In GitHub
 
-Create a Personal Access Token (with repo access only.
-
+Create a Personal Access Token with repo access only.
 Save the token for use in Octopus
 
 ### In Octopus
@@ -133,16 +131,16 @@ Create Git Credentials using the GitHub Personal Access Token
 
 ![Alt text](images/new%20version%20controlled%20project%201.png)
 
-1. Click Save AND CONFIGURE VCS
+3. Click Save AND CONFIGURE VCS
 
       1. Skip the "How do you intend to use this project" popup
-2. Set the Git Repository URL to the URL of the forked repo
-3. Use the Library Git Credentials that were created earlier
-4. Change the default branch to 'master'
+4. Set the Git Repository URL to the URL of the forked repo
+5. Use the Library Git Credentials that were created earlier
+6. Change the default branch to 'master'
 
 ![Alt text](images/new%20version%20controlled%20project%202.png)
 
-1. Click CONFIGURE and push the initial commit to convert the project
+7. Click CONFIGURE and push the initial commit to convert the project
 
 ## Create and Update Project Variables
 
@@ -150,7 +148,7 @@ In the Octopus Project navigate to Variables -\> Project
 
 - Create a variable named **DatabasePassword** Set the values to Sensitive and enter passwords for TDD, UAT, and Prod environments
 - Update **registry\_login\_server** to the login server of the Azure Container Registry that was created
-  - This can be found in the Overview page of the container registry in the Azure Web Portal
+  - This loging server can be found in the Overview page of the container registry in the Azure Web Portal
 - Update **EnsureEnvironmentsExist** to True for Prod/UAT to ensure that all resources will be created the first time.
 
 # Azure DevOps Setup:
@@ -162,10 +160,9 @@ Install the Octopus Deploy Integration ([https://marketplace.visualstudio.com/it
 ## Create Service Connections
 
 To create a service connection
-
-        1. Go to Project Settings in the bottom left
-        2. Under the Pipelines heading, select Service Connections
-        3. Select Create Service Connection
+    1. Go to Project Settings in the bottom left
+    2. Under the Pipelines heading, select Service Connections
+    3. Select Create Service Connection
 
 1. Create an Azure Resource Manager Service Connection
 
@@ -173,37 +170,37 @@ To create a service connection
 
 ![Alt text](images/service%20connections%201.png)
 
-    1. Use the recommended authentication method (Service Principal (automatic))
-    2. Select your Azure Subscriptoin
-    3. Leave the Resource Group section blank
-    4. Name the Service Connection: dotnet-7-containerapp
-    5. Check 'Grant access permission to all pipelines'
+    2. Use the recommended authentication method (Service Principal (automatic))
+    3. Select your Azure Subscriptoin
+    4. Leave the Resource Group section blank
+    5. Name the Service Connection: dotnet-7-containerapp
+    6. Check 'Grant access permission to all pipelines'
 
 ![Alt text](images/service%20connections%202.png)
 
-    1. Save the service connection
+    7. Save the service connection
 
-1. Create an Octopus Deploy Service connection
+2. Create an Octopus Deploy Service connection
 
     1. In Octopus Deploy create an API key ([https://octopus.com/docs/octopus-rest-api/how-to-create-an-api-key](https://octopus.com/docs/octopus-rest-api/how-to-create-an-api-key))
     2. In Azure DevOps select New Service Connection, choose Octopus Deploy as the type
 
 ![Alt text](images/service%20connections%203.png)
 
-    1. Fill in the URL of your Octopus instance, the API key that was created, and name the service connection: OctoServiceConnection
-    2. Check 'Grant access permission to all pipelines'
+    3. Fill in the URL of your Octopus instance, the API key that was created, and name the service connection: OctoServiceConnection
+    4. Check 'Grant access permission to all pipelines'
 
 ![Alt text](images/service%20connections%204.png)
 
-    1. Save the service connection
+    5. Save the service connection
 
-1. Create an Azure Container Registry Service Connection
+3. Create an Azure Container Registry Service Connection
 
     1. Select New Service Connection, choose Docker Registry as the type
 
 ![Alt text](images/service%20connections%205.png)
 
-    1. Configure the registry
+    2. Configure the registry
       1. Choose Azure Container Registy as the type
       2. Choose Service Principal as the Authentication Type
       3. Select your Azure Subscription
@@ -213,21 +210,21 @@ To create a service connection
 
 ![Alt text](images/service%20connections%206.png)
 
-    1. Save the Service Connection
+    3. Save the Service Connection
 
 ## Create an artifact feed
 
-1. In the Azure DevOps project: Go to Artifacts, then select **+ Create Feed**
+- In the Azure DevOps project: Go to Artifacts, then select **+ Create Feed**
 
 ![Alt text](images/feed%201.png)
 
-1. Name the feed something relevant, scope it to the current project, select create
+- Name the feed something relevant, scope it to the current project, select create
 
 ![Alt text](images/feed%202.png)
 
 ## Authorize the Pipeline to push packages to the feed
 
-1. Set the Project Build Service ** ** identity to be a  **Contributor**  on your feed ([https://learn.microsoft.com/en-us/azure/devops/artifacts/feeds/feed-permissions?view=azure-devops#configure-feed-settings](https://learn.microsoft.com/en-us/azure/devops/artifacts/feeds/feed-permissions?view=azure-devops%23configure-feed-settings))
+- Set the Project Build Service ** ** identity to be a  **Contributor**  on your feed ([https://learn.microsoft.com/en-us/azure/devops/artifacts/feeds/feed-permissions?view=azure-devops#configure-feed-settings](https://learn.microsoft.com/en-us/azure/devops/artifacts/feeds/feed-permissions?view=azure-devops%23configure-feed-settings))
 
 ![Alt text](images/authorize%20feed%201.png)
 
@@ -265,7 +262,7 @@ To create a service connection
 
 ![Alt text](images/variable%20group%201.png)
 
-1. Create a variable group named **Integration-Build**
+2. Create a variable group named **Integration-Build**
 
     1. Create a variable called **FeedName**. The value will be \<Azure DevOps project name\>/\<Azure DevOps feed name\>
     2. Create a variable called **OctoProjectGroup** with the value being the Project Group that houses your Octopus Project.
@@ -274,7 +271,7 @@ To create a service connection
 
 ![Alt text](images/variable%20group%202.png)
 
-1. Save the variable group
+3. Save the variable group
 
 ## Grant the pipeline access to the variable group
 
@@ -283,7 +280,7 @@ To create a service connection
 
 ![Alt text](images/variable%20group%203.png)
 
-1. Select Open access to allow all pipelines in the project to use the variable group
+3. Select Open access to allow all pipelines in the project to use the variable group
 
 ![Alt text](images/variable%20group%204.png)
 
@@ -295,13 +292,13 @@ To create a service connection
 
 1. Select Create Pipeline
 2. Select Github as the location for your code
-  1. Accept and allow Github and Azure DevOps to connect
+3. Accept and allow Github and Azure DevOps to connect
 
 ![Alt text](images/pipeline%202.png)
 
-1. Select the forked repo when asked to select a repository
-  1. Select Approve & Install to allow Azure Pipelines to connect to GitHub
-2. When reviewing the pipeline YAML select **Run** to create and run the Pipeline for the first time
+4. Select the forked repo when asked to select a repository
+5. Select Approve & Install to allow Azure Pipelines to connect to GitHub
+6. When reviewing the pipeline YAML select **Run** to create and run the Pipeline for the first time
 
 ![Alt text](images/pipeline%203.png)
 
