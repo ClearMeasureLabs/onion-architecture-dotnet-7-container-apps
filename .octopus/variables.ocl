@@ -54,12 +54,6 @@ variable "container_image" {
     }
 }
 
-variable "registry_login_server" {
-    value "onionarchitecturedotnet7containers.azurecr.io" {
-        environment = ["tdd", "uat", "prod"]
-    }
-}
-
 variable "AzureAccount" {
     type = "AzureAccount"
 
@@ -158,5 +152,12 @@ variable "EnsureEnvironmentsExist" {
     value "True" {
         description = ""
         environment = ["prod", "uat"]
+    }
+}
+
+variable "registry_login_server" {
+    value "" {
+        description = "Fill in the login server of the Azure Container Registry"
+        environment = ["tdd", "uat", "prod"]
     }
 }
