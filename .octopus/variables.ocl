@@ -153,3 +153,9 @@ variable "az_login_appkey" {
 variable "az_login_tenant" {
     value "#{AzureAccount.TenantId}" {}
 }
+
+variable "DatabasePassword" {
+    value "" {
+        description = ""
+    }
+}
