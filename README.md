@@ -61,32 +61,32 @@ When creating the container registry, a Basic SKU is sufficient. Name the contai
 
 ### Create a Client Secret
 
-    1. Select Certificates and Secrets
-    2. New Client Secret
-    3. Provide a description and select add
+- Select Certificates and Secrets
+- New Client Secret
+- Provide a description and select add
 
 ![Alt text](images/Create%20azure%20app%20registration%203.png)
 
-1. Save the client secret Value. It will be used in Octopus.
+- Save the client secret Value. It will be used in Octopus.
 
 ### Set Octopus Deploy as an Azure Contributor
 
-1. In your Azure subscription, navigate to Access Control (IAM), and add a role assignment
-2. Select Privileged administrator roles, then Contributor
+- In your Azure subscription, navigate to Access Control (IAM), and add a role assignment
+- Select Privileged administrator roles, then Contributor
 
 ![Alt text](images/Create%20azure%20app%20registration%204.png)
 
-1. In the Members tab use the + Select Members page to select the App Registration that was created
-2. Press Review + assign
+- In the Members tab use the + Select Members page to select the App Registration that was created
+- Press Review + assign
 
 ![Alt text](images/Create%20azure%20app%20registration%205.png)
 
-1. Press Review + assign again to save
+- Press Review + assign again to save
 
 ### Create an Azure Account in Octopus Deploy
 
-1. In Octopus Deploy navigate to Infrastructure -\> Accounts
-2. Add an Azure Subscription Account
+- In Octopus Deploy navigate to Infrastructure -\> Accounts
+- Add an Azure Subscription Account
 
         1. Name the account Azure-Onion-Containers
         2. Fill in the Subscription ID
