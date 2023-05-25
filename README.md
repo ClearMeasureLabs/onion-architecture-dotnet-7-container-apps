@@ -89,14 +89,14 @@ A Basic SKU is sufficient
 
         1. Name the account Azure-Onion-Containers
         2. Fill in the Subscription ID
-          1. This can be found in the Subscription Overview page in the Azure web portal
+          i. This can be found in the Subscription Overview page in the Azure web portal
         3. Leave the Authentication Method as 'Use a Service Principal'
         4. Fill in the Tenant ID
-          1. This can be found in the Overview page of the App Registration in the Azure web portal
+          i. This can be found in the Overview page of the App Registration in the Azure web portal
         5. Fill in the Application ID
-          1. This is the Application (client) ID from the App registration that was just created. This can be found in the Overview page in the Azure web portal
+          i. This is the Application (client) ID from the App registration that was just created. This can be found in the Overview page in the Azure web portal
         6. Fill in the Application Password / Key
-          1. This is the client secret value that was created previously
+          i. This is the client secret value that was created previously
 
 ![](RackMultipart20230525-1-75kkpw_html_66233ef27e72cde9.png)
 
