@@ -35,7 +35,7 @@ step "create-resource-group" {
                 if ($null -eq $AzureResourceGroup ){
                 Throw "Failed to create resource group $AzureResourceGroupName"
                 }
-                EOT
+                    EOT
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "PowerShell"
             OctopusUseBundledTooling = "True"
@@ -169,7 +169,7 @@ step "get-db-connection-string" {
                 
                 
                 
-                EOT
+                    EOT
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "PowerShell"
             OctopusUseBundledTooling = "False"
@@ -217,7 +217,7 @@ step "deploy-an-azure-resource-manager-template-1" {
                     }
                   ]
                 }
-                EOT
+                    EOT
             Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"location\":{\"value\":\"#{az_location}\"},\"environment_name\":{\"value\":\"#{container_app_environment_name}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
@@ -335,7 +335,7 @@ step "deploy-an-azure-resource-manager-template-2" {
                     }
                   ]
                 }
-                EOT
+                    EOT
             Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"containerappName\":{\"value\":\"#{container_app_name}\"},\"location\":{\"value\":\"#{az_location}\"},\"environment_name\":{\"value\":\"#{container_app_environment_name}\"},\"container_image\":{\"value\":\"#{container_image}\"},\"registry_password\":{\"value\":\"#{az_login_appkey}\"},\"connection_string\":{\"value\":\"#{connection_string}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
@@ -404,7 +404,7 @@ step "get-container-app-fqdn" {
                 
                 
                 
-                EOT
+                    EOT
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "PowerShell"
             OctopusUseBundledTooling = "False"
@@ -480,7 +480,7 @@ step "add-revision-to-container-app" {
                 
                 
                 
-                EOT
+                    EOT
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "PowerShell"
             OctopusUseBundledTooling = "False"
