@@ -25,10 +25,9 @@ Requirements:
 - Octopus Deploy
 - Azure
 - Azure DevOps
-
 - Github
 
-# Github Setup:
+# Github:
 
 Fork the [onion-architecture-dotnet-7-container-apps](https://github.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps) repo
 
@@ -38,9 +37,10 @@ Fork the [onion-architecture-dotnet-7-container-apps](https://github.com/ClearMe
 
 [https://learn.microsoft.com/en-us/azure/container-registry/container-registry-get-started-portal?tabs=azure-cli](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-get-started-portal?tabs=azure-cli)
 
-The name and resource group of the container registry can be anything.
+Name the resource group something identifiable and different than the application environments. onion-architecture-container-apps-acr for example.
+The resource groups for the application environments will be created and destroyed programatically, the container registry should be kept separate.
 
-A Basic SKU is sufficient
+When creating the container registry, a Basic SKU is sufficient. Name the container registry something identifiable. onion-architecture-container-apps for example.
 
 ## Connect Azure to Octopus Deploy
 
