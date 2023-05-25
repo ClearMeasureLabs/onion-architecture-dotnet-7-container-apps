@@ -48,7 +48,7 @@ When creating the container registry, a Basic SKU is sufficient. Name the contai
 
 1. In Azure AD select App Registrations
 
-![](RackMultipart20230525-1-75kkpw_html_4fa33ca2171871f7.png)
+![Alt text](images/Create%20azure%20app%20registration%201.png)
 
 ### Select New Registration
 
@@ -56,7 +56,7 @@ When creating the container registry, a Basic SKU is sufficient. Name the contai
 - A Redirect URI is not needed
 - Select Register
 
-![](RackMultipart20230525-1-75kkpw_html_c49ab560a2f3e2be.png)
+![Alt text](images/Create%20azure%20app%20registration%202.png)
 
 ### Create a Client Secret
 
@@ -64,7 +64,7 @@ When creating the container registry, a Basic SKU is sufficient. Name the contai
         2. New Client Secret
         3. Provide a description and select add
 
-![](RackMultipart20230525-1-75kkpw_html_bdbd1dd158d12fcf.png)
+![Alt text](images/Create%20azure%20app%20registration%203.png)
 
 1. Save the client secret Value. It will be used in Octopus.
 
@@ -73,12 +73,12 @@ When creating the container registry, a Basic SKU is sufficient. Name the contai
 1. In your Azure subscription, navigate to Access Control (IAM), and add a role assignment
 2. Select Privileged administrator roles, then Contributor
 
-![](RackMultipart20230525-1-75kkpw_html_153f64007edf41d3.png)
+![Alt text](images/Create%20azure%20app%20registration%204.png)
 
 1. In the Members tab use the + Select Members page to select the App Registration that was created
 2. Press Review + assign
 
-![](RackMultipart20230525-1-75kkpw_html_e9dfe4c8cfa6d51c.png)
+![Alt text](images/Create%20azure%20app%20registration%205.png)
 
 1. Press Review + assign again to save
 
@@ -98,7 +98,7 @@ When creating the container registry, a Basic SKU is sufficient. Name the contai
         6. Fill in the Application Password / Key
           i. This is the client secret value that was created previously
 
-![](RackMultipart20230525-1-75kkpw_html_66233ef27e72cde9.png)
+![Alt text](images/Create%20azure%20app%20registration%206.png)
 
 # Octopus Deploy Environment Setup:
 
@@ -131,7 +131,7 @@ Create Git Credentials using the GitHub Personal Access Token
 1. Create a new project, ensure the "Use version control for this project" box is checked
 2. Use the Lifecycle that was just created
 
-![](RackMultipart20230525-1-75kkpw_html_61a2b9f506dd0082.png)
+![Alt text](images/new%20version%20controlled%20project%201.png)
 
 1. Click Save AND CONFIGURE VCS
 
@@ -140,7 +140,7 @@ Create Git Credentials using the GitHub Personal Access Token
 3. Use the Library Git Credentials that were created earlier
 4. Change the default branch to 'master'
 
-![](RackMultipart20230525-1-75kkpw_html_f03267bb7448293d.png)
+![Alt text](images/new%20version%20controlled%20project%202.png)
 
 1. Click CONFIGURE and push the initial commit to convert the project
 
@@ -171,7 +171,7 @@ To create a service connection
 
     1. Select Azure Resource Manager as the new service connection type
 
-![](RackMultipart20230525-1-75kkpw_html_44255d02a8569e61.png)
+![Alt text](images/service%20connections%201.png)
 
     1. Use the recommended authentication method (Service Principal (automatic))
     2. Select your Azure Subscriptoin
@@ -179,7 +179,7 @@ To create a service connection
     4. Name the Service Connection: dotnet-7-containerapp
     5. Check 'Grant access permission to all pipelines'
 
-![](RackMultipart20230525-1-75kkpw_html_a359f2ee0fddb7a6.png)
+![Alt text](images/service%20connections%202.png)
 
     1. Save the service connection
 
@@ -188,12 +188,12 @@ To create a service connection
     1. In Octopus Deploy create an API key ([https://octopus.com/docs/octopus-rest-api/how-to-create-an-api-key](https://octopus.com/docs/octopus-rest-api/how-to-create-an-api-key))
     2. In Azure DevOps select New Service Connection, choose Octopus Deploy as the type
 
-![](RackMultipart20230525-1-75kkpw_html_9ad97c8353747449.png)
+![Alt text](images/service%20connections%203.png)
 
     1. Fill in the URL of your Octopus instance, the API key that was created, and name the service connection: OctoServiceConnection
     2. Check 'Grant access permission to all pipelines'
 
-![](RackMultipart20230525-1-75kkpw_html_7f880a8afd52e5cc.png)
+![Alt text](images/service%20connections%204.png)
 
     1. Save the service connection
 
@@ -201,7 +201,7 @@ To create a service connection
 
     1. Select New Service Connection, choose Docker Registry as the type
 
-![](RackMultipart20230525-1-75kkpw_html_d60a98d1f8592edc.png)
+![Alt text](images/service%20connections%205.png)
 
     1. Configure the registry
       1. Choose Azure Container Registy as the type
@@ -211,7 +211,7 @@ To create a service connection
       5. Name the service connection: OnionArchACRServiceConnection
       6. Select 'Grant access permission to all pipelines'
 
-![](RackMultipart20230525-1-75kkpw_html_d2507be4fc1629c9.png)
+![Alt text](images/service%20connections%206.png)
 
     1. Save the Service Connection
 
@@ -219,17 +219,17 @@ To create a service connection
 
 1. In the Azure DevOps project: Go to Artifacts, then select **+ Create Feed**
 
-![](RackMultipart20230525-1-75kkpw_html_f4cde8d4ab2680d7.png)
+![Alt text](images/feed%201.png)
 
 1. Name the feed something relevant, scope it to the current project, select create
 
-![](RackMultipart20230525-1-75kkpw_html_9b152b2f3b6c09f0.png)
+![Alt text](images/feed%202.png)
 
 ## Authorize the Pipeline to push packages to the feed
 
 1. Set the Project Build Service ** ** identity to be a  **Contributor**  on your feed ([https://learn.microsoft.com/en-us/azure/devops/artifacts/feeds/feed-permissions?view=azure-devops#configure-feed-settings](https://learn.microsoft.com/en-us/azure/devops/artifacts/feeds/feed-permissions?view=azure-devops%23configure-feed-settings))
 
-![](RackMultipart20230525-1-75kkpw_html_733945d8db000ad7.png)
+![Alt text](images/authorize%20feed%201.png)
 
 ## Add the Azure DevOps Feed to Octopus
 
@@ -246,7 +246,7 @@ To create a service connection
 3. Select Nuget.exe as the feed type
 4. In the Project Setup section, copy the URL from the value field
 
-![](RackMultipart20230525-1-75kkpw_html_46956bee13f928dd.png)
+![Alt text](images/add%20feed%20to%20octo%201.png)
 
 ### In Octopus Deploy
 
@@ -257,13 +257,13 @@ To create a service connection
 5. Provide something in the Feed username field. It can be anything other than an empty string. It's not actually used.
 6. Provide the personal access token from Azure DevOps as the Feed Password
 
-![](RackMultipart20230525-1-75kkpw_html_e7e48d369a59dbce.png)
+![Alt text](images/add%20feed%20to%20octo%202.png)
 
 ## Create the Library Variable Group
 
 1. In the Azure DevOps project: Go to Pipelines -\> Library
 
-![](RackMultipart20230525-1-75kkpw_html_8ea8a2ff18aeccf1.png)
+![Alt text](images/variable%20group%201.png)
 
 1. Create a variable group named **Integration-Build**
 
@@ -272,7 +272,7 @@ To create a service connection
     3. Create a variable called **OctoProjectName** with the value being the name of your Octopus Project.
     4. Create a variable called **OctoSpace** with the value being the name of your Octopus Space.
 
-![](RackMultipart20230525-1-75kkpw_html_c5a5a1cd410e039c.png)
+![Alt text](images/variable%20group%202.png)
 
 1. Save the variable group
 
@@ -281,29 +281,29 @@ To create a service connection
 1. From the variable group page select the Pipeline permissions tab at the top
 2. Select the hamburger menu, and select Open Access
 
-![](RackMultipart20230525-1-75kkpw_html_41e53b35d4da5882.png)
+![Alt text](images/variable%20group%203.png)
 
 1. Select Open access to allow all pipelines in the project to use the variable group
 
-![](RackMultipart20230525-1-75kkpw_html_2d281f2c0ed7b7fb.png)
+![Alt text](images/variable%20group%204.png)
 
 ## Create a Pipeline
 
 1. Go to Pipelines -\> Pipelines
 
-![](RackMultipart20230525-1-75kkpw_html_1cccab02207c6d87.png)
+![Alt text](images/pipeline%201.png)
 
 1. Select Create Pipeline
 2. Select Github as the location for your code
   1. Accept and allow Github and Azure DevOps to connect
 
-![](RackMultipart20230525-1-75kkpw_html_e982720ffd029def.png)
+![Alt text](images/pipeline%202.png)
 
 1. Select the forked repo when asked to select a repository
   1. Select Approve & Install to allow Azure Pipelines to connect to GitHub
 2. When reviewing the pipeline YAML select **Run** to create and run the Pipeline for the first time
 
-![](RackMultipart20230525-1-75kkpw_html_638bf1850ba7cede.png)
+![Alt text](images/pipeline%203.png)
 
 The pipeline will build the application, create all of the resources in the TDD environment, deploy the app to TDD, test the app, then destroy the TDD resources. Then the Azure resources in UAT will be created, and the app will be deployed to TDD. Ultimately Prod resources will be created, and the app will be deployed to Prod
 
