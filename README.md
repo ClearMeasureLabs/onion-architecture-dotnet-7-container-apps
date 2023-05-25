@@ -1,8 +1,10 @@
 # Introduction 
 TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
 
+This project will create all of the required infrastructure in Azure programatically. The resoureces in the TDD environment will be torn down after automated testing is completed. The UAT and Prod resources will remain. There is an Octopus variable **EnsureEnvironmentsExist** that will tell Octopus to create all of the resources. If the variable is set to **True** Octopus will create all of the resources, if the variable is set to something else, Octopus will not create the resources. **EnsureEnvironmentsExist** should always be set to **True** for the TDD environment. This variable should be set to **False** (or anything other than **True**) for UAT and Prod to save time and preserve the existing resources during subsequent deployments.
+
 # Onion Architecture .NET 7 Container Apps Getting Started
-- [Github Setup:](#github-setup)
+- [Github](#github)
 - [Azure](#azure)
   - [Create an Azure Container Registry](#create-an-azure-container-registry)
   - [Connect Azure to Octopus Deploy](#connect-azure-to-octopus-deploy)
@@ -27,7 +29,7 @@ Requirements:
 - Azure DevOps
 - Github
 
-# Github:
+# Github
 
 Fork the [onion-architecture-dotnet-7-container-apps](https://github.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps) repo
 
