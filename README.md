@@ -47,15 +47,14 @@ When creating the container registry, a Basic SKU is sufficient. Name the contai
 
 ### Create an Azure App Registration for Octopus Deploy
 
-1. In Azure AD select App Registrations
+- In Azure AD select App Registrations
 
 ![Alt text](images/Create%20azure%20app%20registration%201.png)
 
-### Select New Registration
-
-- Name the Registration something identifiable. e.g. Onion-Containers-Octo
-- A Redirect URI is not needed
-- Select Register
+- Select New Registration
+    1. Name the Registration something identifiable. e.g. Onion-Containers-Octo
+    2. A Redirect URI is not needed
+    3. Select Register
 
 ![Alt text](images/Create%20azure%20app%20registration%202.png)
 
