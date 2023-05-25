@@ -61,9 +61,9 @@ When creating the container registry, a Basic SKU is sufficient. Name the contai
 
 ### Create a Client Secret
 
-        1. Select Certificates and Secrets
-        2. New Client Secret
-        3. Provide a description and select add
+    1. Select Certificates and Secrets
+    2. New Client Secret
+    3. Provide a description and select add
 
 ![Alt text](images/Create%20azure%20app%20registration%203.png)
 
