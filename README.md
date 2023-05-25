@@ -160,56 +160,56 @@ Install the Octopus Deploy Integration ([https://marketplace.visualstudio.com/it
 ## Create Service Connections
 
 To create a service connection
-1. Go to Project Settings in the bottom left
-2. Under the Pipelines heading, select Service Connections
-3. Select Create Service Connection
+  - Go to Project Settings in the bottom left
+  - Under the Pipelines heading, select Service Connections
+  - Select Create Service Connection
 
-- Create an Azure Resource Manager Service Connection
-    - Select Azure Resource Manager as the new service connection type
+### Create an Azure Resource Manager Service Connection
+  - Select Azure Resource Manager as the new service connection type
 
 ![Alt text](images/service%20connections%201.png)
 
-- Use the recommended authentication method (Service Principal (automatic))
-- Select your Azure Subscriptoin
-- Leave the Resource Group section blank
-- Name the Service Connection: dotnet-7-containerapp
-- Check 'Grant access permission to all pipelines'
+  - Use the recommended authentication method (Service Principal (automatic))
+  - Select your Azure Subscriptoin
+  - Leave the Resource Group section blank
+  - Name the Service Connection: dotnet-7-containerapp
+  - Check 'Grant access permission to all pipelines'
 
 ![Alt text](images/service%20connections%202.png)
 
-- Save the service connection
+  - Save the service connection
 
-2. Create an Octopus Deploy Service connection
+### Create an Octopus Deploy Service connection
 
-    1. In Octopus Deploy create an API key ([https://octopus.com/docs/octopus-rest-api/how-to-create-an-api-key](https://octopus.com/docs/octopus-rest-api/how-to-create-an-api-key))
-    2. In Azure DevOps select New Service Connection, choose Octopus Deploy as the type
+  - In Octopus Deploy create an API key ([https://octopus.com/docs/octopus-rest-api/how-to-create-an-api-key](https://octopus.com/docs/octopus-rest-api/how-to-create-an-api-key))
+  - In Azure DevOps select New Service Connection, choose Octopus Deploy as the type
 
 ![Alt text](images/service%20connections%203.png)
 
-    3. Fill in the URL of your Octopus instance, the API key that was created, and name the service connection: OctoServiceConnection
-    4. Check 'Grant access permission to all pipelines'
+  - Fill in the URL of your Octopus instance, the API key that was created, and name the service connection: OctoServiceConnection
+  - Check 'Grant access permission to all pipelines'
 
 ![Alt text](images/service%20connections%204.png)
 
-    5. Save the service connection
+  - Save the service connection
 
-3. Create an Azure Container Registry Service Connection
+### Create an Azure Container Registry Service Connection
 
-    - Select New Service Connection, choose Docker Registry as the type
+  - Select New Service Connection, choose Docker Registry as the type
 
 ![Alt text](images/service%20connections%205.png)
 
-    - Configure the registry
-      1. Choose Azure Container Registy as the type
-      2. Choose Service Principal as the Authentication Type
-      3. Select your Azure Subscription
-      4. Select the container registry that was created
-      5. Name the service connection: OnionArchACRServiceConnection
-      6. Select 'Grant access permission to all pipelines'
+  - Configure the registry
+    1. Choose Azure Container Registy as the type
+    2. Choose Service Principal as the Authentication Type
+    3. Select your Azure Subscription
+    4. Select the container registry that was created
+    5. Name the service connection: OnionArchACRServiceConnection
+    6. Select 'Grant access permission to all pipelines'
 
 ![Alt text](images/service%20connections%206.png)
 
-4. Save the Service Connection
+- Save the Service Connection
 
 ## Create an artifact feed
 
@@ -223,7 +223,7 @@ To create a service connection
 
 ## Authorize the Pipeline to push packages to the feed
 
-- Set the Project Build Service ** ** identity to be a  **Contributor**  on your feed ([https://learn.microsoft.com/en-us/azure/devops/artifacts/feeds/feed-permissions?view=azure-devops#configure-feed-settings](https://learn.microsoft.com/en-us/azure/devops/artifacts/feeds/feed-permissions?view=azure-devops%23configure-feed-settings))
+- Set the Project Build Service identity to be a  **Contributor**  on your feed ([https://learn.microsoft.com/en-us/azure/devops/artifacts/feeds/feed-permissions?view=azure-devops#configure-feed-settings](https://learn.microsoft.com/en-us/azure/devops/artifacts/feeds/feed-permissions?view=azure-devops%23configure-feed-settings))
 
 ![Alt text](images/authorize%20feed%201.png)
 
