@@ -160,25 +160,24 @@ Install the Octopus Deploy Integration ([https://marketplace.visualstudio.com/it
 ## Create Service Connections
 
 To create a service connection
-    1. Go to Project Settings in the bottom left
-    2. Under the Pipelines heading, select Service Connections
-    3. Select Create Service Connection
+1. Go to Project Settings in the bottom left
+2. Under the Pipelines heading, select Service Connections
+3. Select Create Service Connection
 
-1. Create an Azure Resource Manager Service Connection
-
-    1. Select Azure Resource Manager as the new service connection type
+- Create an Azure Resource Manager Service Connection
+    - Select Azure Resource Manager as the new service connection type
 
 ![Alt text](images/service%20connections%201.png)
 
-    2. Use the recommended authentication method (Service Principal (automatic))
-    3. Select your Azure Subscriptoin
-    4. Leave the Resource Group section blank
-    5. Name the Service Connection: dotnet-7-containerapp
-    6. Check 'Grant access permission to all pipelines'
+- Use the recommended authentication method (Service Principal (automatic))
+- Select your Azure Subscriptoin
+- Leave the Resource Group section blank
+- Name the Service Connection: dotnet-7-containerapp
+- Check 'Grant access permission to all pipelines'
 
 ![Alt text](images/service%20connections%202.png)
 
-    7. Save the service connection
+- Save the service connection
 
 2. Create an Octopus Deploy Service connection
 
@@ -196,11 +195,11 @@ To create a service connection
 
 3. Create an Azure Container Registry Service Connection
 
-    1. Select New Service Connection, choose Docker Registry as the type
+    - Select New Service Connection, choose Docker Registry as the type
 
 ![Alt text](images/service%20connections%205.png)
 
-    2. Configure the registry
+    - Configure the registry
       1. Choose Azure Container Registy as the type
       2. Choose Service Principal as the Authentication Type
       3. Select your Azure Subscription
@@ -210,7 +209,7 @@ To create a service connection
 
 ![Alt text](images/service%20connections%206.png)
 
-    3. Save the Service Connection
+4. Save the Service Connection
 
 ## Create an artifact feed
 
