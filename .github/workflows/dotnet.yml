@@ -17,26 +17,26 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Setup .NET 7
-      uses: actions/setup-dotnet@v3.0.3
-      with:
-        dotnet-version: 7.0.x
-    - name: Setup .NET 6
-      uses: actions/setup-dotnet@v3.0.3
-      with:
-        dotnet-version: 6.0.x
-    - name: Build Script
-      run: |
-        [System.Environment]::SetEnvironmentVariable('Version','${{ github.run_number }}')
-        . .\build.ps1 ; CIBuild
+#     - name: Setup .NET 7
+#       uses: actions/setup-dotnet@v3.0.3
+#       with:
+#         dotnet-version: 7.0.x
+#     - name: Setup .NET 6
+#       uses: actions/setup-dotnet@v3.0.3
+#       with:
+#         dotnet-version: 6.0.x
+#     - name: Build Script
+#       run: |
+#         [System.Environment]::SetEnvironmentVariable('Version','${{ github.run_number }}')
+#         . .\build.ps1 ; CIBuild
 
-#to do: publish test results, publish code coverage
+# #to do: publish test results, publish code coverage
 
-    - name: Push NuGet packages   
-      run: |
-        foreach($file in (Get-ChildItem ".\build\" -Recurse -Include *.nupkg)) {
-          dotnet nuget push $file --source "https://nuget.pkg.github.com/dmarttinen/index.json" --api-key ${{ secrets.PACKAGESAPI }}
-        }  
+#     - name: Push NuGet packages   
+#       run: |
+#         foreach($file in (Get-ChildItem ".\build\" -Recurse -Include *.nupkg)) {
+#           dotnet nuget push $file --source "https://nuget.pkg.github.com/dmarttinen/index.json" --api-key ${{ secrets.PACKAGESAPI }}
+#         }  
 
 
   dockerbuildandpush:
@@ -47,9 +47,8 @@ jobs:
     - name: Download UI Package
       run: |
         dotnet nuget add source --username dmarttinen --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/OWNER/index.json"
-        dotnet nuget install ChurchBulletin.UI -Version ${{ github.run_number }}
         mkdir -p built
-        cp -r ~/.nuget/packages/churchbulletin.ui/${{ github.run_number }}/* built/
+        nuget install ChurchBulletin.UI -Version 1.0.0 -Outputdirectory built/
         shell: bash
 
     - name: Build and push Docker image
@@ -57,7 +56,7 @@ jobs:
       with:
         context: .
         push: true
-        tags: onioncontainers.azurecr.io/my-image:${{ env.BUILD_BUILDNUMBER }}
+        tags: onioncontainers.azurecr.io/my-image:1.0.0
         registry: onioncontainers.azurecr.io
         username: ${{ secrets.AZAPPID }}
         password: ${{ secrets.AZAPPKEY }}
