@@ -36,7 +36,7 @@ jobs:
       run: |
         $currentDirectory = Get-Location
         Write-Output "The current directory is: $currentDirectory"
-        dotnet nuget push "test.nupkg" --source "https://nuget.pkg.github.com/dmarttinen/index.json"     
+        dotnet nuget push "test.nupkg" --source "https://nuget.pkg.github.com/dmarttinen/index.json" --api-key ${{ secrets.PACKAGESAPI }}
 
   dockerbuildandpush:
     needs: build
