@@ -46,10 +46,9 @@ jobs:
     steps:
     - name: Download UI Package
       run: |
-        dotnet nuget add source --username dmarttinen --password ${{ secrets.PACKAGESAPI }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/dmarttinen/index.json"
-        dotnet restore MyProject.csproj
-        # mkdir -p built
-        # nuget install ChurchBulletin.UI -Version 1.0.0 -source "https://nuget.pkg.github.com/dmarttinen/index.json" -Outputdirectory built/ 
+        nuget sources Add -Name github -Source https://nuget.pkg.github.com/dmarttinen/index.json -UserName dmarttinen -Password ${{ secrets.PACKAGESAPI }}
+        mkdir -p built
+        nuget install ChurchBulletin.UI -Version 1.0.0 -source "https://nuget.pkg.github.com/dmarttinen/index.json" -Outputdirectory built/ 
         shell: bash
 
     - name: Build and push Docker image
