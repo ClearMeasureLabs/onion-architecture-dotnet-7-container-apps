@@ -56,8 +56,8 @@ jobs:
       with:
         context: .
         push: true
-        tags: my-registry.example.com/my-image:${{ github.run_number }}
-        registry: my-registry.example.com
+        tags: onioncontainers.azurecr.io/my-image:${{ github.run_number }}
+        registry: onioncontainers.azurecr.io
         username: ${{ secrets.AZAPPID }}
         password: ${{ secrets.AZAPPKEY }}
           
