@@ -34,9 +34,9 @@ jobs:
 
     - name: Push NuGet packages   
       run: |
-        foreach($file in (Get-ChildItem "." -Recurse -Include *.nupkg)) {
-          dotnet nuget push $file --source "https://nuget.pkg.github.com/dmarttinen/index.json"
-        }       
+        $currentDirectory = Get-Location
+        Write-Output "The current directory is: $currentDirectory"
+        dotnet nuget push "test.nupkg" --source "https://nuget.pkg.github.com/dmarttinen/index.json"     
 
   dockerbuildandpush:
     needs: build
