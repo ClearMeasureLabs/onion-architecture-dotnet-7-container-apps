@@ -9,7 +9,6 @@ on:
 env:
   FEED: https://pkgs.dev.azure.com/clearmeasurelabs/Onion-Architecture-DotNet-7-ContainerApps/_packaging/Onion-Architecture-DotNet-7-Feed/nuget/v3/index.json
   FEED_NAME: Onion-Architecture-DotNet-7-ContainerApps/Onion-Architecture-DotNet-7-Feed
-  NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   build:
@@ -26,17 +25,18 @@ jobs:
       uses: actions/setup-dotnet@v3.0.3
       with:
         dotnet-version: 6.0.x
-    # - name: Build Script
-    #   run: |
-    #     . .\build.ps1 ; CIBuild
+    - name: Build Script
+      run: |
+        . .\build.ps1 ; CIBuild
 
 #to do: publish test results, publish code coverage
 
     - name: Push NuGet packages   
       run: |
-        $currentDirectory = Get-Location
-        Write-Output "The current directory is: $currentDirectory"
-        dotnet nuget push "test.nupkg" --source "https://nuget.pkg.github.com/dmarttinen/index.json" --api-key ${{ secrets.PACKAGESAPI }}
+        foreach($file in (Get-ChildItem ".\build\" -Recurse -Include *.nupkg)) {
+          dotnet nuget push $file --source "https://nuget.pkg.github.com/dmarttinen/index.json" --api-key ${{ secrets.PACKAGESAPI }}
+        }  
+
 
   dockerbuildandpush:
     needs: build
@@ -45,10 +45,20 @@ jobs:
     steps:
     - name: Download UI Package
       run: |
-        dotnet nuget add source --username USERNAME --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/ClearMeasureLabs/index.json"
-        dotnet tool install --global --add-source ${{ env.FEED_NAME }} --version ${{ github.run_number }} ChurchBulletin.UI
+        dotnet nuget add source --username dmarttinen --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/OWNER/index.json"
+        dotnet nuget install ChurchBulletin.UI -Version ${{ github.run_number }}
         mkdir -p built
         cp -r ~/.nuget/packages/churchbulletin.ui/${{ github.run_number }}/* built/
         shell: bash
 
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: true
+        tags: my-registry.example.com/my-image:${{ github.run_number }}
+        registry: my-registry.example.com
+        username: ${{ secrets.AZAPPID }}
+        password: ${{ secrets.AZAPPKEY }}
+          
 
