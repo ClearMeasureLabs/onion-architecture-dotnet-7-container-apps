@@ -46,7 +46,7 @@ jobs:
     steps:
     - name: Download UI Package
       run: |
-        dotnet nuget add source --username dmarttinen --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/dmarttinen/index.json"
+        dotnet nuget add source --username dmarttinen --password ${{ secrets.PACKAGESAPI }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/dmarttinen/index.json"
         mkdir -p built
         nuget install ChurchBulletin.UI -Version 1.0.0 -source "https://nuget.pkg.github.com/dmarttinen/index.json" -Outputdirectory built/
         shell: bash
