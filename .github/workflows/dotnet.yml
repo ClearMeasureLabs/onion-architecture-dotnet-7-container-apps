@@ -26,15 +26,15 @@ jobs:
       uses: actions/setup-dotnet@v3.0.3
       with:
         dotnet-version: 6.0.x
-    - name: Build Script
-      run: |
-        . .\build.ps1 ; CIBuild
+    # - name: Build Script
+    #   run: |
+    #     . .\build.ps1 ; CIBuild
 
 #to do: publish test results, publish code coverage
 
     - name: Push NuGet packages   
       run: |
-        foreach($file in (Get-ChildItem ".\build\" -Recurse -Include *.nupkg)) {
+        foreach($file in (Get-ChildItem "." -Recurse -Include *.nupkg)) {
           dotnet nuget push $file --source "https://nuget.pkg.github.com/dmarttinen/index.json"
         }       
 
