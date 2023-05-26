@@ -7,8 +7,8 @@ on:
     branches: [ "master" ]
 
 env:
-  FEED: https://pkgs.dev.azure.com/clearmeasurelabs/Onion-Architecture-DotNet-7-ContainerApps/_packaging/Onion-Architecture-DotNet-7-Feed/nuget/v3/index.json
-  FEED_NAME: Onion-Architecture-DotNet-7-ContainerApps/Onion-Architecture-DotNet-7-Feed
+  BUILD_BUILDNUMBER: ${{ github.run_number }}
+
 
 jobs:
   build:
@@ -27,6 +27,7 @@ jobs:
         dotnet-version: 6.0.x
     - name: Build Script
       run: |
+        [System.Environment]::SetEnvironmentVariable('Version','${{ github.run_number }}')
         . .\build.ps1 ; CIBuild
 
 #to do: publish test results, publish code coverage
@@ -56,7 +57,7 @@ jobs:
       with:
         context: .
         push: true
-        tags: onioncontainers.azurecr.io/my-image:${{ github.run_number }}
+        tags: onioncontainers.azurecr.io/my-image:${{ env.BUILD_BUILDNUMBER }}
         registry: onioncontainers.azurecr.io
         username: ${{ secrets.AZAPPID }}
         password: ${{ secrets.AZAPPKEY }}
