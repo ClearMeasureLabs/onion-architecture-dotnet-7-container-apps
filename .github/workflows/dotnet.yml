@@ -48,15 +48,14 @@ jobs:
       run: |
         nuget sources Add -Name github -Source https://nuget.pkg.github.com/dmarttinen/index.json -UserName dmarttinen -Password ${{ secrets.PACKAGESAPI }}
         mkdir -p built
-        nuget install ChurchBulletin.UI -Version 1.0.0 -source "https://nuget.pkg.github.com/dmarttinen/index.json" -Outputdirectory built/ 
-        shell: bash
+        nuget install ChurchBulletin.UI -Version 1.0.0 -Source "https://nuget.pkg.github.com/dmarttinen/index.json" -Outputdirectory built/ 
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
       with:
         context: .
         push: true
-        tags: onioncontainers.azurecr.io/my-image:1.0.0
+        tags: onioncontainers.azurecr.io/ChurchBulletin.UI:1.0.0
         registry: onioncontainers.azurecr.io
         username: ${{ secrets.AZAPPID }}
         password: ${{ secrets.AZAPPKEY }}
