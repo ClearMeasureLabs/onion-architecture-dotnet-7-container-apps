@@ -10,7 +10,6 @@ env:
   BUILD_BUILDNUMBER: ${{ github.run_number }}
   OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
   OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
-  OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
 
 jobs:
   build:
@@ -77,10 +76,36 @@ jobs:
     runs-on: 'windows-latest'
     steps:
 
-    - name: Create a release in Octopus Deploy
-      uses: OctopusDeploy/create-release-action@v3
+    - name: Install Octopus CLI
+      uses: OctopusDeploy/install-octopus-cli-action@v1
       with:
+        version: latest
+
+    - name: Create release and deploy to TDD
+      uses: OctopusDeploy/create-release-action@v1
+      with:
+        api_key: ${{ secrets.OCTO_API_KEY  }}
+        server: ${{ secrets.OCTOPUS_URL }}
+        space: ${{ vars.OCTOPUS_SPACE }}       
         project: ${{ vars.OCTOPUS_PROJECT }}
         git_ref: ${{ (github.ref_type == 'tag' && github.event.repository.default_branch ) || (github.head_ref || github.ref) }}
-        git_commit: ${{ github.event.after || github.event.pull_request.head.sha }}          
+        git_commit: ${{ github.event.after || github.event.pull_request.head.sha }}     
+        deploy_to: "TDD"   
+        progress: true  
 
+  UAT:
+    needs: TDD
+    runs-on: 'windows-latest'
+    steps:
+
+    - name: Deploy to UAT
+      uses: OctopusDeploy/deploy-release-action@v3
+      env:
+        OCTOPUS_API_KEY: ${{ secrets.API_KEY  }}
+        OCTOPUS_URL: ${{ secrets.SERVER }}
+        OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
+      with:
+        project: 'MyProject'
+        release_number: ${{ github.run_number }}
+        environments: |
+          TDD
