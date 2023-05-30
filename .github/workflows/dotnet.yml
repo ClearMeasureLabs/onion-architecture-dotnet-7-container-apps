@@ -74,9 +74,7 @@ jobs:
   TDD:
     needs: dockerbuildandpush
     runs-on: 'windows-latest'
-    steps:
-    - uses: browser-actions/setup-chrome@v1
-    - run: chrome --version 
+    steps: 
 
     - name: Install Octopus CLI
       uses: OctopusDeploy/install-octopus-cli-action@v1
@@ -94,7 +92,12 @@ jobs:
         git_commit: ${{ github.event.after || github.event.pull_request.head.sha }}     
         deploy_to: "TDD"   
         progress: true 
-        release_number: ${{ github.run_number }}
+        release_number: ${{ github.run_number }} 
+
+  Acceptance-Tests: 
+    needs: TDD
+    runs-on: 'ubuntu-latest'    
+    steps:
 
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
@@ -124,10 +127,10 @@ jobs:
           !**\*TestAdapter.dll
           !**\obj\**
         searchFolder: ./ChurchBulletin.AcceptanceTests.${{ github.run_number }}/
-        runInParallel: true        
+        runInParallel: true 
 
   Delete-TDD: 
-    needs: TDD
+    needs: Acceptance-Tests
     runs-on: 'ubuntu-latest'    
     steps:
 
@@ -144,11 +147,11 @@ jobs:
           az group delete -n onion-architecture-dotnet-7-containers-tdd --yes
         
   UAT:
-    needs: TDD
+    needs: Acceptance-Tests
     runs-on: 'windows-latest'
     steps:
 
-    - name: Deploy to UAT
+    - name: Deploy-to-UAT
       uses: OctopusDeploy/deploy-release-action@v3
       env:
         OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
@@ -158,14 +161,24 @@ jobs:
         project: ${{ vars.OCTOPUS_PROJECT }}
         release_number: ${{ github.run_number }}
         environments: |
-          TDD
+          UAT
+
+    - name: Wait-for-UAT
+      uses: OctopusDeploy/await-task-action@v3
+      env:
+        OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
+        OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
+        OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
+      with:
+        server_task_id: ${{ fromJson(steps.Deploy-to-UAT.outputs.server_tasks)[0].serverTaskId }}
+
 
   Prod:
     needs: UAT
     runs-on: 'windows-latest'
     steps:
 
-    - name: Deploy to Prod
+    - name: Deploy-to-Prod
       uses: OctopusDeploy/deploy-release-action@v3
       env:
         OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
@@ -176,3 +189,12 @@ jobs:
         release_number: ${{ github.run_number }}
         environments: |
           Prod
+
+    - name: Wait-for-Prod
+      uses: OctopusDeploy/await-task-action@v3
+      env:
+        OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
+        OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
+        OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
+      with:
+        server_task_id: ${{ fromJson(steps.Deploy-to-Prod.outputs.server_tasks)[0].serverTaskId }}
