@@ -53,7 +53,7 @@ variable "EnsureEnvironmentsExist" {
         environment = ["tdd"]
     }
 
-    value "False" {
+    value "True" {
         description = ""
         environment = ["prod", "uat"]
     }
