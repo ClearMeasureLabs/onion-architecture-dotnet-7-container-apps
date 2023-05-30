@@ -149,7 +149,7 @@ variable "az_login_tenant" {
 }
 
 variable "registry_login_server" {
-    value "dotnet7containerapps.azurecr.io" {
+    value "onioncontainers.azurecr.io" {
         environment = ["tdd", "uat", "prod"]
     }
 }
