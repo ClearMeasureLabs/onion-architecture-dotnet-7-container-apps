@@ -57,8 +57,8 @@ jobs:
     - name: Download UI Package
       run: |
         nuget sources Add -Name github -Source https://nuget.pkg.github.com/dmarttinen/index.json -UserName dmarttinen -Password ${{ secrets.PACKAGESAPI }}
-        mkdir -p built
-        nuget install ChurchBulletin.UI -Version ${{ github.run_number }} -Source "https://nuget.pkg.github.com/dmarttinen/index.json" -Outputdirectory ./built/ 
+        nuget install ChurchBulletin.UI -Version ${{ github.run_number }} -Source "https://nuget.pkg.github.com/dmarttinen/index.json"
+        mv ChurchBulletin.UI.${{ github.run_number }} built
 
     - name: 'Build and push image'
       uses: azure/docker-login@v1
