@@ -8,7 +8,9 @@ on:
 
 env:
   BUILD_BUILDNUMBER: ${{ github.run_number }}
-
+  OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
+  OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
+  OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
 
 jobs:
   build:
@@ -68,5 +70,17 @@ jobs:
     - run: |
         docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/churchbulletin.ui:${{ github.run_number }}
         docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/churchbulletin.ui:${{ github.run_number }}
-          
+
+
+  TDD:
+    needs: dockerbuildandpush
+    runs-on: 'windows-latest'
+    steps:
+
+    - name: Create a release in Octopus Deploy
+      uses: OctopusDeploy/create-release-action@v3
+      with:
+        project: ${{ vars.OCTOPUS_PROJECT }}
+        git_ref: ${{ (github.ref_type == 'tag' && github.event.repository.default_branch ) || (github.head_ref || github.ref) }}
+        git_commit: ${{ github.event.after || github.event.pull_request.head.sha }}          
 
