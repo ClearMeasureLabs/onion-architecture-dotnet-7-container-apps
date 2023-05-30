@@ -94,6 +94,18 @@ jobs:
         progress: true 
         release_number: ${{ github.run_number }}
 
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Delete TDD resources
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.30.0
+        inlineScript: |
+          az group delete -n onion-architecture-dotnet-7-containers-tdd --yes
+        
   UAT:
     needs: TDD
     runs-on: 'windows-latest'
@@ -110,3 +122,20 @@ jobs:
         release_number: ${{ github.run_number }}
         environments: |
           TDD
+
+  Prod:
+    needs: UAT
+    runs-on: 'windows-latest'
+    steps:
+
+    - name: Deploy to Prod
+      uses: OctopusDeploy/deploy-release-action@v3
+      env:
+        OCTOPUS_API_KEY: ${{ secrets.API_KEY  }}
+        OCTOPUS_URL: ${{ secrets.SERVER }}
+        OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
+      with:
+        project: ${{ vars.OCTOPUS_PROJECT }}
+        release_number: ${{ github.run_number }}
+        environments: |
+          Prod
