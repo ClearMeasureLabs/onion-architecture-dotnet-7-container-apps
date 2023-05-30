@@ -106,7 +106,7 @@ jobs:
         OCTOPUS_URL: ${{ secrets.SERVER }}
         OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
       with:
-        project: 'MyProject'
+        project: ${{ vars.OCTOPUS_PROJECT }}
         release_number: ${{ github.run_number }}
         environments: |
           TDD
