@@ -96,6 +96,21 @@ jobs:
         progress: true 
         release_number: ${{ github.run_number }}
 
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Get container app url
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.30.0
+        inlineScript: |
+          az config set extension.use_dynamic_install=yes_without_prompt
+          $containerAppURL = az containerapp show --resource-group onion-architecture-dotnet-7-containers-tdd --name tdd-ui --query properties.configuration.ingress.fqdn
+          $containerAppURL = $containerAppURL -replace '"', ''
+          [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "Machine")
+
     - name: Download Acceptance Test Package
       run: |
         nuget sources Add -Name github -Source https://nuget.pkg.github.com/dmarttinen/index.json -UserName dmarttinen -Password ${{ secrets.PACKAGESAPI }}
