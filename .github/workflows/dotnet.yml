@@ -110,9 +110,10 @@ jobs:
         azcliversion: 2.30.0
         inlineScript: |
           az config set extension.use_dynamic_install=yes_without_prompt
-          $containerAppURL = az containerapp show --resource-group onion-architecture-dotnet-7-containers-tdd --name tdd-ui --query properties.configuration.ingress.fqdn
-          $containerAppURL = $containerAppURL -replace '"', ''
-          [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "Machine")
+          containerAppURL=$(az containerapp show --resource-group onion-architecture-dotnet-7-containers-tdd --name tdd-ui --query properties.configuration.ingress.fqdn)
+          containerAppURL=${containerAppURL//\"/}
+          export containerAppURL=$containerAppURL
+          
 
     - name: Download Acceptance Test Package
       run: |
