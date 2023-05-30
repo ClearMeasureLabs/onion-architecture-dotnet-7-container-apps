@@ -94,6 +94,11 @@ jobs:
         progress: true 
         release_number: ${{ github.run_number }}
 
+  Delete-TDD: 
+    needs: TDD
+    runs-on: 'ubuntu-latest'    
+    steps:
+       
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
       with:
@@ -114,8 +119,8 @@ jobs:
     - name: Deploy to UAT
       uses: OctopusDeploy/deploy-release-action@v3
       env:
-        OCTOPUS_API_KEY: ${{ secrets.API_KEY  }}
-        OCTOPUS_URL: ${{ secrets.SERVER }}
+        OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
+        OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
         OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
       with:
         project: ${{ vars.OCTOPUS_PROJECT }}
@@ -131,8 +136,8 @@ jobs:
     - name: Deploy to Prod
       uses: OctopusDeploy/deploy-release-action@v3
       env:
-        OCTOPUS_API_KEY: ${{ secrets.API_KEY  }}
-        OCTOPUS_URL: ${{ secrets.SERVER }}
+        OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
+        OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
         OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
       with:
         project: ${{ vars.OCTOPUS_PROJECT }}
