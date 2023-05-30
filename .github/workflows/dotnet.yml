@@ -91,7 +91,8 @@ jobs:
         git_ref: ${{ (github.ref_type == 'tag' && github.event.repository.default_branch ) || (github.head_ref || github.ref) }}
         git_commit: ${{ github.event.after || github.event.pull_request.head.sha }}     
         deploy_to: "TDD"   
-        progress: true  
+        progress: true 
+        release_number: ${{ github.run_number }}
 
   UAT:
     needs: TDD
