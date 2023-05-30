@@ -75,6 +75,8 @@ jobs:
     needs: dockerbuildandpush
     runs-on: 'windows-latest'
     steps:
+    - uses: browser-actions/setup-chrome@v1
+    - run: chrome --version 
 
     - name: Install Octopus CLI
       uses: OctopusDeploy/install-octopus-cli-action@v1
@@ -94,11 +96,26 @@ jobs:
         progress: true 
         release_number: ${{ github.run_number }}
 
+    - name: Download Acceptance Test Package
+      run: |
+        nuget sources Add -Name github -Source https://nuget.pkg.github.com/dmarttinen/index.json -UserName dmarttinen -Password ${{ secrets.PACKAGESAPI }}
+        nuget install ChurchBulletin.AcceptanceTests -Version ${{ github.run_number }} -Source "https://nuget.pkg.github.com/dmarttinen/index.json"
+
+    - name: Run tests
+      uses: microsoft/vstest-action@v1.0.0
+      with:
+        testAssembly: |
+          **\*AcceptanceTests.dll
+          !**\*TestAdapter.dll
+          !**\obj\**
+        searchFolder: ./tests/
+        runInParallel: true        
+
   Delete-TDD: 
     needs: TDD
     runs-on: 'ubuntu-latest'    
     steps:
-       
+
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
       with:
