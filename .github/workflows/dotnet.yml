@@ -108,7 +108,7 @@ jobs:
           **\*AcceptanceTests.dll
           !**\*TestAdapter.dll
           !**\obj\**
-        searchFolder: ./tests/
+        searchFolder: ./ChurchBulletin.AcceptanceTests.${{ github.run_number }}/
         runInParallel: true        
 
   Delete-TDD: 
