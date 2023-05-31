@@ -162,5 +162,5 @@ variable "registry_login_server" {
 }
 
 variable "az_location" {
-    value "westus" {}
+    value "southcentralus" {}
 }
