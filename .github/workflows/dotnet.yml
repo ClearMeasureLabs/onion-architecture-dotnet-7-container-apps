@@ -144,6 +144,7 @@ jobs:
           az group delete -n onion-architecture-dotnet-7-containers-tdd --yes
         
   UAT:
+    needs: TDD
     runs-on: 'windows-latest'
     steps:
 
