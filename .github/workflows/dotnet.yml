@@ -7,6 +7,7 @@ on:
     branches: [ "master" ]
 
 env:
+  BUILD_BUILDNUMBER: ${{ github.run_number }}
   OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
   OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
 
