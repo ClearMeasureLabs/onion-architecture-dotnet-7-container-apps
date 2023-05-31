@@ -161,7 +161,7 @@ jobs:
 
     - name: Get Container App URL
       run: |
-        Write-Host ${{ steps.Deploy-to-UAT.outputs.server_tasks }}
+        Write-Host ${{ steps.UAT.outputs.server_tasks }}
       shell: pwsh  
 
     - name: Wait-for-UAT
@@ -171,7 +171,7 @@ jobs:
         OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
         OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
       with:
-        server_task_id: ${{ fromJson(steps.Deploy-to-UAT.outputs.server_tasks[0].serverTaskId) }}
+        server_task_id: ${{ fromJson(steps.UAT.outputs.server_tasks[0].serverTaskId) }}
 
 
   Prod:
