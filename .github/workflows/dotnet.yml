@@ -124,22 +124,22 @@ jobs:
         searchFolder: ./ChurchBulletin.AcceptanceTests.${{ github.run_number }}/
         runInParallel: true 
 
-  Delete-TDD: 
-    needs: TDD
-    runs-on: 'ubuntu-latest'    
-    steps:
+  # Delete-TDD: 
+  #   needs: TDD
+  #   runs-on: 'ubuntu-latest'    
+  #   steps:
 
-    - name: 'Login via Azure CLI'
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+  #   - name: 'Login via Azure CLI'
+  #     uses: azure/login@v1
+  #     with:
+  #       creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Delete TDD resources
-      uses: azure/CLI@v1
-      with:
-        azcliversion: 2.30.0
-        inlineScript: |
-          az group delete -n onion-architecture-dotnet-7-containers-tdd --yes
+  #   - name: Delete TDD resources
+  #     uses: azure/CLI@v1
+  #     with:
+  #       azcliversion: 2.30.0
+  #       inlineScript: |
+  #         az group delete -n onion-architecture-dotnet-7-containers-tdd --yes
         
   UAT:
     needs: TDD
@@ -157,6 +157,11 @@ jobs:
         release_number: ${{ github.run_number }}
         environments: |
           UAT
+
+    - name: Get Container App URL
+      run: |
+        Write-Host ${{ steps.Deploy-to-UAT.outputs.server_tasks }}
+      shell: pwsh  
 
     - name: Wait-for-UAT
       uses: OctopusDeploy/await-task-action@v3
