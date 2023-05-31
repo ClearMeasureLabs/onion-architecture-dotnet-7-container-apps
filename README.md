@@ -324,11 +324,11 @@ The pipeline will build the application, create all of the resources in the TDD 
 - Select New repository secret to add secrets, or select the Variables tab, and New repository variable to add variables.
 
 ### Create Github Packages API key
-- Create a Github Personal Access Token that has **write:Packages** scope. Save the token for a repository secret.
+- Create a Github Personal Access Token that has **write:Packages** scope. Save the token for a repository secret, and for Octopus Deploy.
 
 ### Create an Azure Service Principal
 Using the az cli run:
-- az ad sp create-for-rbac --scope /subscriptions/**subscriptionid** --role Contributor --sdk-auth
+- az ad sp create-for-rbac --scope /subscriptions/subscriptionid --role Contributor --sdk-auth
 - replace **subscriptionid** with the id of your Azure subscription. Save the JSON output as it will be needed later.
 
 ### Create an API Key in Octopus Deploy
@@ -355,7 +355,19 @@ Variable: Value
 4. OWNER:                 The owner of the repository. 
 5. TDD_RESOURCE_GROUP:    Eqaul to the Octopus Deploy variable **ResourceGroupName** TDD value. default: onion-architecture-dotnet-7-containers-tdd
 6. TDD_APP_NAME:          Eqaul to the Octopus Deploy variable **container_app_name** TDD value. default: tdd-ui
-  
+
+## Connect Octopus to the Github Packages feed:
+
+- Navigate to Library -\> External Feeds and select ADD FEED
+- Set the Feed type to NuGet Feed
+- Name the feed Onion-Arch-DotNet-7
+- Paste in the URL of the Github Packages feed
+  1. The URL should be: https://nuget.pkg.github.com/owner/index.json
+  2. Replace **owner** with the owner of the repo
+- Set the Feed username to the github username of the user that created the PAT
+- Provide the personal access token from Github as the Feed Password
+
+
 # Build and Test
 TODO: Describe and show how to build your code and run the tests. 
 
