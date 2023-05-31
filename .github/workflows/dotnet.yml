@@ -148,6 +148,7 @@ jobs:
     steps:
 
     - name: Deploy-to-UAT
+      id: deploy-to-uat
       uses: OctopusDeploy/deploy-release-action@v3
       env:
         OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
@@ -161,7 +162,7 @@ jobs:
 
     - name: Get Container App URL
       run: |
-        Write-Host ${{ steps.UAT.outputs.task_id }}
+        Write-Host ${{ steps.deploy-to-uat.outputs.server_tasks }}
       shell: pwsh  
 
     - name: Wait-for-UAT
@@ -171,7 +172,7 @@ jobs:
         OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
         OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
       with:
-        server_task_id: ${{ steps.UAT.outputs.server_tasks[0].serverTaskId }}
+        server_task_id: ${{ steps.deploy-to-uat.outputs.server_tasks[0].serverTaskId }}
 
 
   Prod:
