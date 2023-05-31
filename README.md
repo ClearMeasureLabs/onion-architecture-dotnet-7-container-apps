@@ -344,7 +344,7 @@ Secret: Value
 4. REGISTRY_PASSWORD:	    The clientSecret from the JSON output from the service principal creation  
 5. PACKAGESAPI:           The Personal Access Token that was just created
 6. OCTOPUS_URL:           The URL of your Octopus Deploy instance. e.g. https://clearmeasure.octopus.app/
-7. OCO_API_KEY:           The value of the Octopus Deploy API key
+7. OCTO_API_KEY:          The value of the Octopus Deploy API key
   
 ### Create the following variables:
 
