@@ -172,7 +172,7 @@ jobs:
         OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
         OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
       with:
-        server_task_id: ${{ steps.deploy-to-uat.outputs.server_tasks[0].serverTaskId }}
+        server_task_id: ${{ fromJson(steps.deploy-to-uat.outputs.server_tasks)[0].serverTaskId }}
 
 
   Prod:
