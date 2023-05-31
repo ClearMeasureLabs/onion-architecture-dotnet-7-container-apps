@@ -1,7 +1,3 @@
-variable "az_location" {
-    value "southcentralus" {}
-}
-
 variable "DatabaseName" {
     value "oniondb" {
         environment = ["tdd"]
@@ -53,7 +49,7 @@ variable "EnsureEnvironmentsExist" {
         environment = ["tdd"]
     }
 
-    value "False" {
+    value "True" {
         description = ""
         environment = ["prod", "uat"]
     }
@@ -61,12 +57,6 @@ variable "EnsureEnvironmentsExist" {
 
 variable "container_image" {
     value "#{registry_login_server}/churchbulletin.ui:#{Octopus.Release.Number}" {
-        environment = ["tdd", "uat", "prod"]
-    }
-}
-
-variable "registry_login_server" {
-    value "onionarchitecturedotnet7containers.azurecr.io" {
         environment = ["tdd", "uat", "prod"]
     }
 }
@@ -101,12 +91,6 @@ variable "DatabaseEdition" {
 
 variable "DatabasePerformanceLevel" {
     value "Basic" {
-        description = ""
-    }
-}
-
-variable "ResourceGroupName" {
-    value "onion-architecture-dotnet-7-containers-#{Octopus.Environment.Name}" {
         description = ""
     }
 }
@@ -152,4 +136,20 @@ variable "az_login_appkey" {
 
 variable "az_login_tenant" {
     value "#{AzureAccount.TenantId}" {}
+}
+
+variable "registry_login_server" {
+    value "onioncontainers.azurecr.io" {
+        environment = ["tdd", "uat", "prod"]
+    }
+}
+
+variable "az_location" {
+    value "southcentralus" {}
+}
+
+variable "ResourceGroupName" {
+    value "onion-architecture-dotnet-7-containers-#{Octopus.Environment.Name}" {
+        description = ""
+    }
 }
