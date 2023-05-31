@@ -159,7 +159,7 @@ stages:
           scriptLocation: 'inlineScript'
           inlineScript: |
             az config set extension.use_dynamic_install=yes_without_prompt
-            $containerAppURL = az containerapp show --resource-group onion-architecture-dotnet-7-containers-tdd --name tdd-ui --query properties.configuration.ingress.fqdn
+            $containerAppURL = az containerapp show --resource-group $(TDDResourceGroup) --name $(TDDAppName) --query properties.configuration.ingress.fqdn
             $containerAppURL = $containerAppURL -replace '"', ''
             [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "Machine")
 
@@ -195,7 +195,7 @@ stages:
           scriptType: 'ps'
           scriptLocation: 'inlineScript'
           inlineScript: |
-            az group delete -n onion-architecture-dotnet-7-containers-tdd --yes
+            az group delete -n $(TDDResourceGroup) --yes
 
 - stage: 'UAT'
   displayName: 'UAT'
