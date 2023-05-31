@@ -153,6 +153,9 @@ In the Octopus Project navigate to Variables -\> Project
   - This loging server can be found in the Overview page of the container registry in the Azure Web Portal
 - Update **EnsureEnvironmentsExist** to True for Prod/UAT to ensure that all resources will be created the first time.
 
+Optional:
+- Update **ResourceGroupName** and/or **container_app_name** to names that match your naming convention. If the TDD values are changed, the TDDResourceGroup and/or TDDAppName variables in Azure DevOps must be changed to match.
+
 # Azure DevOps Setup:
 
 Create a new project
@@ -269,6 +272,8 @@ To create a service connection
     2. Create a variable called **OctoProjectGroup** with the value being the Project Group that houses your Octopus Project.
     3. Create a variable called **OctoProjectName** with the value being the name of your Octopus Project.
     4. Create a variable called **OctoSpace** with the value being the name of your Octopus Space.
+    5. Create a variable called **TDDAppName** with the value equaling the Octopus **container_app_name** variable TDD value. default is tdd-ui
+    6. Create a variable called **TDDResourceGroup** with the value equaling the Octopus **ResourceGroupName** variable TDD value. default is onion-architecture-dotnet-7-containers-tdd
 
 ![Alt text](images/variable%20group%202.png)
 
