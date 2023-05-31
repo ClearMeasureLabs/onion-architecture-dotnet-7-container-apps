@@ -7,7 +7,6 @@ on:
     branches: [ "master" ]
 
 env:
-  BUILD_BUILDNUMBER: ${{ github.run_number }}
   OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
   OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
 
@@ -35,7 +34,7 @@ jobs:
     - name: Push NuGet packages   
       run: |
         foreach($file in (Get-ChildItem ".\build\" -Recurse -Include *.nupkg)) {
-          dotnet nuget push $file --source "https://nuget.pkg.github.com/dmarttinen/index.json" --api-key ${{ secrets.PACKAGESAPI }}
+          dotnet nuget push $file --source "https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json" --api-key ${{ secrets.PACKAGESAPI }}
         }  
 
 
@@ -56,8 +55,8 @@ jobs:
 
     - name: Download UI Package
       run: |
-        nuget sources Add -Name github -Source https://nuget.pkg.github.com/dmarttinen/index.json -UserName dmarttinen -Password ${{ secrets.PACKAGESAPI }}
-        nuget install ChurchBulletin.UI -Version ${{ github.run_number }} -Source "https://nuget.pkg.github.com/dmarttinen/index.json"
+        nuget sources Add -Name github -Source https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json -UserName ${{ vars.USERNAME }} -Password ${{ secrets.PACKAGESAPI }}
+        nuget install ChurchBulletin.UI -Version ${{ github.run_number }} -Source "https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json"
         mv ChurchBulletin.UI.${{ github.run_number }} built
 
     - name: 'Build and push image'
@@ -106,15 +105,15 @@ jobs:
         Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi
         Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'
         az config set extension.use_dynamic_install=yes_without_prompt
-        $containerAppURL = az containerapp show --resource-group onion-architecture-dotnet-7-containers-tdd --name tdd-ui --query properties.configuration.ingress.fqdn
+        $containerAppURL = az containerapp show --resource-group ${{vars.TDD_RESOURCE_GROUP}} --name ${{vars.TDD_APP_NAME}} --query properties.configuration.ingress.fqdn
         $containerAppURL = $containerAppURL -replace '"', ''
         [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "Machine")
       shell: pwsh
 
     - name: Download Acceptance Test Package
       run: |
-        nuget sources Add -Name github -Source https://nuget.pkg.github.com/dmarttinen/index.json -UserName dmarttinen -Password ${{ secrets.PACKAGESAPI }}
-        nuget install ChurchBulletin.AcceptanceTests -Version ${{ github.run_number }} -Source "https://nuget.pkg.github.com/dmarttinen/index.json"
+        nuget sources Add -Name github -Source https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json -UserName ${{ vars.USERNAME }} -Password ${{ secrets.PACKAGESAPI }}
+        nuget install ChurchBulletin.AcceptanceTests -Version ${{ github.run_number }} -Source "https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json"
 
     - name: Run tests
       uses: microsoft/vstest-action@v1.0.0
@@ -141,7 +140,7 @@ jobs:
       with:
         azcliversion: 2.30.0
         inlineScript: |
-          az group delete -n onion-architecture-dotnet-7-containers-tdd --yes
+          az group delete -n ${{vars.TDD_RESOURCE_GROUP}} --yes
         
   UAT:
     needs: TDD
