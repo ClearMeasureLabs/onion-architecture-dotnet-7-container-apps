@@ -160,10 +160,10 @@ jobs:
         environments: |
           UAT
 
-    # - name: Get Container App URL
-    #   run: |
-    #     Write-Host ${{ steps.deploy-to-uat.outputs.server_tasks }}
-    #   shell: pwsh  
+    - name: Get Container App URL
+      run: |
+        Write-Host ${{ fromJson(steps.deploy-to-uat.outputs.server_tasks) }}
+      shell: pwsh  
 
     - name: Wait-for-UAT
       uses: OctopusDeploy/await-task-action@v3
