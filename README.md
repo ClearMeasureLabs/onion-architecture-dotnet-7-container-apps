@@ -318,8 +318,16 @@ The pipeline will build the application, create all of the resources in the TDD 
 
 # Github Actions Setup:
 
+## Create Repository Secrets and Variables
+
+### Create an Azure Service Principal
+
+Using the az cli run:
+- az ad sp create-for-rbac --scope /subscriptions/<subscription id> --role Contributor --sdk-auth
+replacing <subscription id> with the id of your Azure subscriptoin. Save the JSON output as it will be needed later.
 
 
+  
 # Build and Test
 TODO: Describe and show how to build your code and run the tests. 
 
