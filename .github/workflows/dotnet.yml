@@ -157,7 +157,7 @@ jobs:
         OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
       with:
         project: ${{ vars.OCTOPUS_PROJECT }}
-        release_number: 45
+        release_number: ${{ github.run_number }}
         environments: |
           UAT
 
