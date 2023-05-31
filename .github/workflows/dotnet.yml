@@ -162,7 +162,7 @@ jobs:
 
     - name: Get Container App URL
       run: |
-        Write-Host ${{ fromJson(steps.deploy-to-uat.outputs.server_tasks) }}
+        Write-Host ${{ fromJson(steps.deploy-to-uat.outputs.server_tasks)[0].serverTaskId }}
       shell: pwsh  
 
     - name: Wait-for-UAT
