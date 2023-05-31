@@ -8,7 +8,7 @@ on:
 
 env:
   BUILD_BUILDNUMBER: ${{ github.run_number }}
-  OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
+  OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY  }}
   OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
 
 jobs:
@@ -84,7 +84,7 @@ jobs:
     - name: Create release and deploy to TDD
       uses: OctopusDeploy/create-release-action@v1
       with:
-        api_key: ${{ secrets.OCTO_API_KEY  }}
+        api_key: ${{ secrets.OCTOPUS_API_KEY  }}
         server: ${{ secrets.OCTOPUS_URL }}
         space: ${{ vars.OCTOPUS_SPACE }}       
         project: ${{ vars.OCTOPUS_PROJECT }}
@@ -152,7 +152,7 @@ jobs:
       id: deploy-to-uat
       uses: OctopusDeploy/deploy-release-action@v3
       env:
-        OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
+        OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY  }}
         OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
         OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
       with:
@@ -164,7 +164,7 @@ jobs:
     - name: Wait-for-UAT
       uses: OctopusDeploy/await-task-action@v3
       env:
-        OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
+        OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY  }}
         OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
         OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
       with:
@@ -181,7 +181,7 @@ jobs:
       id: deploy-to-prod
       uses: OctopusDeploy/deploy-release-action@v3
       env:
-        OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
+        OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY  }}
         OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
         OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
       with:
@@ -193,7 +193,7 @@ jobs:
     - name: Wait-for-Prod
       uses: OctopusDeploy/await-task-action@v3
       env:
-        OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
+        OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY  }}
         OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
         OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
       with:
