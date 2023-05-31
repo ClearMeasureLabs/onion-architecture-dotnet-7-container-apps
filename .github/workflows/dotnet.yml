@@ -93,7 +93,7 @@ jobs:
         deploy_to: "TDD"   
         progress: true 
         release_number: ${{ github.run_number }}
-        deployment_timeout: 00:00:30
+        deployment_timeout: 00:30:00
         
 
     - name: 'Login via Azure CLI'
