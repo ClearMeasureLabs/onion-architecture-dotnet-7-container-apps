@@ -95,23 +95,6 @@ variable "DatabasePerformanceLevel" {
     }
 }
 
-variable "ResourceGroupName" {
-    value "onion-architecture-dotnet-7-containers" {
-        description = ""
-        environment = ["tdd"]
-    }
-
-    value "onion-architecture-dotnet-7-containers-UAT" {
-        description = ""
-        environment = ["uat"]
-    }
-
-    value "onion-architecture-dotnet-7-containers-Prod" {
-        description = ""
-        environment = ["prod"]
-    }
-}
-
 variable "container_app_name" {
     value "tdd-ui" {
         description = ""
@@ -163,4 +146,10 @@ variable "registry_login_server" {
 
 variable "az_location" {
     value "southcentralus" {}
+}
+
+variable "ResourceGroupName" {
+    value "onion-architecture-dotnet-7-containers-#{Octopus.Environment.Name}" {
+        description = ""
+    }
 }
