@@ -21,6 +21,15 @@ This project will create all of the required infrastructure in Azure programatic
   - [Create the Library Variable Group](#create-the-library-variable-group)
   - [Grant the pipeline access to the variable group](#grant-the-pipeline-access-to-the-variable-group)
   - [Create a Pipeline](#create-a-pipeline)
+- [Github Actions Setup:](#github-actions-setup)
+  - [Create Repository Secrets and Variables](#create-repository-secrets-and-variables)
+    - [Create Github Packages API key](#create-github-packages-api-key)
+    - [Create an Azure Service Principal](#create-an-azure-service-principal)
+    - [Create an API Key in Octopus Deploy](#create-an-api-key-in-octopus-deploy)
+    - [Create the following secrets:](#create-the-following-secrets)
+    - [Create the following variables:](#create-the-following-variables)
+  - [Connect Octopus to the Github Packages feed:](#connect-octopus-to-the-github-packages-feed)
+
 
 Requirements:
 
@@ -367,6 +376,7 @@ Variable: Value
 - Set the Feed username to the github username of the user that created the PAT
 - Provide the personal access token from Github as the Feed Password
 
+Push a commit to trigger Github Actions to run the pipeline.  
 
 # Build and Test
 TODO: Describe and show how to build your code and run the tests. 
