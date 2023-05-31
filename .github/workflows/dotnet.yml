@@ -169,6 +169,7 @@ jobs:
         OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
       with:
         server_task_id: ${{ fromJson(steps.deploy-to-uat.outputs.server_tasks)[0].serverTaskId }}
+        timeout_after: 1800
 
 
   Prod:
@@ -197,3 +198,4 @@ jobs:
         OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
       with:
         server_task_id: ${{ fromJson(steps.deploy-to-prod.outputs.server_tasks)[0].serverTaskId }}
+        timeout_after: 1800
