@@ -320,13 +320,41 @@ The pipeline will build the application, create all of the resources in the TDD 
 
 ## Create Repository Secrets and Variables
 
+- In the GitHub UI, navigate to your forked repository and select Security > Secrets and variables > Actions.
+- Select New repository secret to add secrets, or select the Variables tab, and New repository variable to add variables.
+
+### Create Github Packages API key
+- Create a Github Personal Access Token that has **write:Packages** scope. Save the token for a repository secret.
+
 ### Create an Azure Service Principal
-
 Using the az cli run:
-- az ad sp create-for-rbac --scope /subscriptions/<subscription id> --role Contributor --sdk-auth
-replacing <subscription id> with the id of your Azure subscriptoin. Save the JSON output as it will be needed later.
+- az ad sp create-for-rbac --scope /subscriptions/**subscriptionid** --role Contributor --sdk-auth
+- replace **subscriptionid** with the id of your Azure subscription. Save the JSON output as it will be needed later.
 
+### Create an API Key in Octopus Deploy
+In Octopus Deploy create an API key. Save the value for a repository secret. 
+([https://octopus.com/docs/octopus-rest-api/how-to-create-an-api-key](https://octopus.com/docs/octopus-rest-api/how-to-create-an-api-key))
+  
+### Create the following secrets:
 
+Secret: Value
+1. AZURE_CREDENTIALS:	    The entire JSON output from the service principal creation step
+2. REGISTRY_LOGIN_SERVER:	The login server name of your registry (all lowercase). Example: myregistry.azurecr.io
+3. REGISTRY_USERNAME:	    The clientId from the JSON output from the service principal creation
+4. REGISTRY_PASSWORD:	    The clientSecret from the JSON output from the service principal creation  
+5. PACKAGESAPI:           The Personal Access Token that was just created
+6. OCTOPUS_URL:           The URL of your Octopus Deploy instance. e.g. https://clearmeasure.octopus.app/
+7. OCO_API_KEY:           The value of the Octopus Deploy API key
+  
+### Create the following variables:
+
+Variable: Value
+1. OCTOPUS_PROJECT:       The name of your Octopus Deploy project
+2. OCTOPUS_SPACE:         The name of your Octopus Deploy space
+3. USERNAME:              The github username of the user that created the PAT
+4. OWNER:                 The owner of the repository. 
+5. TDD_RESOURCE_GROUP:    Eqaul to the Octopus Deploy variable **ResourceGroupName** TDD value. default: onion-architecture-dotnet-7-containers-tdd
+6. TDD_APP_NAME:          Eqaul to the Octopus Deploy variable **container_app_name** TDD value. default: tdd-ui
   
 # Build and Test
 TODO: Describe and show how to build your code and run the tests. 
