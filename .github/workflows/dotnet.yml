@@ -161,7 +161,7 @@ jobs:
 
     - name: Get Container App URL
       run: |
-        Write-Host ${{ steps.UAT.outputs.server_tasks }}
+        Write-Host ${{ steps.UAT.outputs.task_id }}
       shell: pwsh  
 
     - name: Wait-for-UAT
