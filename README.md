@@ -29,9 +29,15 @@ Requirements:
 - Azure DevOps
 - Github
 
+This project is configured to work with either Azure DevOps Pipelines or Github Actions. It cannot work with both at the same time.
+Follow all of the steps at the beginning of this document, then:
+- If using Azure DevOps, follow the steps in the [Azure DevOps Setup:](#azure-devops-setup) section, and instructions marked **AzDO**
+- If using Github Actions, follow the steps in the [Github Actions Setup:](#github-actions-setup) section, and instructions marked **GHA**
+
 # Github
 
-Fork the [onion-architecture-dotnet-7-container-apps](https://github.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps) repo
+- **AzDO** Fork the [onion-architecture-dotnet-7-container-apps](https://github.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps) repo
+- **GHA** Fork the (fill in repo here) repo. 
 
 # Azure
 
@@ -154,7 +160,7 @@ In the Octopus Project navigate to Variables -\> Project
 - Update **EnsureEnvironmentsExist** to True for Prod/UAT to ensure that all resources will be created the first time.
 
 Optional:
-- Update **ResourceGroupName** and/or **container_app_name** to names that match your naming convention. If the TDD values are changed, the TDDResourceGroup and/or TDDAppName variables in Azure DevOps must be changed to match.
+- Update **ResourceGroupName** and/or **container_app_name** to names that match your naming convention. If the TDD values are changed, the TDDResourceGroup and/or TDDAppName variables in Azure DevOps, or the **TDD_RESOURCE_GROUP** and/or **TDD_APP_NAME** variables in Github Actions must be changed to match.
 
 # Azure DevOps Setup:
 
@@ -309,6 +315,10 @@ To create a service connection
 ![Alt text](images/pipeline%203.png)
 
 The pipeline will build the application, create all of the resources in the TDD environment, deploy the app to TDD, test the app, then destroy the TDD resources. Then the Azure resources in UAT will be created, and the app will be deployed to TDD. Ultimately Prod resources will be created, and the app will be deployed to Prod
+
+# Github Actions Setup:
+
+
 
 # Build and Test
 TODO: Describe and show how to build your code and run the tests. 
