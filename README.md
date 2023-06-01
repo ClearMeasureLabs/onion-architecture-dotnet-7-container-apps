@@ -325,11 +325,11 @@ The pipeline will build the application, create all of the resources in the TDD 
 
 ## Create Repository Secrets and Variables
 
-- In the GitHub UI, navigate to your forked repository and select Security > Secrets and variables > Actions.
+- In the GitHub UI, navigate to your forked repository settings and select Security > Secrets and variables > Actions.
 - Select New repository secret to add secrets, or select the Variables tab, and New repository variable to add variables.
 
 ### Create Github Packages API key
-- Create a Github Personal Access Token that has **write:Packages** scope. Save the token for a repository secret, and for Octopus Deploy.
+- Create a classic Github Personal Access Token that has **write:Packages** scope. Save the token for a repository secret, and for Octopus Deploy. ([https://docs.github.com/en/enterprise-server@3.4/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token](https://docs.github.com/en/enterprise-server@3.4/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token))
 
 ### Create an Azure Service Principal
 Using the az cli run:
@@ -358,11 +358,11 @@ Variable: Value
 2. OCTOPUS_SPACE:         The name of your Octopus Deploy space
 3. USERNAME:              The github username of the user that created the PAT
 4. OWNER:                 The owner of the repository. 
-5. TDD_RESOURCE_GROUP:    Eqaul to the Octopus Deploy variable **ResourceGroupName** TDD value. default: onion-architecture-dotnet-7-containers-tdd
-6. TDD_APP_NAME:          Eqaul to the Octopus Deploy variable **container_app_name** TDD value. default: tdd-ui
+5. TDD_RESOURCE_GROUP:    Equal to the Octopus Deploy variable **ResourceGroupName** TDD value. default: onion-architecture-dotnet-7-containers-tdd
+6. TDD_APP_NAME:          Equal to the Octopus Deploy variable **container_app_name** TDD value. default: tdd-ui
 
 ## Connect Octopus to the Github Packages feed:
-
+In Octopus Deploy:
 - Navigate to Library -\> External Feeds and select ADD FEED
 - Set the Feed type to NuGet Feed
 - Name the feed Onion-Arch-DotNet-7
@@ -371,6 +371,10 @@ Variable: Value
   2. Replace **owner** with the owner of the repo
 - Set the Feed username to the github username of the user that created the PAT
 - Provide the personal access token from Github as the Feed Password
+
+## Enable Github Actions Workflows
+In the forked Github repository, navigate to Actions. Select *I understand my workflows, go ahead and enable them*
+
 
 Push a commit to trigger Github Actions to run the pipeline.  
 
