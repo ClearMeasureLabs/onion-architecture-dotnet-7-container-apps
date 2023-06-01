@@ -46,7 +46,7 @@ Follow all of the steps at the beginning of this document, then:
 # Github
 
 - **AzDO** Fork the [onion-architecture-dotnet-7-container-apps](https://github.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps) repo
-- **GHA** Fork the (fill in repo here) repo. 
+- **GHA** Fork the [onion-architecture-dotnet-7-container-apps-github-actions](https://github.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps-github-actions) repo. 
 
 # Azure
 
