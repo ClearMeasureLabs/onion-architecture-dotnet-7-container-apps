@@ -40,13 +40,11 @@ Requirements:
 
 This project is configured to work with either Azure DevOps Pipelines or Github Actions. It cannot work with both at the same time.
 Follow all of the steps at the beginning of this document, then:
-- If using Azure DevOps, follow the steps in the [Azure DevOps Setup:](#azure-devops-setup) section, and instructions marked **AzDO**
-- If using Github Actions, follow the steps in the [Github Actions Setup:](#github-actions-setup) section, and instructions marked **GHA**
+- If using Azure DevOps, follow the steps in the [Azure DevOps Setup:](#azure-devops-setup) section
+- If using Github Actions, follow the steps in the [Github Actions Setup:](#github-actions-setup) section
 
 # Github
-
-- **AzDO** Fork the [onion-architecture-dotnet-7-container-apps](https://github.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps) repo
-- **GHA** Fork the [onion-architecture-dotnet-7-container-apps-github-actions](https://github.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps-github-actions) repo. 
+Fork the [onion-architecture-dotnet-7-container-apps](https://github.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps) repo
 
 # Azure
 
