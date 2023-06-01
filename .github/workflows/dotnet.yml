@@ -4,7 +4,12 @@ on:
   push:
     branches: [ "*" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "main" ]
+
+env:
+  BUILD_BUILDNUMBER: ${{ github.run_number }}
+  OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
+  OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
 
 jobs:
   build:
@@ -23,5 +28,174 @@ jobs:
         dotnet-version: 6.0.x
     - name: Build Script
       run: |
+        [System.Environment]::SetEnvironmentVariable('Version','${{ github.run_number }}')
         . .\build.ps1 ; CIBuild
 
+
+    - name: Push NuGet packages   
+      run: |
+        foreach($file in (Get-ChildItem ".\build\" -Recurse -Include *.nupkg)) {
+          dotnet nuget push $file --source "https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json" --api-key ${{ secrets.PACKAGESAPI }}
+        }  
+
+
+  dockerbuildandpush:
+    needs: build
+
+    runs-on: 'ubuntu-latest'
+
+    steps:
+
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@main
+
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Download UI Package
+      run: |
+        nuget sources Add -Name github -Source https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json -UserName ${{ vars.USERNAME }} -Password ${{ secrets.PACKAGESAPI }}
+        nuget install ChurchBulletin.UI -Version ${{ github.run_number }} -Source "https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json"
+        mv ChurchBulletin.UI.${{ github.run_number }} built
+
+    - name: 'Build and push image'
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+    - run: |
+        docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/churchbulletin.ui:${{ github.run_number }}
+        docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/churchbulletin.ui:${{ github.run_number }}
+
+
+  TDD:
+    needs: dockerbuildandpush
+    runs-on: 'windows-latest'
+    steps: 
+
+    - name: Install Octopus CLI
+      uses: OctopusDeploy/install-octopus-cli-action@v1
+      with:
+        version: latest
+
+    - name: Create release and deploy to TDD
+      uses: OctopusDeploy/create-release-action@v1
+      with:
+        api_key: ${{ secrets.OCTO_API_KEY  }}
+        server: ${{ secrets.OCTOPUS_URL }}
+        space: ${{ vars.OCTOPUS_SPACE }}       
+        project: ${{ vars.OCTOPUS_PROJECT }}
+        git_ref: ${{ (github.ref_type == 'tag' && github.event.repository.default_branch ) || (github.head_ref || github.ref) }}
+        git_commit: ${{ github.event.after || github.event.pull_request.head.sha }}     
+        deploy_to: "TDD"   
+        progress: true 
+        release_number: ${{ github.run_number }}
+        deployment_timeout: 00:30:00
+        
+
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Get Container App URL
+      run: |
+        Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi
+        Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'
+        az config set extension.use_dynamic_install=yes_without_prompt
+        $containerAppURL = az containerapp show --resource-group ${{vars.TDD_RESOURCE_GROUP}} --name ${{vars.TDD_APP_NAME}} --query properties.configuration.ingress.fqdn
+        $containerAppURL = $containerAppURL -replace '"', ''
+        [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "Machine")
+      shell: pwsh
+
+    - name: Download Acceptance Test Package
+      run: |
+        nuget sources Add -Name github -Source https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json -UserName ${{ vars.USERNAME }} -Password ${{ secrets.PACKAGESAPI }}
+        nuget install ChurchBulletin.AcceptanceTests -Version ${{ github.run_number }} -Source "https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json"
+
+    - name: Run tests
+      uses: microsoft/vstest-action@v1.0.0
+      with:
+        testAssembly: |
+          **\*AcceptanceTests.dll
+          !**\*TestAdapter.dll
+          !**\obj\**
+        searchFolder: ./ChurchBulletin.AcceptanceTests.${{ github.run_number }}/
+        runInParallel: true 
+
+  Delete-TDD: 
+    needs: TDD
+    runs-on: 'ubuntu-latest'    
+    steps:
+
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Delete TDD resources
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.30.0
+        inlineScript: |
+          az group delete -n ${{vars.TDD_RESOURCE_GROUP}} --yes
+        
+  UAT:
+    needs: TDD
+    runs-on: 'windows-latest'
+    steps:
+
+    - name: Deploy-to-UAT
+      id: deploy-to-uat
+      uses: OctopusDeploy/deploy-release-action@v3
+      env:
+        OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
+        OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
+        OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
+      with:
+        project: ${{ vars.OCTOPUS_PROJECT }}
+        release_number: ${{ github.run_number }}
+        environments: |
+          UAT
+
+    - name: Wait-for-UAT
+      uses: OctopusDeploy/await-task-action@v3
+      env:
+        OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
+        OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
+        OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
+      with:
+        server_task_id: ${{ fromJson(steps.deploy-to-uat.outputs.server_tasks)[0].serverTaskId }}
+        timeout_after: 1800
+
+
+  Prod:
+    needs: UAT
+    runs-on: 'windows-latest'
+    steps:
+
+    - name: Deploy-to-Prod
+      id: deploy-to-prod
+      uses: OctopusDeploy/deploy-release-action@v3
+      env:
+        OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
+        OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
+        OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
+      with:
+        project: ${{ vars.OCTOPUS_PROJECT }}
+        release_number: ${{ github.run_number }}
+        environments: |
+          Prod
+
+    - name: Wait-for-Prod
+      uses: OctopusDeploy/await-task-action@v3
+      env:
+        OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
+        OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
+        OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
+      with:
+        server_task_id: ${{ fromJson(steps.deploy-to-prod.outputs.server_tasks)[0].serverTaskId }}
+        timeout_after: 1800
