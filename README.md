@@ -39,13 +39,12 @@ Requirements:
 - Github
 
 This project is configured to work with either Azure DevOps Pipelines or Github Actions. It cannot work with both at the same time.
-Follow all of the steps at the beginning of this document, then:
+Follow the [Github](#github),[Azure](#azure),[Octopus Deploy Environment Setup:](#octopus-deploy-environment-setup) and [Octopus Deploy Project Setup:](#octopus-deploy-project-setup) steps at the beginning of this document, then:
 - If using Azure DevOps, follow the steps in the [Azure DevOps Setup:](#azure-devops-setup) section
 - If using Github Actions, follow the steps in the [Github Actions Setup:](#github-actions-setup) section
-
+ 
 # Github
 Fork the [onion-architecture-dotnet-7-container-apps](https://github.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps) repo
-
 # Azure
 
 ## Create an Azure Container Registry
