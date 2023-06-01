@@ -153,7 +153,6 @@ Create Git Credentials using the GitHub Personal Access Token
       1. Skip the "How do you intend to use this project" popup
 4. Set the Git Repository URL to the URL of the forked repo
 5. Use the Library Git Credentials that were created earlier
-6. Change the default branch to 'master'
 
 ![Alt text](images/new%20version%20controlled%20project%202.png)
 
