@@ -21,6 +21,15 @@ This project will create all of the required infrastructure in Azure programatic
   - [Create the Library Variable Group](#create-the-library-variable-group)
   - [Grant the pipeline access to the variable group](#grant-the-pipeline-access-to-the-variable-group)
   - [Create a Pipeline](#create-a-pipeline)
+- [Github Actions Setup:](#github-actions-setup)
+  - [Create Repository Secrets and Variables](#create-repository-secrets-and-variables)
+    - [Create Github Packages API key](#create-github-packages-api-key)
+    - [Create an Azure Service Principal](#create-an-azure-service-principal)
+    - [Create an API Key in Octopus Deploy](#create-an-api-key-in-octopus-deploy)
+    - [Create the following secrets:](#create-the-following-secrets)
+    - [Create the following variables:](#create-the-following-variables)
+  - [Connect Octopus to the Github Packages feed:](#connect-octopus-to-the-github-packages-feed)
+
 
 Requirements:
 
@@ -29,9 +38,15 @@ Requirements:
 - Azure DevOps
 - Github
 
+This project is configured to work with either Azure DevOps Pipelines or Github Actions. It cannot work with both at the same time.
+Follow all of the steps at the beginning of this document, then:
+- If using Azure DevOps, follow the steps in the [Azure DevOps Setup:](#azure-devops-setup) section, and instructions marked **AzDO**
+- If using Github Actions, follow the steps in the [Github Actions Setup:](#github-actions-setup) section, and instructions marked **GHA**
+
 # Github
 
-Fork the [onion-architecture-dotnet-7-container-apps](https://github.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps) repo
+- **AzDO** Fork the [onion-architecture-dotnet-7-container-apps](https://github.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps) repo
+- **GHA** Fork the [onion-architecture-dotnet-7-container-apps-github-actions](https://github.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps-github-actions) repo. 
 
 # Azure
 
@@ -138,7 +153,6 @@ Create Git Credentials using the GitHub Personal Access Token
       1. Skip the "How do you intend to use this project" popup
 4. Set the Git Repository URL to the URL of the forked repo
 5. Use the Library Git Credentials that were created earlier
-6. Change the default branch to 'master'
 
 ![Alt text](images/new%20version%20controlled%20project%202.png)
 
@@ -154,7 +168,7 @@ In the Octopus Project navigate to Variables -\> Project
 - Update **EnsureEnvironmentsExist** to True for Prod/UAT to ensure that all resources will be created the first time.
 
 Optional:
-- Update **ResourceGroupName** and/or **container_app_name** to names that match your naming convention. If the TDD values are changed, the TDDResourceGroup and/or TDDAppName variables in Azure DevOps must be changed to match.
+- Update **ResourceGroupName** and/or **container_app_name** to names that match your naming convention. If the TDD values are changed, the TDDResourceGroup and/or TDDAppName variables in Azure DevOps, or the **TDD_RESOURCE_GROUP** and/or **TDD_APP_NAME** variables in Github Actions must be changed to match.
 
 # Azure DevOps Setup:
 
@@ -309,6 +323,59 @@ To create a service connection
 ![Alt text](images/pipeline%203.png)
 
 The pipeline will build the application, create all of the resources in the TDD environment, deploy the app to TDD, test the app, then destroy the TDD resources. Then the Azure resources in UAT will be created, and the app will be deployed to TDD. Ultimately Prod resources will be created, and the app will be deployed to Prod
+
+# Github Actions Setup:
+
+## Create Repository Secrets and Variables
+
+- In the GitHub UI, navigate to your forked repository and select Security > Secrets and variables > Actions.
+- Select New repository secret to add secrets, or select the Variables tab, and New repository variable to add variables.
+
+### Create Github Packages API key
+- Create a Github Personal Access Token that has **write:Packages** scope. Save the token for a repository secret, and for Octopus Deploy.
+
+### Create an Azure Service Principal
+Using the az cli run:
+- az ad sp create-for-rbac --scope /subscriptions/subscriptionid --role Contributor --sdk-auth
+- replace **subscriptionid** with the id of your Azure subscription. Save the JSON output as it will be needed later.
+
+### Create an API Key in Octopus Deploy
+In Octopus Deploy create an API key. Save the value for a repository secret. 
+([https://octopus.com/docs/octopus-rest-api/how-to-create-an-api-key](https://octopus.com/docs/octopus-rest-api/how-to-create-an-api-key))
+  
+### Create the following secrets:
+
+Secret: Value
+1. AZURE_CREDENTIALS:	    The entire JSON output from the service principal creation step
+2. REGISTRY_LOGIN_SERVER:	The login server name of your registry (all lowercase). Example: myregistry.azurecr.io
+3. REGISTRY_USERNAME:	    The clientId from the JSON output from the service principal creation
+4. REGISTRY_PASSWORD:	    The clientSecret from the JSON output from the service principal creation  
+5. PACKAGESAPI:           The Personal Access Token that was just created
+6. OCTOPUS_URL:           The URL of your Octopus Deploy instance. e.g. https://clearmeasure.octopus.app/
+7. OCTO_API_KEY:          The value of the Octopus Deploy API key
+  
+### Create the following variables:
+
+Variable: Value
+1. OCTOPUS_PROJECT:       The name of your Octopus Deploy project
+2. OCTOPUS_SPACE:         The name of your Octopus Deploy space
+3. USERNAME:              The github username of the user that created the PAT
+4. OWNER:                 The owner of the repository. 
+5. TDD_RESOURCE_GROUP:    Eqaul to the Octopus Deploy variable **ResourceGroupName** TDD value. default: onion-architecture-dotnet-7-containers-tdd
+6. TDD_APP_NAME:          Eqaul to the Octopus Deploy variable **container_app_name** TDD value. default: tdd-ui
+
+## Connect Octopus to the Github Packages feed:
+
+- Navigate to Library -\> External Feeds and select ADD FEED
+- Set the Feed type to NuGet Feed
+- Name the feed Onion-Arch-DotNet-7
+- Paste in the URL of the Github Packages feed
+  1. The URL should be: https://nuget.pkg.github.com/owner/index.json
+  2. Replace **owner** with the owner of the repo
+- Set the Feed username to the github username of the user that created the PAT
+- Provide the personal access token from Github as the Feed Password
+
+Push a commit to trigger Github Actions to run the pipeline.  
 
 # Build and Test
 TODO: Describe and show how to build your code and run the tests. 
