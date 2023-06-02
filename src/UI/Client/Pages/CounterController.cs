@@ -16,7 +16,7 @@ public class CounterController : ControllerComponentBase<CounterView>
 
     private void IncrementCount()
     {
-        _currentCount++;
+        _currentCount+=2;
         View.Model = _currentCount;
     }
 }
