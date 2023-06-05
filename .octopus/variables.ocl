@@ -49,13 +49,13 @@ variable "connection_string" {
 }
 
 variable "EnsureEnvironmentsExist" {
-    value "True" {
-        environment = ["tdd"]
-    }
-
     value "False" {
         description = ""
         environment = ["prod", "uat"]
+    }
+
+    value "True" {
+        environment = ["tdd"]
     }
 }
 
@@ -105,12 +105,6 @@ variable "DatabasePerformanceLevel" {
     }
 }
 
-variable "ResourceGroupName" {
-    value "onion-architecture-dotnet-7-containers-#{Octopus.Environment.Name}" {
-        description = ""
-    }
-}
-
 variable "container_app_name" {
     value "tdd-ui" {
         description = ""
@@ -152,4 +146,16 @@ variable "az_login_appkey" {
 
 variable "az_login_tenant" {
     value "#{AzureAccount.TenantId}" {}
+}
+
+variable "ResourceGroupName" {
+    value "onion-architecture-dotnet-7-containers-#{Octopus.Environment.Name}" {
+        description = ""
+        environment = ["uat", "prod"]
+    }
+
+    value "onion-architecture-dotnet-7-containers-TDD-#{Octopus.Release.Number}" {
+        description = ""
+        environment = ["tdd"]
+    }
 }
