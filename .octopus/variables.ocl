@@ -151,6 +151,11 @@ variable "az_login_tenant" {
 variable "ResourceGroupName" {
     value "onion-architecture-dotnet-7-containers-#{Octopus.Environment.Name}" {
         description = ""
+        environment = ["uat", "prod"]
+    }
+
+    value "onion-architecture-dotnet-7-containers-TDD-#{Octopus.Release.Number}" {
+        description = ""
         environment = ["tdd"]
     }
 }
