@@ -157,7 +157,7 @@ stages:
           scriptLocation: 'inlineScript'
           inlineScript: |
             az config set extension.use_dynamic_install=yes_without_prompt
-            $containerAppURL = az containerapp show --resource-group $(TDDResourceGroup) --name $(TDDAppName) --query properties.configuration.ingress.fqdn
+            $containerAppURL = az containerapp show --resource-group $(TDDResourceGroup)-$(Build.BuildNumber) --name $(TDDAppName) --query properties.configuration.ingress.fqdn
             $containerAppURL = $containerAppURL -replace '"', ''
             [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "Machine")
 
@@ -193,7 +193,7 @@ stages:
           scriptType: 'ps'
           scriptLocation: 'inlineScript'
           inlineScript: |
-            az group delete -n $(TDDResourceGroup) --yes
+            az group delete -n $(TDDResourceGroup)-$(Build.BuildNumber) --yes
 
 - stage: 'UAT'
   displayName: 'UAT'
