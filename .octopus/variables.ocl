@@ -122,20 +122,6 @@ variable "container_app_name" {
     }
 }
 
-variable "DatabaseServerName" {
-    value "#{az_login_appid}-sqlserver-prod" {
-        environment = ["prod"]
-    }
-
-    value "#{az_login_appid}-sqlserver-uat" {
-        environment = ["uat"]
-    }
-
-    value "#{az_login_appid}-sqlserver" {
-        environment = ["tdd"]
-    }
-}
-
 variable "az_login_appid" {
     value "#{AzureAccount.Client}" {}
 }
@@ -156,6 +142,20 @@ variable "ResourceGroupName" {
 
     value "onion-architecture-dotnet-7-containers-TDD-#{Octopus.Release.Number}" {
         description = ""
+        environment = ["tdd"]
+    }
+}
+
+variable "DatabaseServerName" {
+    value "#{Octopus.Action[Get Container App FQDN].Output.AzureRMOutputs[databaseserverName]}" {
+        environment = ["prod"]
+    }
+
+    value "#{Octopus.Action[Get Container App FQDN].Output.AzureRMOutputs[databaseserverName]}" {
+        environment = ["uat"]
+    }
+
+    value "#{Octopus.Action[Get Container App FQDN].Output.AzureRMOutputs[databaseserverName]}" {
         environment = ["tdd"]
     }
 }
