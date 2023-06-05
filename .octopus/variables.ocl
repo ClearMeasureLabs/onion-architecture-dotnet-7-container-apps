@@ -147,5 +147,5 @@ variable "ResourceGroupName" {
 }
 
 variable "DatabaseServerName" {
-    value "#{Octopus.Action[Get Container App FQDN].Output.AzureRMOutputs[databaseserverName]}" {}
+    value "#{Octopus.Action[Create AZ DB].Output.AzureRMOutputs[databaseserverName]}" {}
 }
