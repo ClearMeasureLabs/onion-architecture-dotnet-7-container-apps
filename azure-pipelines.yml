@@ -148,41 +148,18 @@ stages:
           GitRef: '$(branch)'
           DeployToEnvironment: 'TDD'
           DeploymentProgress: true
-          AdditionalArguments: '--deploymenttimeout=00:30:00'
+          AdditionalArguments: '--deploymenttimeout=00:30:00' 
 
-      # - task: PowerShell@2
-      #   name: 'Retrieve Container App URL'
-      #   inputs:
-      #     targetType: 'filePath'
-      #     filePath: './get-octo-var.ps1'
-      #     arguments: >
-            # -octopusURL $(OctoURL) 
-            # -octopusAPIKey $(OctoAPIKey) 
-            # -projectName $(OctoProjectName) 
-            # -spaceName $(OctoSpace) 
-            # -varName "containerAppURL"
-            # -environment $null 
-            # -gitRefOrBranchName $(Build.SourceBranchName)
-
-      - task: PowerShell@2
-        name: Retrieve_ContainerApp_URL
+      - task: AzureCLI@2
         inputs:
-          targetType: 'inline'
-          script: |
-            $containerAppURL = $(.\get-octo-var.ps1 -octopusURL $(OctoURL) -octopusAPIKey $(OctoAPIKey) -projectName $(OctoProjectName) -spaceName $(OctoSpace) -varName "containerAppURL" -environment $null -gitRefOrBranchName $(Build.SourceBranchName))
+          azureSubscription: 'dotnet-7-containerapp'
+          scriptType: 'ps'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            az config set extension.use_dynamic_install=yes_without_prompt
+            $containerAppURL = az containerapp show --resource-group $(TDDResourceGroup) --name $(TDDAppName) --query properties.configuration.ingress.fqdn
             $containerAppURL = $containerAppURL -replace '"', ''
-            [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "Machine")     
-
-      # - task: AzureCLI@2
-      #   inputs:
-      #     azureSubscription: 'dotnet-7-containerapp'
-      #     scriptType: 'ps'
-      #     scriptLocation: 'inlineScript'
-      #     inlineScript: |
-      #       az config set extension.use_dynamic_install=yes_without_prompt
-      #       $containerAppURL = az containerapp show --resource-group $(TDDResourceGroup) --name $(TDDAppName) --query properties.configuration.ingress.fqdn
-      #       $containerAppURL = $containerAppURL -replace '"', ''
-      #       [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "Machine")
+            [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "Machine")
 
       - task: DownloadPackage@1
         displayName: 'Download Acceptance Test Package'
@@ -216,8 +193,7 @@ stages:
           scriptType: 'ps'
           scriptLocation: 'inlineScript'
           inlineScript: |
-            $resourceGroupName = $(.\get-octo-var.ps1 -octopusURL $(OctoURL) -octopusAPIKey $(OctoAPIKey) -projectName $(OctoProjectName) -spaceName $(OctoSpace) -varName "ResourceGroupName" -environment "TDD" -gitRefOrBranchName $(Build.SourceBranchName))
-            az group delete -n $resourceGroupName --yes
+            az group delete -n $(TDDResourceGroup) --yes
 
 - stage: 'UAT'
   displayName: 'UAT'
