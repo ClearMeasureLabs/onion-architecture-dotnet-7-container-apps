@@ -105,12 +105,6 @@ variable "DatabasePerformanceLevel" {
     }
 }
 
-variable "ResourceGroupName" {
-    value "onion-architecture-dotnet-7-containers-#{Octopus.Environment.Name}" {
-        description = ""
-    }
-}
-
 variable "container_app_name" {
     value "tdd-ui" {
         description = ""
@@ -152,4 +146,11 @@ variable "az_login_appkey" {
 
 variable "az_login_tenant" {
     value "#{AzureAccount.TenantId}" {}
+}
+
+variable "ResourceGroupName" {
+    value "onion-architecture-dotnet-7-containers-#{Octopus.Environment.Name}" {
+        description = ""
+        environment = ["tdd"]
+    }
 }
