@@ -10,6 +10,8 @@ env:
   BUILD_BUILDNUMBER: ${{ github.run_number }}
   OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
   OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
+  TDD_RESOURCE_GROUP: onion-architecture-dotnet-7-containers-TDD
+  TDD_APP_NAME: tdd-ui
 
 jobs:
   build:
@@ -94,6 +96,11 @@ jobs:
         progress: true 
         release_number: ${{ github.run_number }}
         deployment_timeout: 00:30:00
+        variable: |
+          ResourceGroupName:${{env.TDD_RESOURCE_GROUP}}-${{env.BUILD_BUILDNUMBER}}
+          container_app_name:${{env.TDD_APP_NAME}}
+          
+
         
 
     - name: 'Login via Azure CLI'
@@ -106,7 +113,7 @@ jobs:
         Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi
         Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'
         az config set extension.use_dynamic_install=yes_without_prompt
-        $containerAppURL = az containerapp show --resource-group ${{vars.TDD_RESOURCE_GROUP}}-${{env.BUILD_BUILDNUMBER}} --name ${{vars.TDD_APP_NAME}} --query properties.configuration.ingress.fqdn
+        $containerAppURL = az containerapp show --resource-group ${{env.TDD_RESOURCE_GROUP}}-${{env.BUILD_BUILDNUMBER}} --name ${{env.TDD_APP_NAME}} --query properties.configuration.ingress.fqdn
         $containerAppURL = $containerAppURL -replace '"', ''
         [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "Machine")
       shell: pwsh
@@ -141,7 +148,7 @@ jobs:
       with:
         azcliversion: 2.30.0
         inlineScript: |
-          az group delete -n ${{vars.TDD_RESOURCE_GROUP}}-${{env.BUILD_BUILDNUMBER}} --yes
+          az group delete -n ${{env.TDD_RESOURCE_GROUP}}-${{env.BUILD_BUILDNUMBER}} --yes
         
   UAT:
     needs: TDD
