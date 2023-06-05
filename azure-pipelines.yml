@@ -165,7 +165,7 @@ stages:
             # -gitRefOrBranchName $(Build.SourceBranchName)
 
       - task: PowerShell@2
-        name: Retrieve ContainerAPP URL
+        name: Retrieve_ContainerApp_URL
         inputs:
           targetType: 'inline'
           script: |
