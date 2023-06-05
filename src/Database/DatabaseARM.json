@@ -52,17 +52,15 @@
       "metadata": {
         "description": "Describes the performance level for Edition"
       }
-    },
-    "databaseserverName": {
-      "type": "string"
     }
   },
   "variables": {
-    "resourceGroupUniqueString": "[uniqueString(resourceGroup().id,resourceGroup().location,subscription().subscriptionId)]"
+    "resourceGroupUniqueString": "[uniqueString(resourceGroup().id,resourceGroup().location,subscription().subscriptionId)]",
+    "databaseserverName": "[concat('databaseserver', variables('resourceGroupUniqueString'))]"
   },
   "resources": [
     {
-      "name": "[parameters('databaseserverName')]",
+      "name": "[variables('databaseserverName')]",
       "type": "Microsoft.Sql/servers",
       "location": "[resourceGroup().location]",
       "apiVersion": "2014-04-01-preview",
@@ -110,9 +108,9 @@
     }
   ],
   "outputs": {
-    "resourceGroupUniqueString": {
+    "databaseserverName": {
       "type": "string",
-      "value": "[variables('resourceGroupUniqueString')]"
+      "value": "[variables('databaseserverName')]"
     }
   }
 }
