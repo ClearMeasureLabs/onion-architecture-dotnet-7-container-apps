@@ -147,15 +147,5 @@ variable "ResourceGroupName" {
 }
 
 variable "DatabaseServerName" {
-    value "#{Octopus.Action[Get Container App FQDN].Output.AzureRMOutputs[databaseserverName]}" {
-        environment = ["prod"]
-    }
-
-    value "#{Octopus.Action[Get Container App FQDN].Output.AzureRMOutputs[databaseserverName]}" {
-        environment = ["uat"]
-    }
-
-    value "#{Octopus.Action[Get Container App FQDN].Output.AzureRMOutputs[databaseserverName]}" {
-        environment = ["tdd"]
-    }
+    value "#{Octopus.Action[Get Container App FQDN].Output.AzureRMOutputs[databaseserverName]}" {}
 }
