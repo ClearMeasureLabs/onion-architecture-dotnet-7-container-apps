@@ -53,7 +53,7 @@ variable "EnsureEnvironmentsExist" {
         environment = ["tdd"]
     }
 
-    value "True" {
+    value "False" {
         description = ""
         environment = ["prod", "uat"]
     }
@@ -116,7 +116,7 @@ variable "container_app_name" {
         environment = ["prod"]
     }
 
-    value "tdd-ui" {
+    value "t" {
         description = ""
         environment = ["tdd"]
 
@@ -145,7 +145,7 @@ variable "ResourceGroupName" {
         environment = ["uat", "prod"]
     }
 
-    value "onion-architecture-dotnet-7-containers-TDD-#{Octopus.Release.Number}" {
+    value "onio" {
         description = ""
         environment = ["tdd"]
 
