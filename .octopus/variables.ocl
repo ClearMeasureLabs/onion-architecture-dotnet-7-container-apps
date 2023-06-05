@@ -106,11 +106,6 @@ variable "DatabasePerformanceLevel" {
 }
 
 variable "container_app_name" {
-    value "tdd-ui" {
-        description = ""
-        environment = ["tdd"]
-    }
-
     value "uat-ui" {
         description = ""
         environment = ["uat"]
@@ -119,6 +114,16 @@ variable "container_app_name" {
     value "prod-ui" {
         description = ""
         environment = ["prod"]
+    }
+
+    value "tdd-ui" {
+        description = ""
+        environment = ["tdd"]
+
+        prompt {
+            description = ""
+            label = "Name of the TDD UI container app"
+        }
     }
 }
 
@@ -143,6 +148,11 @@ variable "ResourceGroupName" {
     value "onion-architecture-dotnet-7-containers-TDD-#{Octopus.Release.Number}" {
         description = ""
         environment = ["tdd"]
+
+        prompt {
+            description = ""
+            label = "Name of the TDD resource group"
+        }
     }
 }
 
