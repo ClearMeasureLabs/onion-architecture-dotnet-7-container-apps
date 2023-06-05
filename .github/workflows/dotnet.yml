@@ -96,7 +96,7 @@ jobs:
         progress: true 
         release_number: ${{ github.run_number }}
         deployment_timeout: 00:30:00
-        variable: |
+        variables: |
           ResourceGroupName:${{env.TDD_RESOURCE_GROUP}}-${{env.BUILD_BUILDNUMBER}}
           container_app_name:${{env.TDD_APP_NAME}}
           
