@@ -172,6 +172,7 @@ In the Octopus Project navigate to Variables -\> Project
 - Update **EnsureEnvironmentsExist** to True for Prod/UAT to ensure that all resources will be created the first time.
 - Create a variable named **APIKey** Make it sensitive, and set the value to your Octopus Deploy API Key 
 - Add the Onion DevOps library variable set to the project
+- Update **octoURL** to the URL of your octopus instance. e.g. https://clearmeasure.octopus.app
 
 # Azure DevOps Setup:
 
