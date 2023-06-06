@@ -164,9 +164,6 @@ In the Octopus Project navigate to Variables -\> Project
   - This loging server can be found in the Overview page of the container registry in the Azure Web Portal
 - Update **EnsureEnvironmentsExist** to True for Prod/UAT to ensure that all resources will be created the first time.
 
-Optional:
-- Update **ResourceGroupName** and/or **container_app_name** to names that match your naming convention. If the TDD values are changed, the TDDResourceGroup and/or TDDAppName variables in Azure DevOps, or the **TDD_RESOURCE_GROUP** and/or **TDD_APP_NAME** variables in Github Actions must be changed to match.
-
 # Azure DevOps Setup:
 
 Create a new project
@@ -301,6 +298,16 @@ To create a service connection
 
 ![Alt text](images/variable%20group%204.png)
 
+## Create Environments
+
+1. Go to Pipelines -\> Environments
+2. Select New environment
+3. Create three environments.
+- TDD
+- UAT
+- Prod
+4. In the UAT and Prod environments, add an approval check and select the users that need to approve the appropriate deploy stages.
+
 ## Create a Pipeline
 
 1. Go to Pipelines -\> Pipelines
@@ -358,8 +365,6 @@ Variable: Value
 2. OCTOPUS_SPACE:         The name of your Octopus Deploy space
 3. USERNAME:              The github username of the user that created the PAT
 4. OWNER:                 The owner of the repository. 
-5. TDD_RESOURCE_GROUP:    Equal to the Octopus Deploy variable **ResourceGroupName** TDD value. default: onion-architecture-dotnet-7-containers-tdd
-6. TDD_APP_NAME:          Equal to the Octopus Deploy variable **container_app_name** TDD value. default: tdd-ui
 
 ## Connect Octopus to the Github Packages feed:
 In Octopus Deploy:
@@ -371,6 +376,16 @@ In Octopus Deploy:
   2. Replace **owner** with the owner of the repo
 - Set the Feed username to the github username of the user that created the PAT
 - Provide the personal access token from Github as the Feed Password
+
+## Create Environments
+In Github
+1. Go to Settings -\> Environments
+2. Select New environment
+3. Create three environments.
+- TDD
+- UAT
+- Prod
+4. In the UAT and Prod environments, check Required reviewers box and select the users that need to approve that stage
 
 ## Enable Github Actions Workflows
 In the forked Github repository, navigate to Actions. Select *I understand my workflows, go ahead and enable them*
