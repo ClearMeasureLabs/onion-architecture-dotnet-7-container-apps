@@ -78,6 +78,97 @@ step "deploy-an-azure-resource-manager-template" {
     }
 }
 
+step "run-a-script" {
+    condition = "Variable"
+    name = "Retrieve database server name"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist == \"True\"}true#{/if}"
+    }
+
+    action {
+        action_type = "Octopus.Script"
+        properties = {
+            Octopus.Action.RunOnServer = "true"
+            Octopus.Action.Script.ScriptBody = <<-EOT
+                
+                param(
+                    $octopusURL = $octoURL, # Octopus Server URL
+                    $octopusAPIKey = $APIKey,               # API key goes here
+                    $projectName = $OctopusParameters["Octopus.Project.Name"],                        # Replace with your project name
+                    $spaceName = $OctopusParameters["Octopus.Space.Name"],                   # Replace with the name of the space you are working in
+                    $environment = $OctopusParameters["Octopus.Environment.Name"],                     # Replace with the name of the environment you want to scope the variables to
+                    $varName = "DatabaseServerName",                            # Replace with the name of the variable
+                    $varValue = $uniquedbname,                           # Replace with the value of the variable
+                    $gitRefOrBranchName = $OctopusParameters["Octopus.Release.Git.BranchName"],              # Set this value if you are storing a plain-text variable and the project is version controlled. If no value is set, the default branch will be used.
+                	$libraryVariableSetName  = $libraryset
+                )
+                
+                # Defines header for API call
+                $header = @{ "X-Octopus-ApiKey" = $octopusAPIKey }
+                
+                # Get space
+                $space = (Invoke-RestMethod -Method Get -Uri "$octopusURL/api/spaces/all" -Headers $header) | Where-Object {$_.Name -eq $spaceName}
+                
+                # Get project
+                $project = (Invoke-RestMethod -Method Get -Uri "$octopusURL/api/$($space.Id)/projects/all" -Headers $header) | Where-Object {$_.Name -eq $projectName}
+                
+                $databaseVariables = Invoke-RestMethod -Method Get -Uri "$octopusURL/api/$($space.Id)/variables/$($project.VariableSetId)" -Headers $header
+                
+                # Get library set
+                $LibraryvariableSets = (Invoke-RestMethod -Method Get -Uri "$octopusURL/api/$($space.Id)/libraryvariablesets?contentType=Variables" -Headers $header)
+                $LibraryVariableSet = $LibraryVariableSets.Items | Where-Object { $_.Name -eq $libraryVariableSetName }
+                
+                
+                if ($null -eq $libraryVariableSet) {
+                    Write-Warning "Library variable set not found with name '$libraryVariableSetName'."
+                    exit
+                }
+                
+                
+                # Get environment values to scope to
+                $environmentObj = $databaseVariables.ScopeValues.Environments | Where { $_.Name -eq $environment } | Select -First 1
+                
+                # Define values for variable
+                $variable = @{
+                    Name = $varName  # Replace with a variable name
+                    Value = $varValue # Replace with a value
+                    Type = "String"
+                    IsSensitive = $false
+                    Scope = @{ 
+                        Environment = @(
+                            $environmentObj.Id
+                            )
+                        }
+                }
+                $LibraryVariableSetVariables = (Invoke-RestMethod -Method Get -Uri "$OctopusURL/api/$($Space.Id)/variables/$($LibraryVariableSet.VariableSetId)" -Headers $Header) 
+                
+                # Check to see if variable is already present. If so, removing old version(s).
+                $variablesWithSameName = $LibraryVariableSetVariables.Variables | Where-Object {$_.Name -eq $variable.Name}
+                
+                
+                if (@($variablesWithSameName.Scope.Environment) -contains $variable.Scope.Environment){
+                    # At least one of the existing variables with the same name is scoped to the same environment, update the value
+                    $variablesWithMatchingNameAndScope = $variablesWithSameName | Where-Object { $_.Scope.Environment -like $variable.Scope.Environment}
+                    $variablesWithMatchingNameAndScope.Value = $variable.Value
+                }
+                else{
+                    # Adding the new value
+                    $LibraryVariableSetVariables.Variables += $variable
+                }
+                
+                
+                
+                # Update the collection
+                Invoke-RestMethod -Method Put -Uri "$OctopusURL/api/$($Space.Id)/variables/$($LibraryVariableSetVariables.Id)" -Headers $Header -Body ($LibraryVariableSetVariables | ConvertTo-Json -Depth 10)
+                
+                EOT
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+        }
+        worker_pool = "hosted-windows"
+    }
+}
+
 step "create-db-schema" {
     condition = "Variable"
     name = "Create DB Schema"
