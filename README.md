@@ -170,9 +170,6 @@ In the Octopus Project navigate to Variables -\> Project
 - Update **registry\_login\_server** to the login server of the Azure Container Registry that was created
   - This loging server can be found in the Overview page of the container registry in the Azure Web Portal
 - Update **EnsureEnvironmentsExist** to True for Prod/UAT to ensure that all resources will be created the first time.
-- Create a variable named **APIKey** Make it sensitive, and set the value to your Octopus Deploy API Key 
-- Add the Onion DevOps library variable set to the project
-- Update **octoURL** to the URL of your octopus instance. e.g. https://clearmeasure.octopus.app
 
 # Azure DevOps Setup:
 

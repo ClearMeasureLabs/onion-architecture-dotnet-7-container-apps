@@ -157,5 +157,15 @@ variable "ResourceGroupName" {
 }
 
 variable "DatabaseServerName" {
-    value "#{Octopus.Action[Create AZ DB].Output.AzureRMOutputs[databaseserverName]}" {}
+    value "#{az_login_appid}-sqlserver-prod" {
+        environment = ["prod"]
+    }
+
+    value "#{az_login_appid}-sqlserver-tdd-#{Octopus.Release.Number}" {
+        environment = ["tdd"]
+    }
+
+    value "#{az_login_appid}-sqlserver-uat" {
+        environment = ["uat"]
+    }
 }
