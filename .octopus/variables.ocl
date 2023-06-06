@@ -145,7 +145,7 @@ variable "ResourceGroupName" {
         environment = ["uat", "prod"]
     }
 
-    value "onion-architecture-dotnet-7-containers-#{Octopus.Release.Number}" {
+    value "onion-architecture-dotnet-7-containers-TDD-#{Octopus.Release.Number}" {
         description = ""
         environment = ["tdd"]
 
