@@ -145,7 +145,7 @@ variable "ResourceGroupName" {
         environment = ["uat", "prod"]
     }
 
-    value "onion-architecture-dotnet-7-containers-TDD-#{Octopus.Release.Number}" {
+    value "onion-architecture-dotnet-7-containers-#{Octopus.Release.Number}" {
         description = ""
         environment = ["tdd"]
 
@@ -161,11 +161,11 @@ variable "DatabaseServerName" {
         environment = ["prod"]
     }
 
-    value "#{az_login_appid}-sqlserver-tdd-#{Octopus.Release.Number}" {
-        environment = ["tdd"]
-    }
-
     value "#{az_login_appid}-sqlserver-uat" {
         environment = ["uat"]
+    }
+    
+    value "#{az_login_appid}-tdd-#{Octopus.Release.Id | ToLower }" {
+        environment = ["tdd"]
     }
 }

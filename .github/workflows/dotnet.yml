@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 env:
-  BUILD_BUILDNUMBER: ${{ github.run_number }}
+  BUILD_BUILDNUMBER: 1.0.${{ github.run_number }}
   OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
   OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
   TDD_RESOURCE_GROUP: onion-architecture-dotnet-7-containers-TDD
@@ -30,7 +30,7 @@ jobs:
         dotnet-version: 6.0.x
     - name: Build Script
       run: |
-        [System.Environment]::SetEnvironmentVariable('Version','${{ github.run_number }}')
+        [System.Environment]::SetEnvironmentVariable('Version','${{ env.BUILD_BUILDNUMBER }}')
         . .\build.ps1 ; CIBuild
 
 
@@ -59,8 +59,8 @@ jobs:
     - name: Download UI Package
       run: |
         nuget sources Add -Name github -Source https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json -UserName ${{ vars.USERNAME }} -Password ${{ secrets.PACKAGESAPI }}
-        nuget install ChurchBulletin.UI -Version ${{ github.run_number }} -Source "https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json"
-        mv ChurchBulletin.UI.${{ github.run_number }} built
+        nuget install ChurchBulletin.UI -Version ${{ env.BUILD_BUILDNUMBER }} -Source "https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json"
+        mv ChurchBulletin.UI.${{ env.BUILD_BUILDNUMBER }} built
 
     - name: 'Build and push image'
       uses: azure/docker-login@v1
@@ -69,8 +69,8 @@ jobs:
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
     - run: |
-        docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/churchbulletin.ui:${{ github.run_number }}
-        docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/churchbulletin.ui:${{ github.run_number }}
+        docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/churchbulletin.ui:${{ env.BUILD_BUILDNUMBER }}
+        docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/churchbulletin.ui:${{ env.BUILD_BUILDNUMBER }}
 
 
   TDD:
@@ -96,8 +96,9 @@ jobs:
         git_commit: ${{ github.event.after || github.event.pull_request.head.sha }}     
         deploy_to: "TDD"   
         progress: true 
-        release_number: ${{ github.run_number }}
+        release_number: ${{env.BUILD_BUILDNUMBER}}
         deployment_timeout: 00:30:00
+        package_version: ${{env.BUILD_BUILDNUMBER}}
         variables: |
           ResourceGroupName:${{env.TDD_RESOURCE_GROUP}}-${{env.BUILD_BUILDNUMBER}}
           container_app_name:${{env.TDD_APP_NAME}}
@@ -123,7 +124,7 @@ jobs:
     - name: Download Acceptance Test Package
       run: |
         nuget sources Add -Name github -Source https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json -UserName ${{ vars.USERNAME }} -Password ${{ secrets.PACKAGESAPI }}
-        nuget install ChurchBulletin.AcceptanceTests -Version ${{ github.run_number }} -Source "https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json"
+        nuget install ChurchBulletin.AcceptanceTests -Version ${{ env.BUILD_BUILDNUMBER }} -Source "https://nuget.pkg.github.com/${{ vars.OWNER }}/index.json"
 
     - name: Run tests
       uses: microsoft/vstest-action@v1.0.0
@@ -132,7 +133,7 @@ jobs:
           **\*AcceptanceTests.dll
           !**\*TestAdapter.dll
           !**\obj\**
-        searchFolder: ./ChurchBulletin.AcceptanceTests.${{ github.run_number }}/
+        searchFolder: ./ChurchBulletin.AcceptanceTests.${{ env.BUILD_BUILDNUMBER }}/
         runInParallel: true 
 
   Delete-TDD: 
@@ -168,7 +169,7 @@ jobs:
         OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
       with:
         project: ${{ vars.OCTOPUS_PROJECT }}
-        release_number: ${{ github.run_number }}
+        release_number: ${{ env.BUILD_BUILDNUMBER }}
         environments: |
           UAT
 
@@ -199,7 +200,7 @@ jobs:
         OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
       with:
         project: ${{ vars.OCTOPUS_PROJECT }}
-        release_number: ${{ github.run_number }}
+        release_number: ${{ env.BUILD_BUILDNUMBER }}
         environments: |
           Prod
 
