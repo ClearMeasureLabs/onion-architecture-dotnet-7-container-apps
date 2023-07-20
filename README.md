@@ -29,7 +29,16 @@ This project will create all of the required infrastructure in Azure programatic
     - [Create the following secrets:](#create-the-following-secrets)
     - [Create the following variables:](#create-the-following-variables)
   - [Connect Octopus to the Github Packages feed:](#connect-octopus-to-the-github-packages-feed)
-
+- [TeamCity](#teamcity)
+  - [Create a New Project](#create-a-new-project)
+  - [Enable UI Updates](#enable-ui-updates)
+  - [Create an Azure Service Principal](#create-an-azure-service-principal-1)
+  - [Update Project Parameters](#update-project-parameters)
+  - [Connect TeamCity to ACR](#connect-teamcity-to-acr)
+  - [Create a TeamCity Nuget Feed](#create-a-teamcity-nuget-feed)
+  - [Connect Octopus to the TeamCity feed](#connect-octopus-to-the-teamcity-feed)
+    - [In Octopus Deploy](#in-octopus-deploy-1)
+    
 
 Requirements:
 
@@ -379,7 +388,7 @@ In the forked Github repository, navigate to Actions. Select *I understand my wo
 Push a commit to trigger Github Actions to run the pipeline.  
 
 
-# TeamCity Setup:
+# TeamCity
 
 ## Create a New Project
 Create a New Project by selecting the **New project…** button in the top right
