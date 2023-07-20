@@ -29,7 +29,16 @@ This project will create all of the required infrastructure in Azure programatic
     - [Create the following secrets:](#create-the-following-secrets)
     - [Create the following variables:](#create-the-following-variables)
   - [Connect Octopus to the Github Packages feed:](#connect-octopus-to-the-github-packages-feed)
-
+- [TeamCity](#teamcity)
+  - [Create a New Project](#create-a-new-project)
+  - [Enable UI Updates](#enable-ui-updates)
+  - [Create an Azure Service Principal](#create-an-azure-service-principal-1)
+  - [Update Project Parameters](#update-project-parameters)
+  - [Connect TeamCity to ACR](#connect-teamcity-to-acr)
+  - [Create a TeamCity Nuget Feed](#create-a-teamcity-nuget-feed)
+  - [Connect Octopus to the TeamCity feed](#connect-octopus-to-the-teamcity-feed)
+    - [In Octopus Deploy](#in-octopus-deploy-1)
+    
 
 Requirements:
 
@@ -377,6 +386,89 @@ In the forked Github repository, navigate to Actions. Select *I understand my wo
 
 
 Push a commit to trigger Github Actions to run the pipeline.  
+
+
+# TeamCity
+
+## Create a New Project
+Create a New Project by selecting the **New project…** button in the top right
+
+![Alt text](images/TC1.png)
+
+Select the git repository that was created as the repository to create from
+
+![Alt text](images/TC2.png)
+
+Select **Import settings from .teamcity/settings.kts and enable synchronization with the VS repository**
+
+![Alt text](images/TC3.png)
+
+Select **Proceed**
+
+## Enable UI Updates
+
+Navigate to Project settings -> Versioned settings
+Check the box **Allow editing project settings via UI**
+
+![Alt text](images/TC4.png)
+
+Select Apply
+
+## Create an Azure Service Principal
+Using the az cli run:
+- az ad sp create-for-rbac --scope /subscriptions/subscriptionid --role Contributor --sdk-auth
+- replace **subscriptionid** with the id of your Azure subscription. Save the JSON output as it will be needed later.
+
+## Update Project Parameters
+Navigate to Project Settings -> Parameters
+
+Edit the following Configuration Parameters
+- AzAppId – The clientId from the JSON output from the service principal creation
+- AzPassword (password spec) - The clientSecret from the JSON output from the service principal creation
+- AzTenant (password spec) – The tenantId from the JSON output from the service principal creation
+-	OctoApiKey (password spec) – API key from Octopus Deploy
+- OctoProject – Name of the Octopus Deploy project that was created
+- OctoSpace – ID of the Octopus Deploy Space that houses the project. This should be Spaces-##
+- OctoSpaceName – Name of the Octopus Deploy Space that houses the project. E.g. Default
+- OctoURL – URL of the Octopus Deploy Instance. E.g. https://clearmeasure.octopus.app
+
+![Alt text](images/TC5.png)
+
+
+## Connect TeamCity to ACR
+
+-	Select Edit Project -> Connections
+-	Edit the existing Onoin-Arch ACR connection
+-	Set the registry address to the login server of the ACR that was created
+-	Set the Username to the clientId from the JSON output from the service principal creation
+-	Set the Password to the clientSecret from the JSON output from the service principal creation
+
+![Alt text](images/TC6.png)
+
+## Create a TeamCity Nuget feed
+
+Navigate to Edit Project -> NuGet Feed
+- If this option is not available, contact TeamCity and request a NuGet feed be enabled
+Name the feed Onion_Architecture_Container_Apps
+In the Integration Build build configuration, edit the Publish Packages Build Step
+- Set the API key value to: **%teamcity.nuget.feed.api.key%**
+- Set the Package Source value to the nuget feed that was just created
+- The nuget feed can be found in the hamburger dropdown menu
+
+## Connect Octopus to the TeamCity feed:
+### In Octopus Deploy
+1.	Navigate to Library -> External Feeds and select ADD FEED
+2.	Set the Feed type to NuGet Feed
+3.	Name the feed Onion-Arch-DotNet-7
+4.	Copy the v3 URL from the TeamCity Nuget feed into the URL field
+5.	Provide the username from one of the TeamCity users as the Username. 
+6.	Provide the password from the TeamCity user as the Feed Password
+- Making a TeamCity user for Octopus to connect to TeamCity is recommended
+
+![Alt text](images/TC7.png)
+
+Push a commit to the git repo, and the pipeline will start
+
 
 # Build and Test
 TODO: Describe and show how to build your code and run the tests. 
