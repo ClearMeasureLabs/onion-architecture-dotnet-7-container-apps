@@ -108,6 +108,17 @@ variable "DatabasePerformanceLevel" {
 variable "ResourceGroupName" {
     value "onion-architecture-dotnet-7-containers-#{Octopus.Environment.Name}" {
         description = ""
+        environment = ["uat", "prod"]
+    }
+
+    value "onion-architecture-dotnet-7-containers-#{Octopus.Release.Number}" {
+        description = ""
+        environment = ["tdd"]
+
+        prompt {
+            description = ""
+            label = ""
+        }
     }
 }
 
