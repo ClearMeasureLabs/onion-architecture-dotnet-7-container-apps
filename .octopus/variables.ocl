@@ -164,7 +164,7 @@ variable "DatabaseServerName" {
     value "#{az_login_appid}-sqlserver-uat" {
         environment = ["uat"]
     }
-    
+
     value "#{az_login_appid}-tdd-#{Octopus.Release.Id | ToLower }" {
         environment = ["tdd"]
     }
