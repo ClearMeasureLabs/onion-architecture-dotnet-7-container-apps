@@ -52,15 +52,17 @@
       "metadata": {
         "description": "Describes the performance level for Edition"
       }
+    },
+    "databaseserverName": {
+      "type": "string"
     }
   },
   "variables": {
-    "resourceGroupUniqueString": "[uniqueString(resourceGroup().id,resourceGroup().location,subscription().subscriptionId)]",
-    "databaseserverName": "[concat('databaseserver', variables('resourceGroupUniqueString'))]"
+    "resourceGroupUniqueString": "[uniqueString(resourceGroup().id,resourceGroup().location,subscription().subscriptionId)]"
   },
   "resources": [
     {
-      "name": "[variables('databaseserverName')]",
+      "name": "[parameters('databaseserverName')]",
       "type": "Microsoft.Sql/servers",
       "location": "[resourceGroup().location]",
       "apiVersion": "2014-04-01-preview",
@@ -82,7 +84,7 @@
           },
           "apiVersion": "2014-04-01-preview",
           "dependsOn": [
-            "[resourceId('Microsoft.Sql/servers/', variables('databaseserverName'))]"
+            "[resourceId('Microsoft.Sql/servers/', parameters('databaseserverName'))]"
           ],
           "properties": {
             "edition": "[parameters('edition')]",
@@ -97,7 +99,7 @@
           "location": "[resourceGroup().location]",
           "apiVersion": "2014-04-01-preview",
           "dependsOn": [
-            "[resourceId('Microsoft.Sql/servers', variables('databaseserverName'))]"
+            "[resourceId('Microsoft.Sql/servers', parameters('databaseserverName'))]"
           ],
           "properties": {
             "startIpAddress": "0.0.0.0",
@@ -108,9 +110,9 @@
     }
   ],
   "outputs": {
-    "databaseserverName": {
+    "resourceGroupUniqueString": {
       "type": "string",
-      "value": "[variables('databaseserverName')]"
+      "value": "[variables('resourceGroupUniqueString')]"
     }
   }
 }
