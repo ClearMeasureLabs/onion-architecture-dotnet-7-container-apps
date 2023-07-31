@@ -122,22 +122,8 @@ variable "container_app_name" {
 
         prompt {
             description = ""
-            label = ""
+            label = "Name of the TDD UI container app"
         }
-    }
-}
-
-variable "DatabaseServerName" {
-    value "#{az_login_appid}-sqlserver-prod" {
-        environment = ["prod"]
-    }
-
-    value "#{az_login_appid}-sqlserver-uat" {
-        environment = ["uat"]
-    }
-
-    value "#{az_login_appid}-tdd-#{Octopus.Release.Id | ToLower }" {
-        environment = ["tdd"]
     }
 }
 
@@ -165,7 +151,21 @@ variable "ResourceGroupName" {
 
         prompt {
             description = ""
-            label = ""
+            label = "Name of the TDD resource group"
         }
+    }
+}
+
+variable "DatabaseServerName" {
+    value "#{az_login_appid}-sqlserver-prod" {
+        environment = ["prod"]
+    }
+
+    value "#{az_login_appid}-sqlserver-uat" {
+        environment = ["uat"]
+    }
+
+    value "#{az_login_appid}-tdd-#{Octopus.Release.Id | ToLower }" {
+        environment = ["tdd"]
     }
 }

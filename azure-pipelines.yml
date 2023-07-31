@@ -121,136 +121,146 @@ stages:
 - stage: 'TDD'
   displayName: 'TDD'
   jobs: 
-    - job: 'DeployToTDD'
+    - deployment: 'DeployToTDD'
       pool:
         vmImage: 'windows-latest'
       variables:
       - group: Integration-Build  
       - name: branch
-        value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])]   
+        value: $[coalesce(variables['system.pullRequest.sourceBranch'], variables['build.sourceBranch'])] 
+      - name: TDD-Resource-Group
+        value: onion-architecture-dotnet-7-containers-TDD-$(Build.BuildNumber)
+      - name: TDD-App-Name
+        value: tdd-ui 
+      environment: 'TDD'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
 
+            - task: OctoInstaller@5
+              displayName: 'Install octo cli tools on Windows agent'
+              inputs:
+                version: '*'
 
+            - task: OctopusCreateRelease@5
+              name: 'CreateRelease'
+              inputs:
+                OctoConnectedServiceName: 'octoServiceConnection'
+                Space: '$(OctoSpace)'
+                ProjectGroup: '$(OctoProjectGroup)'
+                ProjectName: '$(OctoProjectName)'
+                ReleaseNumber: '$(Build.BuildNumber)'
+                Channel: 'Default'
+                GitRef: '$(branch)'
+                DeployToEnvironment: 'TDD'
+                DeploymentProgress: true
+                AdditionalArguments: '--deploymenttimeout=00:30:00 --variable=ResourceGroupName:$(TDD-Resource-Group) --variable=container_app_name:$(TDD-App-Name)' 
 
-      steps:
+            - task: AzureCLI@2
+              inputs:
+                azureSubscription: 'dotnet-7-containerapp'
+                scriptType: 'ps'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  az config set extension.use_dynamic_install=yes_without_prompt
+                  $containerAppURL = az containerapp show --resource-group $(TDD-Resource-Group) --name $(TDD-App-Name) --query properties.configuration.ingress.fqdn
+                  $containerAppURL = $containerAppURL -replace '"', ''
+                  [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "Machine")
 
-      - task: OctoInstaller@5
-        displayName: 'Install octo cli tools on Windows agent'
-        inputs:
-          version: '*'
+            - task: DownloadPackage@1
+              displayName: 'Download Acceptance Test Package'
+              inputs:
+                packageType: 'nuget'
+                feed: '$(FeedName)'
+                view: 'Local'
+                definition: 'ChurchBulletin.AcceptanceTests'
+                version: '$(Build.BuildNumber)'
+                downloadPath: '$(System.DefaultWorkingDirectory)/tests'
+                extract: true
 
-      - task: OctopusCreateRelease@5
-        name: 'CreateRelease'
-        inputs:
-          OctoConnectedServiceName: 'octoServiceConnection'
-          Space: '$(OctoSpace)'
-          ProjectGroup: '$(OctoProjectGroup)'
-          ProjectName: '$(OctoProjectName)'
-          ReleaseNumber: '$(Build.BuildNumber)'
-          Channel: 'Default'
-          GitRef: '$(branch)'
-          DeployToEnvironment: 'TDD'
-          DeploymentProgress: true
-          AdditionalArguments: '--deploymenttimeout=00:30:00'
+            - task: VSTest@2
+              displayName: 'VsTest - AcceptanceTests'
+              inputs:
+                testSelector: 'testAssemblies'
+                testAssemblyVer2: |
+                  **\*AcceptanceTests.dll
+                  !**\*TestAdapter.dll
+                  !**\obj\**
+                  searchFolder: '$(System.DefaultWorkingDirectory)/tests'
+                uiTests: true
+                codeCoverageEnabled: true
+                testRunTitle: 'Acceptance Tests'
+                diagnosticsEnabled: True
 
-      - task: AzureCLI@2
-        inputs:
-          azureSubscription: 'dotnet-7-containerapp'
-          scriptType: 'ps'
-          scriptLocation: 'inlineScript'
-          inlineScript: |
-            az config set extension.use_dynamic_install=yes_without_prompt
-            $containerAppURL = az containerapp show --resource-group $(TDDResourceGroup) --name $(TDDAppName) --query properties.configuration.ingress.fqdn
-            $containerAppURL = $containerAppURL -replace '"', ''
-            [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "Machine")
-
-      - task: DownloadPackage@1
-        displayName: 'Download Acceptance Test Package'
-        inputs:
-          packageType: 'nuget'
-          feed: '$(FeedName)'
-          view: 'Local'
-          definition: 'ChurchBulletin.AcceptanceTests'
-          version: '$(Build.BuildNumber)'
-          downloadPath: '$(System.DefaultWorkingDirectory)/tests'
-          extract: true
-
-      - task: VSTest@2
-        displayName: 'VsTest - AcceptanceTests'
-        inputs:
-          testSelector: 'testAssemblies'
-          testAssemblyVer2: |
-            **\*AcceptanceTests.dll
-            !**\*TestAdapter.dll
-            !**\obj\**
-            searchFolder: '$(System.DefaultWorkingDirectory)/tests'
-          uiTests: true
-          codeCoverageEnabled: true
-          testRunTitle: 'Acceptance Tests'
-          diagnosticsEnabled: True
-
-      - task: AzureCLI@2
-        displayName: 'Delete TDD Resources'
-        inputs:
-          azureSubscription: 'dotnet-7-containerapp'
-          scriptType: 'ps'
-          scriptLocation: 'inlineScript'
-          inlineScript: |
-            az group delete -n $(TDDResourceGroup) --yes
+            - task: AzureCLI@2
+              displayName: 'Delete TDD Resources'
+              inputs:
+                azureSubscription: 'dotnet-7-containerapp'
+                scriptType: 'ps'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  az group delete -n $(TDD-Resource-Group) --yes
 
 - stage: 'UAT'
   displayName: 'UAT'
   jobs: 
-    - job: 'DeployToUAT'
+    - deployment: 'DeployToUAT'
       pool:
         vmImage: 'windows-latest'
       variables:
         - group: Integration-Build    
+      environment: 'UAT'  
+      strategy:
+        runOnce:
+          deploy:
+            steps:
 
+            - task: OctoInstaller@5
+              displayName: 'Install octo cli tools on Windows agent'
+              inputs:
+                version: '*'
 
-      steps:
-
-      - task: OctoInstaller@5
-        displayName: 'Install octo cli tools on Windows agent'
-        inputs:
-          version: '*'
-
-      - task: OctopusDeployRelease@5
-        name: deploytoUAT
-        inputs:
-          OctoConnectedServiceName: 'octoServiceConnection'
-          Space: '$(OctoSpace)'
-          ProjectGroup: '$(OctoProjectGroup)'
-          Project: '$(OctoProjectName)'
-          ReleaseNumber: '$(Build.BuildNumber)'
-          Environments: 'UAT'
-          ShowProgress: true
-          AdditionalArguments: '--deploymenttimeout=00:30:00'
+            - task: OctopusDeployRelease@5
+              name: deploytoUAT
+              inputs:
+                OctoConnectedServiceName: 'octoServiceConnection'
+                Space: '$(OctoSpace)'
+                ProjectGroup: '$(OctoProjectGroup)'
+                Project: '$(OctoProjectName)'
+                ReleaseNumber: '$(Build.BuildNumber)'
+                Environments: 'UAT'
+                ShowProgress: true
+                AdditionalArguments: '--deploymenttimeout=00:30:00'
           
 
 - stage: 'Production'
   displayName: 'Prod'  
   jobs: 
-    - job: 'DeployToProd'
+    - deployment: 'DeployToProd'
       pool:
         vmImage: 'windows-latest'
       variables:
         - group: Integration-Build    
-
-      steps:
+      environment: 'Prod'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
       
-      - task: OctoInstaller@5
-        displayName: 'Install octo cli tools on Windows agent'
-        inputs:
-          version: '*'
+            - task: OctoInstaller@5
+              displayName: 'Install octo cli tools on Windows agent'
+              inputs:
+                version: '*'
 
-      - task: OctopusDeployRelease@5
-        name: deploytoProd
-        inputs:
-          OctoConnectedServiceName: 'octoServiceConnection'
-          Space: '$(OctoSpace)'
-          ProjectGroup: '$(OctoProjectGroup)'
-          Project: '$(OctoProjectName)'
-          ReleaseNumber: '$(Build.BuildNumber)'
-          Environments: 'Prod'
-          ShowProgress: true 
-          AdditionalArguments: '--deploymenttimeout=00:30:00'
+            - task: OctopusDeployRelease@5
+              name: deploytoProd
+              inputs:
+                OctoConnectedServiceName: 'octoServiceConnection'
+                Space: '$(OctoSpace)'
+                ProjectGroup: '$(OctoProjectGroup)'
+                Project: '$(OctoProjectName)'
+                ReleaseNumber: '$(Build.BuildNumber)'
+                Environments: 'Prod'
+                ShowProgress: true 
+                AdditionalArguments: '--deploymenttimeout=00:30:00'

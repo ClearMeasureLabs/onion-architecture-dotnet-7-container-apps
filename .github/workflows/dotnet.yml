@@ -10,6 +10,8 @@ env:
   BUILD_BUILDNUMBER: 1.0.${{ github.run_number }}
   OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
   OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
+  TDD_RESOURCE_GROUP: onion-architecture-dotnet-7-containers-TDD
+  TDD_APP_NAME: tdd-ui
 
 jobs:
   build:
@@ -74,6 +76,8 @@ jobs:
   TDD:
     needs: dockerbuildandpush
     runs-on: 'windows-latest'
+    environment:
+      name: TDD
     steps: 
 
     - name: Install Octopus CLI
@@ -92,8 +96,14 @@ jobs:
         git_commit: ${{ github.event.after || github.event.pull_request.head.sha }}     
         deploy_to: "TDD"   
         progress: true 
-        release_number: ${{ env.BUILD_BUILDNUMBER }}
+        release_number: ${{env.BUILD_BUILDNUMBER}}
         deployment_timeout: 00:30:00
+        package_version: ${{env.BUILD_BUILDNUMBER}}
+        variables: |
+          ResourceGroupName:${{env.TDD_RESOURCE_GROUP}}-${{env.BUILD_BUILDNUMBER}}
+          container_app_name:${{env.TDD_APP_NAME}}
+          
+
         
 
     - name: 'Login via Azure CLI'
@@ -106,7 +116,7 @@ jobs:
         Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi
         Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'
         az config set extension.use_dynamic_install=yes_without_prompt
-        $containerAppURL = az containerapp show --resource-group ${{vars.TDD_RESOURCE_GROUP}} --name ${{vars.TDD_APP_NAME}} --query properties.configuration.ingress.fqdn
+        $containerAppURL = az containerapp show --resource-group ${{env.TDD_RESOURCE_GROUP}}-${{env.BUILD_BUILDNUMBER}} --name ${{env.TDD_APP_NAME}} --query properties.configuration.ingress.fqdn
         $containerAppURL = $containerAppURL -replace '"', ''
         [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "Machine")
       shell: pwsh
@@ -141,11 +151,13 @@ jobs:
       with:
         azcliversion: 2.30.0
         inlineScript: |
-          az group delete -n ${{vars.TDD_RESOURCE_GROUP}} --yes
+          az group delete -n ${{env.TDD_RESOURCE_GROUP}}-${{env.BUILD_BUILDNUMBER}} --yes
         
   UAT:
     needs: TDD
     runs-on: 'windows-latest'
+    environment:
+      name: UAT
     steps:
 
     - name: Deploy-to-UAT
@@ -175,6 +187,8 @@ jobs:
   Prod:
     needs: UAT
     runs-on: 'windows-latest'
+    environment:
+      name: Prod
     steps:
 
     - name: Deploy-to-Prod
