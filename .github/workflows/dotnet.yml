@@ -96,7 +96,7 @@ jobs:
         git_commit: ${{ github.event.after || github.event.pull_request.head.sha }}     
         deploy_to: "TDD"   
         progress: true 
-        release_number: ${{env.BUILD_BUILDNUMBER}}
+        release_number: ${{ env.BUILD_BUILDNUMBER }}
         deployment_timeout: 00:30:00
         package_version: ${{env.BUILD_BUILDNUMBER}}
         variables: |
