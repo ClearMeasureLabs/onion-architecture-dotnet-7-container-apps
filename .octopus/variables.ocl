@@ -48,17 +48,6 @@ variable "connection_string" {
     value "#{Octopus.Action[Get DB Connection String].Output.connstring}" {}
 }
 
-variable "EnsureEnvironmentsExist" {
-    value "True" {
-        environment = ["tdd"]
-    }
-
-    value "False" {
-        description = ""
-        environment = ["prod", "uat"]
-    }
-}
-
 variable "container_image" {
     value "#{registry_login_server}/churchbulletin.ui:#{Octopus.Release.Number}" {
         environment = ["tdd", "uat", "prod"]
@@ -167,5 +156,15 @@ variable "DatabaseServerName" {
 
     value "#{az_login_appid}-tdd-#{Octopus.Release.Id | ToLower }" {
         environment = ["tdd"]
+    }
+}
+
+variable "EnsureEnvironmentsExist" {
+    value "False" {
+        environment = ["uat"]
+    }
+
+    value "False" {
+        environment = ["prod"]
     }
 }
