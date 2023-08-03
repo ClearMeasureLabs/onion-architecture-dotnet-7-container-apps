@@ -160,28 +160,23 @@ jobs:
       name: UAT
     steps:
 
+    - name: Install Octopus CLI
+      uses: OctopusDeploy/install-octopus-cli-action@v1
+      with:
+        version: latest
+
     - name: Deploy-to-UAT
       id: deploy-to-uat
-      uses: OctopusDeploy/deploy-release-action@v3
-      env:
-        OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
-        OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
-        OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
+      uses: dmarttinen/deploy-release-action@v0.3.0
       with:
-        project: ${{ vars.OCTOPUS_PROJECT }}
-        release_number: ${{ env.BUILD_BUILDNUMBER }}
-        environments: |
-          UAT
-
-    - name: Wait-for-UAT
-      uses: OctopusDeploy/await-task-action@v3
-      env:
-        OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
-        OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
-        OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
-      with:
-        server_task_id: ${{ fromJson(steps.deploy-to-uat.outputs.server_tasks)[0].serverTaskId }}
-        timeout_after: 1800
+        api_key: ${{ secrets.OCTO_API_KEY  }}
+        server: ${{ secrets.OCTOPUS_URL }}
+        space: ${{ vars.OCTOPUS_SPACE }}       
+        project: ${{ vars.OCTOPUS_PROJECT }}   
+        deploy_to: "UAT"   
+        progress: true 
+        release_number: ${{env.BUILD_BUILDNUMBER}}
+        timeout: 00:30:00
 
 
   Prod:
@@ -191,25 +186,20 @@ jobs:
       name: Prod
     steps:
 
+    - name: Install Octopus CLI
+      uses: OctopusDeploy/install-octopus-cli-action@v1
+      with:
+        version: latest
+
     - name: Deploy-to-Prod
       id: deploy-to-prod
-      uses: OctopusDeploy/deploy-release-action@v3
-      env:
-        OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
-        OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
-        OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
+      uses: dmarttinen/deploy-release-action@v0.3.0
       with:
-        project: ${{ vars.OCTOPUS_PROJECT }}
-        release_number: ${{ env.BUILD_BUILDNUMBER }}
-        environments: |
-          Prod
-
-    - name: Wait-for-Prod
-      uses: OctopusDeploy/await-task-action@v3
-      env:
-        OCTOPUS_API_KEY: ${{ secrets.OCTO_API_KEY  }}
-        OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
-        OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE }}
-      with:
-        server_task_id: ${{ fromJson(steps.deploy-to-prod.outputs.server_tasks)[0].serverTaskId }}
-        timeout_after: 1800
+        api_key: ${{ secrets.OCTO_API_KEY  }}
+        server: ${{ secrets.OCTOPUS_URL }}
+        space: ${{ vars.OCTOPUS_SPACE }}       
+        project: ${{ vars.OCTOPUS_PROJECT }}   
+        deploy_to: "Prod"   
+        progress: true 
+        release_number: ${{env.BUILD_BUILDNUMBER}}
+        timeout: 00:30:00
