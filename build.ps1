@@ -161,6 +161,7 @@ Function Package{
 
 Function PrivateBuild{
 	$projectConfig = "Debug"
+	[Environment]::SetEnvironmentVariable("containerAppURL", "localhost:7174", "User")
 	$sw = [Diagnostics.Stopwatch]::StartNew()
 	Init
 	Compile

@@ -166,7 +166,7 @@ stages:
                   az config set extension.use_dynamic_install=yes_without_prompt
                   $containerAppURL = az containerapp show --resource-group $(TDD-Resource-Group) --name $(TDD-App-Name) --query properties.configuration.ingress.fqdn
                   $containerAppURL = $containerAppURL -replace '"', ''
-                  [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "Machine")
+                  [System.Environment]::SetEnvironmentVariable("containerAppURL", $containerAppURL, "User")
 
             - task: DownloadPackage@1
               displayName: 'Download Acceptance Test Package'
