@@ -591,7 +591,7 @@ step "scale-container-app" {
                 #new revision in the container app, and sets it active.
                 Write-Host "Name $container_app_name"
                 & az containerapp update --name $container_app_name --resource-group $ResourceGroupName --image $container_image
-                & az containerapp update --name $container_app_name --resource-group $ResourceGroupName --replicas $ContainerAppReplicas
+                & az containerapp update --name $container_app_name --resource-group $ResourceGroupName --min-replicas $ContainerAppReplicas --max-replicas $ContainerAppReplicas
                 ###################################################################
                 EOT
             Octopus.Action.Script.ScriptSource = "Inline"
