@@ -2,7 +2,7 @@ step "create-resource-group" {
     condition = "Variable"
     name = "Create Resource Group"
     properties = {
-        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist == \"True\"}true#{/if}"
+        Octopus.Step.ConditionVariableExpression = "#{if Octopus.Environment.Name == \"TDD\"}true#{else}#{if EnsureEnvironmentsExist}true#{else}False#{/if}#{/if}"
     }
 
     action {
@@ -48,7 +48,7 @@ step "deploy-an-azure-resource-manager-template" {
     condition = "Variable"
     name = "Create AZ DB"
     properties = {
-        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist == \"True\"}true#{/if}"
+        Octopus.Step.ConditionVariableExpression = "#{if Octopus.Environment.Name == \"TDD\"}true#{else}#{if EnsureEnvironmentsExist}true#{else}False#{/if}#{/if}"
     }
 
     action {
@@ -82,7 +82,7 @@ step "create-db-schema" {
     condition = "Variable"
     name = "Create DB Schema"
     properties = {
-        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist == \"True\"}true#{/if}"
+        Octopus.Step.ConditionVariableExpression = "#{if Octopus.Environment.Name == \"TDD\"}true#{else}#{if EnsureEnvironmentsExist}true#{else}False#{/if}#{/if}"
     }
 
     action {
@@ -182,7 +182,7 @@ step "deploy-an-azure-resource-manager-template-1" {
     condition = "Variable"
     name = "Create Container App Environment"
     properties = {
-        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist == \"True\"}true#{/if}"
+        Octopus.Step.ConditionVariableExpression = "#{if Octopus.Environment.Name == \"TDD\"}true#{else}#{if EnsureEnvironmentsExist}true#{else}False#{/if}#{/if}"
     }
 
     action {
@@ -230,7 +230,7 @@ step "deploy-an-azure-resource-manager-template-2" {
     condition = "Variable"
     name = "Create Container App"
     properties = {
-        Octopus.Step.ConditionVariableExpression = "#{if EnsureEnvironmentsExist == \"True\"}true#{/if}"
+        Octopus.Step.ConditionVariableExpression = "#{if Octopus.Environment.Name == \"TDD\"}true#{else}#{if EnsureEnvironmentsExist}true#{else}False#{/if}#{/if}"
     }
 
     action {
