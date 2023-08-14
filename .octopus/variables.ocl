@@ -172,3 +172,7 @@ variable "EnsureEnvironmentsExist" {
 variable "ContainerAppReplicas" {
     value "2" {}
 }
+
+variable "DBScaledUpPerformanceLevel" {
+    value "S0" {}
+}
