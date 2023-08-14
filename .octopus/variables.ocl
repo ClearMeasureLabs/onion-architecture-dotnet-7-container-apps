@@ -168,3 +168,7 @@ variable "EnsureEnvironmentsExist" {
         environment = ["prod"]
     }
 }
+
+variable "ContainerAppReplicas" {
+    value "2" {}
+}
