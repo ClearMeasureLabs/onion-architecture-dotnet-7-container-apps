@@ -1,3 +1,8 @@
+param(
+    [int]$appReplicas = 1,
+    [string]$serviceObjective = "Basic"
+
+)
 
 #$azPath = "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin"
 ###################################################################
@@ -38,10 +43,8 @@ Write-Host $env:PATH -Split ';'
 ###################################################################
 
 ###################################################################
-#All of that to get to this.  This the actual revision
-#update - fetches the latest container image, creates a 
-#new revision in the container app, and sets it active.
-Write-Host "Name $container_app_name"
-& az containerapp update --name $container_app_name --resource-group $ResourceGroupName --image $container_image
-& az containerapp update --name $container_app_name --resource-group $ResourceGroupName --min-replicas 1 --max-replicas 1
+#All of that to get to this.  This the actual containerapp
+#update - set the number of replicas, and scale the database
+& az containerapp update --name $container_app_name --resource-group $ResourceGroupName --min-replicas $appReplicas --max-replicas $appReplicas
+& az sql db update --resource-group $ResourceGroupName --server $DatabaseServerName --name $DatabaseName --service-objective $serviceObjective
 ###################################################################
