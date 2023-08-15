@@ -333,7 +333,7 @@ step "deploy-an-azure-resource-manager-template-2" {
                               "name": "http-rule",
                               "http": {
                                 "metadata": {
-                                  "concurrentRequests": "100"
+                                  "concurrentRequests": "1"
                                 }
                               }
                             }]
