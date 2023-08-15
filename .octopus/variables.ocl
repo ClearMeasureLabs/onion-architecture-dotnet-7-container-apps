@@ -159,20 +159,20 @@ variable "DatabaseServerName" {
     }
 }
 
-variable "EnsureEnvironmentsExist" {
-    value "False" {
-        environment = ["uat"]
-    }
-
-    value "False" {
-        environment = ["prod"]
-    }
-}
-
 variable "ContainerAppReplicas" {
     value "2" {}
 }
 
 variable "DBScaledUpPerformanceLevel" {
     value "S0" {}
+}
+
+variable "EnsureEnvironmentsExist" {
+    value "True" {
+        environment = ["uat"]
+    }
+
+    value "True" {
+        environment = ["prod"]
+    }
 }
