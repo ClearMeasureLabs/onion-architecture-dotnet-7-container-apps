@@ -327,8 +327,16 @@ step "deploy-an-azure-resource-manager-template-2" {
                             }
                           ],
                           "scale": {
-                            "minReplicas": 1,
-                            "maxReplicas": 1
+                            "minReplicas": 0,
+                            "maxReplicas": 1,
+                            "rules": [{
+                              "name": "http-rule",
+                              "http": {
+                                "metadata": {
+                                  "concurrentRequests": "1"
+                                }
+                              }
+                            }]
                           }
                         }
                       }

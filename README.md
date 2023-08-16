@@ -505,7 +505,9 @@ In the ChurchBulletin.Scripts package that is created there is a script called S
 ## Create ContainerAppReplicas variable
 
 In your Octopus Deploy project, create two new variables
-- **ContainerAppReplicas** and give it an integer value. e.g. 2
+- **ContainerAppScaledUpReplicas** and give it an integer value. e.g. 2
+- **ContainerAppScaledUpCPU** and give it a float value. e.g. 0.5
+- **ContainerAppScaledUpMem** and give it a float value. e.g. 1.0
 - **DBScaledUpPerformanceLevel** and give it service objective value. e.g. S0
 
 Commit these variables to main. **Variables not in the default branch will not be accessible to runbooks**
@@ -542,7 +544,7 @@ Commit these variables to main. **Variables not in the default branch will not b
 - Under Script File in Package set the Package feed to the feed that was created.
 - Set the Package ID to **ChurchBulletin.Script**
 - Set the Script file name to **ScaleInfrastructure.ps1**
-- Set the Script parameters to **-appReplicas #{ContainerAppReplicas} -serviceObjective #{DBScaledUpPerformanceLevel}**
+- Set the Script parameters to **-appReplicas #{ContainerAppScaledUpReplicas} -cpu #{ContainerAppScaledUpCPU} -mem #{ContainerAppScaledUpMem} -serviceObjective #{DBScaledUpPerformanceLevel}**
 
 ![Alt text](images/runbook5.png)
 
