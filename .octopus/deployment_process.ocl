@@ -310,6 +310,17 @@ step "deploy-an-azure-resource-manager-template-2" {
                             {
                               "name": "main",
                               "image": "[parameters('container_image')]",
+                              "probes": [
+                                {
+                                  "type": "liveness",
+                                  "httpGet": {
+                                    "path": "/_healthcheck",
+                                    "port": 80
+                                  },
+                                  "initialDelaySeconds": 90,
+                                  "periodSeconds": 60
+                                }
+                              ],
                               "env": [
                                 {
                                   "name": "HTTP_PORT",
