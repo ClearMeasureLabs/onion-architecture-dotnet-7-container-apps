@@ -1,7 +1,8 @@
 param(
     [int]$appReplicas = 1,
+    [float]$cpu = 0.25,
+    [float]$memGi = 0.5,
     [string]$serviceObjective = "Basic"
-
 )
 
 #$azPath = "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin"
@@ -45,6 +46,6 @@ Write-Host $env:PATH -Split ';'
 ###################################################################
 #All of that to get to this.  This the actual containerapp
 #update - set the number of replicas, and scale the database
-& az containerapp update --name $container_app_name --resource-group $ResourceGroupName --min-replicas $appReplicas --max-replicas $appReplicas
+& az containerapp update --name $container_app_name --resource-group $ResourceGroupName --max-replicas $appReplicas --cpu $cpu --memory "$($memGi)Gi"
 & az sql db update --resource-group $ResourceGroupName --server $DatabaseServerName --name $DatabaseName --service-objective $serviceObjective
 ###################################################################
