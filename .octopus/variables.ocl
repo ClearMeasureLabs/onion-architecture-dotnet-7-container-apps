@@ -159,8 +159,16 @@ variable "DatabaseServerName" {
     }
 }
 
-variable "ContainerAppReplicas" {
+variable "ContainerAppScaledUpReplicas" {
     value "2" {}
+}
+
+variable "ContainerAppScaledUpCPU" {
+    value "0.5" {}
+}
+
+variable "ContainerAppScaledUpMem" {
+    value "1.0" {}
 }
 
 variable "DBScaledUpPerformanceLevel" {
