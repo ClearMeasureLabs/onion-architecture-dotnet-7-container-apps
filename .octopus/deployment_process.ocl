@@ -317,7 +317,7 @@ step "deploy-an-azure-resource-manager-template-2" {
                                     "path": "/_healthcheck",
                                     "port": 80
                                   },
-                                  "initialDelaySeconds": 90,
+                                  "initialDelaySeconds": 60,
                                   "periodSeconds": 60
                                 }
                               ],
