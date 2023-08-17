@@ -544,3 +544,90 @@ step "healthcheck" {
         }
     }
 }
+
+step "create-availability-test" {
+    name = "Create Availability Test"
+
+    action {
+        action_type = "Octopus.AzureResourceGroup"
+        properties = {
+            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
+            Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
+            Octopus.Action.Azure.ResourceGroupName = "#{ResourceGroupName}"
+            Octopus.Action.Azure.ResourceGroupTemplate = <<-EOT
+                {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "webtests_test_healthcheck_test_name": {
+                            "defaultValue": "test healthcheck-test",
+                            "type": "String"
+                        },
+                      	"app_url": {
+                        	"defaultValue": "",
+                          	"type": "String"
+                        },
+                      	"location": {
+                        	"defaultValue": "southcentralus",
+                          	"type": "String"
+                        }
+                    },
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "microsoft.insights/webtests",
+                            "apiVersion": "2022-06-15",
+                            "name": "[parameters('webtests_test_healthcheck_test_name')]",
+                            "location": "[parameters('location')]",
+                            "tags": {
+                                "create-tags": "Resource"
+                            },
+                            "properties": {
+                                "SyntheticMonitorId": "[parameters('webtests_test_healthcheck_test_name')]",
+                                "Name": "test healthcheck",
+                                "Enabled": true,
+                                "Frequency": 300,
+                                "Timeout": 30,
+                                "Kind": "standard",
+                                "RetryEnabled": true,
+                                "Locations": [
+                                    {
+                                        "Id": "us-ca-sjc-azr"
+                                    },
+                                    {
+                                        "Id": "emea-nl-ams-azr"
+                                    },
+                                    {
+                                        "Id": "us-va-ash-azr"
+                                    },
+                                    {
+                                        "Id": "us-tx-sn1-azr"
+                                    }
+                                ],
+                                "Request": {
+                                    "RequestUrl": "[parameters('app_url')]/_healthcheck",
+                                    "HttpVerb": "GET",
+                                    "ParseDependentRequests": false
+                                },
+                                "ValidationRules": {
+                                    "ExpectedHttpStatusCode": 200,
+                                    "IgnoreHttpStatusCode": false,
+                                    "ContentValidation": {
+                                        "ContentMatch": "Healthy",
+                                        "IgnoreCase": false,
+                                        "PassIfTextFound": true
+                                    },
+                                    "SSLCheck": false
+                                }
+                            }
+                        }
+                    ]
+                }
+                EOT
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"webtests_test_healthcheck_test_name\":{\"value\":\"test healthcheck-test\"},\"app_url\":{\"value\":\"#{containerAppURL}\"},\"location\":{\"value\":\"#{az_location}\"}}"
+            Octopus.Action.Azure.TemplateSource = "Inline"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool_variable = ""
+    }
+}
