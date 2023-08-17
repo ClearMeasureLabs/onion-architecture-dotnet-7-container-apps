@@ -618,7 +618,7 @@ step "create-app-insights" {
                   ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"name\":{\"value\":\"#{ResourceGroupName}-Insights\"},\"type\":{\"value\":\"web\"},\"regionId\":{\"value\":\"#{az_location}\"},\"tagsArray\":{\"value\":{}},\"requestSource\":{\"value\":\"Octopus\"},\"workspaceResourceId\":{\"value\":\"#{WorkspaceID}\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"name\":{\"value\":\"#{ResourceGroupName}-Insights\"},\"type\":{\"value\":\"web\"},\"regionId\":{\"value\":\"#{az_location}\"},\"tagsArray\":{\"value\":{}},\"requestSource\":{\"value\":\"Octopus\"},\"workspaceResourceId\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourcegroups/onion-architecture-dotnet-7-containers-acr/providers/microsoft.operationalinsights/workspaces/Onion-Architecture-Logs\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
@@ -655,6 +655,10 @@ step "create-availability-test" {
                       	"location": {
                         	"defaultValue": "southcentralus",
                           	"type": "String"
+                        },
+                      	"hidden-link": {
+                          	"defaultValue": "",
+                          	"type": "String"
                         }
                     },
                     "variables": {},
@@ -665,7 +669,7 @@ step "create-availability-test" {
                             "name": "[parameters('webtests_test_healthcheck_test_name')]",
                             "location": "[parameters('location')]",
                             "tags": {
-                                "create-tags": "Resource"
+                                "[parameters('hidden-link')]": "Resource"
                             },
                             "properties": {
                                 "SyntheticMonitorId": "[parameters('webtests_test_healthcheck_test_name')]",
@@ -709,7 +713,7 @@ step "create-availability-test" {
                     ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"webtests_test_healthcheck_test_name\":{\"value\":\"test healthcheck-test\"},\"app_url\":{\"value\":\"#{containerAppURL}\"},\"location\":{\"value\":\"#{az_location}\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"webtests_test_healthcheck_test_name\":{\"value\":\"test healthcheck-test\"},\"app_url\":{\"value\":\"#{containerAppURL}\"},\"location\":{\"value\":\"#{az_location}\"},\"hidden-link\":{\"value\":\"\\\"hidden-link:/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/components/#{ResourceGroupName}-Insights\\\"\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
