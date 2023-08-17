@@ -713,7 +713,7 @@ step "create-availability-test" {
                     ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"webtests_healthcheck_name\":{\"value\":\"Availability Test\"},\"healthcheck_url\":{\"value\":\"http://#{containerAppURL}/_healthcheck\"},\"location\":{\"value\":\"#{az_location}\"},\"hidden-link\":{\"value\":\"hidden-link:/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/components/#{ResourceGroupName}-Insights\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"webtests_healthcheck_name\":{\"value\":\"#{container_app_name}-availability-test\"},\"healthcheck_url\":{\"value\":\"http://#{containerAppURL}/_healthcheck\"},\"location\":{\"value\":\"#{az_location}\"},\"hidden-link\":{\"value\":\"hidden-link:/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/components/#{ResourceGroupName}-Insights\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
