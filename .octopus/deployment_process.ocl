@@ -644,8 +644,8 @@ step "create-availability-test" {
                     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
                     "contentVersion": "1.0.0.0",
                     "parameters": {
-                        "webtests_test_healthcheck_test_name": {
-                            "defaultValue": "test healthcheck-test",
+                        "webtests_healthcheck_name": {
+                            "defaultValue": "Availability Test",
                             "type": "String"
                         },
                       	"healthcheck_url": {
@@ -666,14 +666,14 @@ step "create-availability-test" {
                         {
                             "type": "microsoft.insights/webtests",
                             "apiVersion": "2022-06-15",
-                            "name": "[parameters('webtests_test_healthcheck_test_name')]",
+                            "name": "[parameters('webtests_healthcheck_name')]",
                             "location": "[parameters('location')]",
                             "tags": {
                                 "[parameters('hidden-link')]": "Resource"
                             },
                             "properties": {
-                                "SyntheticMonitorId": "[parameters('webtests_test_healthcheck_test_name')]",
-                                "Name": "test healthcheck",
+                                "SyntheticMonitorId": "[parameters('webtests_healthcheck_name')]",
+                                "Name": "Availability Test",
                                 "Enabled": true,
                                 "Frequency": 300,
                                 "Timeout": 30,
@@ -713,7 +713,7 @@ step "create-availability-test" {
                     ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"webtests_test_healthcheck_test_name\":{\"value\":\"test healthcheck-test\"},\"healthcheck_url\":{\"value\":\"http://#{containerAppURL}/_healthcheck\"},\"location\":{\"value\":\"#{az_location}\"},\"hidden-link\":{\"value\":\"hidden-link:/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/components/#{ResourceGroupName}-Insights\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"webtests_healthcheck_name\":{\"value\":\"Availability Test\"},\"healthcheck_url\":{\"value\":\"http://#{containerAppURL}/_healthcheck\"},\"location\":{\"value\":\"#{az_location}\"},\"hidden-link\":{\"value\":\"hidden-link:/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/components/#{ResourceGroupName}-Insights\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
