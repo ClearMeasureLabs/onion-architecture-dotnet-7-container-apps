@@ -694,7 +694,7 @@ step "create-availability-test" {
                                     }
                                 ],
                                 "Request": {
-                                    "RequestUrl": "[parameters('healthcheck_url')]",
+                                    "RequestUrl": "[replace(parameters('healthcheck_url'), '\"', '')]",
                                     "HttpVerb": "GET",
                                     "ParseDependentRequests": false
                                 },
