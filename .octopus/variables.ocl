@@ -200,3 +200,7 @@ variable "AppInsightsName" {
 variable "LowAvailabilityAlertName" {
     value "#{ResourceGroupName} Low Availability" {}
 }
+
+variable "LogAnalyticsWorkspaceName" {
+    value "#{ResourceGroupName}-Log-Analytics" {}
+}
