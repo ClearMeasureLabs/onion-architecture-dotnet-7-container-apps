@@ -618,7 +618,7 @@ step "create-app-insights" {
                   ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"name\":{\"value\":\"#{ResourceGroupName}-Insights\"},\"type\":{\"value\":\"web\"},\"regionId\":{\"value\":\"#{az_location}\"},\"tagsArray\":{\"value\":{}},\"requestSource\":{\"value\":\"Octopus\"},\"workspaceResourceId\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourcegroups/onion-architecture-dotnet-7-containers-acr/providers/microsoft.operationalinsights/workspaces/Onion-Architecture-Logs\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"name\":{\"value\":\"#{AppInsightsName}\"},\"type\":{\"value\":\"web\"},\"regionId\":{\"value\":\"#{az_location}\"},\"tagsArray\":{\"value\":{}},\"requestSource\":{\"value\":\"Octopus\"},\"workspaceResourceId\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourcegroups/onion-architecture-dotnet-7-containers-acr/providers/microsoft.operationalinsights/workspaces/Onion-Architecture-Logs\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
@@ -713,7 +713,7 @@ step "create-availability-test" {
                     ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"webtests_healthcheck_name\":{\"value\":\"#{container_app_name}-availability-test\"},\"healthcheck_url\":{\"value\":\"http://#{containerAppURL}/_healthcheck\"},\"location\":{\"value\":\"#{az_location}\"},\"hidden-link\":{\"value\":\"hidden-link:/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/components/#{ResourceGroupName}-Insights\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"webtests_healthcheck_name\":{\"value\":\"#{AvailabilityTestName}\"},\"healthcheck_url\":{\"value\":\"http://#{containerAppURL}/_healthcheck\"},\"location\":{\"value\":\"#{az_location}\"},\"hidden-link\":{\"value\":\"hidden-link:/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/components/#{AppInsightsName}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
@@ -776,7 +776,7 @@ step "create-email-alert-action" {
                     ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"actionGroups_Email_Alert_name\":{\"value\":\"Email Alert\"},\"email_address\":{\"value\":\"dale.marttinen@clear-measure.com\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"actionGroups_Email_Alert_name\":{\"value\":\"#{EmailAlertActionName}\"},\"email_address\":{\"value\":\"dale.marttinen@clear-measure.com\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
@@ -855,7 +855,7 @@ step "create-low-availability-metric-alert" {
                     ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"metricAlerts_Prod_UI_Low_Availability_name\":{\"value\":\"Prod-UI Low Availability\"},\"components_onion_architecture_dotnet_7_containers_Prod_Insights_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/components/#{ResourceGroupName}-Insights\"},\"actionGroups_Email_Alert_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/actionGroups/Email Alert\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"metricAlerts_Prod_UI_Low_Availability_name\":{\"value\":\"#{LowAvailabilityAlertName}\"},\"components_onion_architecture_dotnet_7_containers_Prod_Insights_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/components/#{AppInsightsName}\"},\"actionGroups_Email_Alert_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/actionGroups/#{EmailAlertActionName}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
