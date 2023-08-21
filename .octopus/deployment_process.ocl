@@ -600,6 +600,12 @@ step "create-log-analytics-workspace" {
                       "metadata": {
                         "description": "Specify true to use resource or workspace permissions, or false to require workspace permissions."
                       }
+                    },
+                    "heartbeatTableRetention": {
+                      "type": "int",
+                      "metadata": {
+                        "description": "Specify the number of days to retain data in Heartbeat table."
+                      }
                     }
                   },
                   "resources": [
@@ -615,18 +621,24 @@ step "create-log-analytics-workspace" {
                         "retentionInDays": "[parameters('retentionInDays')]",
                         "features": {
                           "enableLogAccessUsingOnlyResourcePermissions": "[parameters('resourcePermissions')]"
-                        },
-                        "workspaceCapping": {
-                         	"dailyQuotaGb": -1
-                        },
-                        "publicNetworkAccessForIngestion": "Enabled",
-                        "publicNetworkAccessForQuery": "Enabled"
+                        }
                       }
+                    },
+                    {
+                      "type": "Microsoft.OperationalInsights/workspaces/tables",
+                      "apiVersion": "2021-12-01-preview",
+                      "name": "[format('{0}/{1}', parameters('workspaceName'), 'Heartbeat')]",
+                      "properties": {
+                        "retentionInDays": "[parameters('heartbeatTableRetention')]"
+                      },
+                      "dependsOn": [
+                        "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]"
+                      ]
                     }
                   ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"workspaceName\":{\"value\":\"#{LogAnalyticsWorkspaceName}\"},\"location\":{\"value\":\"#{az_location}\"},\"sku\":{\"value\":\"PerGB2018\"},\"retentionInDays\":{\"value\":120},\"resourcePermissions\":{\"value\":\"True\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"workspaceName\":{\"value\":\"#{LogAnalyticsWorkspaceName}\"},\"location\":{\"value\":\"#{az_location}\"},\"sku\":{\"value\":\"PerGB2018\"},\"retentionInDays\":{\"value\":120},\"resourcePermissions\":{\"value\":\"True\"},\"heartbeatTableRetention\":{\"value\":1}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
