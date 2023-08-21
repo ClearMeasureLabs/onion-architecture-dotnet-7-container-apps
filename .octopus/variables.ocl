@@ -202,5 +202,5 @@ variable "LowAvailabilityAlertName" {
 }
 
 variable "LogAnalyticsWorkspaceName" {
-    value "#{ResourceGroupName}-Log-Analytics" {}
+    value "#{Octopus.Environment.Name}-Log-Analytics" {}
 }
