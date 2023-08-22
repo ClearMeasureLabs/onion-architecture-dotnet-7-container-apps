@@ -1024,7 +1024,25 @@ step "create-automation-account" {
                         },
                         "tags": {
                             "type": "object"
-                        }
+                        },
+                        "apiKeyValue": {
+                          "type": "securestring"
+                        },
+                        "envNameValue": {
+                          "type": "string"
+                        },
+                        "octoProjectValue": {
+                          "type": "string"
+                        },
+                        "octoURLValue": {
+                          "type": "securestring"
+                        },
+                        "octoRunbookValue": {
+                          "type": "string"
+                        }, 
+                        "octoSpaceValue": {
+                          "type": "string"
+                        }      
                     },
                     "resources": [
                         {
@@ -1038,12 +1056,72 @@ step "create-automation-account" {
                                     "name": "Basic"
                                 }
                             }
-                        }
+                        },
+                      	{
+                          "name": "apikey",
+                          "type": "Microsoft.Automation/automationAccounts/variables",
+                          "apiVersion": "2019-06-01",
+                          "location": "[parameters('location')]",
+                          "properties": {
+                            "isEncrypted": true,
+                            "value": "[parameters('apiKeyValue')]"
+                          }
+                        },
+                      	{
+                          "name": "envName",
+                          "type": "Microsoft.Automation/automationAccounts/variables",
+                          "apiVersion": "2019-06-01",
+                          "location": "[parameters('location')]",
+                          "properties": {
+                            "isEncrypted": true,
+                            "value": "[parameters('envNameValue')]"
+                          }
+                        },
+                      	{
+                          "name": "octoProject",
+                          "type": "Microsoft.Automation/automationAccounts/variables",
+                          "apiVersion": "2019-06-01",
+                          "location": "[parameters('location')]",
+                          "properties": {
+                            "isEncrypted": true,
+                            "value": "[parameters('octoProjectValue')]"
+                          }
+                        },
+                      	{
+                          "name": "octoURL",
+                          "type": "Microsoft.Automation/automationAccounts/variables",
+                          "apiVersion": "2019-06-01",
+                          "location": "[parameters('location')]",
+                          "properties": {
+                            "isEncrypted": true,
+                            "value": "[parameters('OctoURLValue')]"
+                          }
+                        },
+                      	{
+                          "name": "octoRunbook",
+                          "type": "Microsoft.Automation/automationAccounts/variables",
+                          "apiVersion": "2019-06-01",
+                          "location": "[parameters('location')]",
+                          "properties": {
+                            "isEncrypted": true,
+                            "value": "[parameters('octoRunbookValue')]"
+                          }
+                        },
+                      	{
+                          "name": "octoSpace",
+                          "type": "Microsoft.Automation/automationAccounts/variables",
+                          "apiVersion": "2019-06-01",
+                          "location": "[parameters('location')]",
+                          "properties": {
+                            "isEncrypted": true,
+                            "value": "[parameters('octoSpaceValue')]"
+                          }
+                        }      
                     ]
                 }
                 
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"#{Octopus.Environment.Name}-automation\"},\"location\":{\"value\":\"#{az_location}\"},\"tags\":{\"value\":{}}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"#{Octopus.Environment.Name}-automation\"},\"location\":{\"value\":\"#{az_location}\"},\"tags\":{\"value\":{}},\"apiKeyValue\":{},\"envNameValue\":{\"value\":\"#{Octopus.Environment.Name}\"},\"octoProjectValue\":{\"value\":\"#{Octopus.Project.Name}\"},\"octoURLValue\":{\"value\":\"https://clearmeasure.octopus.app\"},\"octoRunbookValue\":{\"value\":\"Unhealthy app alert\"},\"octoSpaceValue\":{\"value\":\"#{Octopus.Space.Name}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
