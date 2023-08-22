@@ -1076,7 +1076,7 @@ step "create-runbook" {
                         },
                         "runbookScriptContent": {
                             "type": "string",
-                            "defaultValue": "$ErrorActionPreference = \"Stop\";\n\n# Define working variables\n$octopusURL = \"https://clearmeasure.octopus.app/\"\n$octopusAPIKey = \"API-L5IB8Y1CRCZPXSU1D33DO6WFE8FNWMXU\"\n$header = @{ \"X-Octopus-ApiKey\" = $octopusAPIKey }\n$spaceName = \"Onion DevOps\"\n$projectName = \"onion-architecture-dotnet-7-container-apps\"\n$runbookName = \"Unhealthy app alert\"\n$environmentNames = @(\"TDD\")\n\n# Get space\n$space = (Invoke-RestMethod -Method Get -Uri \"$octopusURL/api/spaces/all\" -Headers $header) | Where-Object {$_.Name -eq $spaceName}\nWrite-Host \"Using Space named $($space.Name) with id $($space.Id)\"\n\n# Create the release body\n$createRunbookRunCommandV1 = @{\n\tSpaceId          = $space.Id\n    SpaceIdOrName    = $spaceName\n    ProjectName      = $projectName\n    RunbookName      = $runbookName\n    EnvironmentNames = $environmentNames\n} | ConvertTo-Json\n\n# Run runbook\nInvoke-RestMethod -Method POST -Uri \"$OctopusURL/api/$($Space.Id)/runbook-runs/create/v1\" -Body $createRunbookRunCommandV1 -Headers $header"
+                            "defaultValue": ""
                         }
                     },
                     "resources": [
