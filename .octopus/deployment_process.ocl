@@ -846,7 +846,7 @@ step "create-automation-account" {
                 }
                 
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"#{Octopus.Environment.Name}-automation\"},\"location\":{\"value\":\"#{az_location}\"},\"tags\":{\"value\":{}}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"#{Octopus.Environment.Name}-#{Octopus.Release.Id | ToLower }-automation\"},\"location\":{\"value\":\"#{az_location}\"},\"tags\":{\"value\":{}}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
