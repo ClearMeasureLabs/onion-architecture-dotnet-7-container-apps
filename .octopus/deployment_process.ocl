@@ -68,7 +68,7 @@ step "create-runbook" {
                       "properties": {
                         "description": "api key",
                         "isEncrypted": true,
-                        "value": "[parameters('apikeyValue')]"
+                        "value": "[concat('\"', parameters('apiKeyValue'), '\"')]"
                       }
                     },      
                     {
@@ -78,7 +78,7 @@ step "create-runbook" {
                       "properties": {
                         "description": "environment name",
                         "isEncrypted": false,
-                        "value": "'TDD'"
+                        "value": "[concat('\"', parameters('envNameValue'), '\"')]"
                       }
                     },
                     {
@@ -87,8 +87,8 @@ step "create-runbook" {
                       "apiVersion": "2019-06-01",
                       "location": "[resourceGroup().location]",
                       "properties": {
-                        "isEncrypted": true,
-                        "value": "[parameters('octoProjectValue')]"
+                        "isEncrypted": false,
+                        "value": "[concat('\"', parameters('octoProjectValue'), '\"')]"
                       }
                     },
                     {
@@ -98,7 +98,7 @@ step "create-runbook" {
                       "location": "[resourceGroup().location]",
                       "properties": {
                         "isEncrypted": true,
-                        "value": "[parameters('OctoURLValue')]"
+                        "value": "[concat('\"', parameters('octoURLValue'), '\"')]"
                       }
                     },
                     {
@@ -107,8 +107,8 @@ step "create-runbook" {
                       "apiVersion": "2019-06-01",
                       "location": "[resourceGroup().location]",
                       "properties": {
-                        "isEncrypted": true,
-                        "value": "[parameters('octoRunbookValue')]"
+                        "isEncrypted": false,
+                        "value": "[concat('\"', parameters('octoRunbookValue'), '\"')]"
                       }
                     },
                     {
@@ -117,8 +117,8 @@ step "create-runbook" {
                       "apiVersion": "2019-06-01",
                       "location": "[resourceGroup().location]",
                       "properties": {
-                        "isEncrypted": true,
-                        "value": "[parameters('octoSpaceValue')]"
+                        "isEncrypted": false,
+                        "value": "[concat('\"', parameters('octoSpaceValue'), '\"')]"
                       }
                     }
                     
