@@ -78,7 +78,7 @@ step "create-runbook" {
                       "properties": {
                         "description": "environment name",
                         "isEncrypted": false,
-                        "value": "[parameters('envNameValue')]"
+                        "value": "TDD"
                       }
                     },
                     {
