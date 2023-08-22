@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop";
 
 # Define working variables
-$octopusURL = Get-AutomationVariable -Name 'octopusURL'
+$octopusURL = Get-AutomationVariable -Name 'octoURL'
 $octopusAPIKey = Get-AutomationVariable -Name 'apiKey'
 $header = @{ "X-Octopus-ApiKey" = $octopusAPIKey }
 $spaceName = Get-AutomationVariable -Name 'octoSpace'
