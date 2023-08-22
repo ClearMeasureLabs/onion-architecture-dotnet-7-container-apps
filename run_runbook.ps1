@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop";
 
 # Define working variables
 $octopusURL = "https://clearmeasure.octopus.app/"
-$octopusAPIKey = "API-L5IB8Y1CRCZPXSU1D33DO6WFE8FNWMXU"
+$octopusAPIKey = "API-key"
 $header = @{ "X-Octopus-ApiKey" = $octopusAPIKey }
 $spaceName = "Onion DevOps"
 $projectName = "onion-architecture-dotnet-7-container-apps"
