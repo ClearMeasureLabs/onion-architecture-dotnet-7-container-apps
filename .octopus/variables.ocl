@@ -184,3 +184,23 @@ variable "EnsureEnvironmentsExist" {
         environment = ["prod"]
     }
 }
+
+variable "EmailAlertActionName" {
+    value "Email Alert" {}
+}
+
+variable "AvailabilityTestName" {
+    value "#{container_app_name}-availability-test" {}
+}
+
+variable "AppInsightsName" {
+    value "#{ResourceGroupName}-Insights" {}
+}
+
+variable "LowAvailabilityAlertName" {
+    value "#{ResourceGroupName} Low Availability" {}
+}
+
+variable "LogAnalyticsWorkspaceName" {
+    value "#{Octopus.Environment.Name}-Log-Analytics" {}
+}
