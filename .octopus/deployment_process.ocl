@@ -1057,13 +1057,13 @@ step "create-automation-account" {
                                 }
                             }
                         },
-                      	{
-                          "name": "envName",
+                        {
                           "type": "Microsoft.Automation/automationAccounts/variables",
-                          "apiVersion": "2019-06-01",
-                          "location": "[parameters('location')]",
+                          "apiVersion": "2015-10-31",
+                          "name": "envName",
                           "properties": {
-                            "isEncrypted": true,
+                            "description": "environment name",
+                            "isEncrypted": false,
                             "value": "[parameters('envNameValue')]"
                           }
                         },
