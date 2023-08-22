@@ -1092,7 +1092,7 @@ step "create-runbook" {
                         "logProgress": false,
                         "logVerbose": false,
                         "publishContentLink": {
-                          "uri": "parameters('contentURL')"
+                          "uri": "https://raw.githubusercontent.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps/add-healthcheck-monitoring/run_runbook.ps1"
                         }
                       }
                     }
