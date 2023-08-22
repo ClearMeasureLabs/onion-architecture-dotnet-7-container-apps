@@ -1060,7 +1060,17 @@ step "create-automation-account" {
                         {
                           "type": "Microsoft.Automation/automationAccounts/variables",
                           "apiVersion": "2015-10-31",
-                          "name": "concat(parameters('automationAccountName'), '/', envName",
+                          "name": "concat(parameters('automationAccountName'), '/', apiKey)",
+                          "properties": {
+                            "description": "api key",
+                            "isEncrypted": true,
+                            "value": "[parameters('apikeyValue')]"
+                          }
+                        },      
+                        {
+                          "type": "Microsoft.Automation/automationAccounts/variables",
+                          "apiVersion": "2015-10-31",
+                          "name": "concat(parameters('automationAccountName'), '/', envName)",
                           "properties": {
                             "description": "environment name",
                             "isEncrypted": false,
@@ -1068,7 +1078,7 @@ step "create-automation-account" {
                           }
                         },
                       	{
-                          "name": "octoProject",
+                          "name": "concat(parameters('automationAccountName'), '/', octoProject)",
                           "type": "Microsoft.Automation/automationAccounts/variables",
                           "apiVersion": "2019-06-01",
                           "location": "[parameters('location')]",
@@ -1078,7 +1088,7 @@ step "create-automation-account" {
                           }
                         },
                       	{
-                          "name": "octoURL",
+                          "name": "concat(parameters('automationAccountName'), '/', octoURL)",
                           "type": "Microsoft.Automation/automationAccounts/variables",
                           "apiVersion": "2019-06-01",
                           "location": "[parameters('location')]",
@@ -1088,7 +1098,7 @@ step "create-automation-account" {
                           }
                         },
                       	{
-                          "name": "octoRunbook",
+                          "name": "concat(parameters('automationAccountName'), '/', octoRunbook)",
                           "type": "Microsoft.Automation/automationAccounts/variables",
                           "apiVersion": "2019-06-01",
                           "location": "[parameters('location')]",
@@ -1098,7 +1108,7 @@ step "create-automation-account" {
                           }
                         },
                       	{
-                          "name": "octoSpace",
+                          "name": "concat(parameters('automationAccountName'), '/', octoSpace)",
                           "type": "Microsoft.Automation/automationAccounts/variables",
                           "apiVersion": "2019-06-01",
                           "location": "[parameters('location')]",
@@ -1111,7 +1121,7 @@ step "create-automation-account" {
                 }
                 
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"#{Octopus.Environment.Name}-automation\"},\"location\":{\"value\":\"#{az_location}\"},\"tags\":{\"value\":{}},\"apiKeyValue\":{\"value\":\"asdfaghh\"},\"envNameValue\":{\"value\":\"#{Octopus.Environment.Name}\"},\"octoProjectValue\":{\"value\":\"#{Octopus.Project.Name}\"},\"octoURLValue\":{\"value\":\"https://clearmeasure.octopus.app\"},\"octoRunbookValue\":{\"value\":\"Unhealthy app alert\"},\"octoSpaceValue\":{\"value\":\"#{Octopus.Space.Name}\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"#{Octopus.Environment.Name}-automation\"},\"location\":{\"value\":\"#{az_location}\"},\"tags\":{\"value\":{}},\"apiKeyValue\":{\"value\":\"#{azrunbookAPI}\"},\"envNameValue\":{\"value\":\"#{Octopus.Environment.Name}\"},\"octoProjectValue\":{\"value\":\"#{Octopus.Project.Name}\"},\"octoURLValue\":{\"value\":\"https://clearmeasure.octopus.app\"},\"octoRunbookValue\":{\"value\":\"Unhealthy app alert\"},\"octoSpaceValue\":{\"value\":\"#{Octopus.Space.Name}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
