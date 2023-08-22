@@ -1,3 +1,139 @@
+step "create-runbook" {
+    name = "Create runbook"
+
+    action {
+        action_type = "Octopus.AzureResourceGroup"
+        properties = {
+            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
+            Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
+            Octopus.Action.Azure.ResourceGroupName = "#{ResourceGroupName}"
+            Octopus.Action.Azure.ResourceGroupTemplate = <<-EOT
+                {
+                  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "automationAccountName": {
+                      "type": "string",
+                      "metadata": {
+                        "description": "The name of the Automation account."
+                      }
+                    },
+                    "runbookName": {
+                      "type": "string",
+                      "metadata": {
+                        "description": "The name of the runbook."
+                      }
+                    },   
+                    "contentURL": {
+                    	"type": "string"
+                    },
+                    "apiKeyValue": {
+                      "type": "securestring"
+                    },
+                    "envNameValue": {
+                      "type": "string"
+                    },
+                    "octoProjectValue": {
+                      "type": "string"
+                    },
+                    "octoURLValue": {
+                      "type": "securestring"
+                    },
+                    "octoRunbookValue": {
+                      "type": "string"
+                    }, 
+                    "octoSpaceValue": {
+                      "type": "string"
+                    } 
+                  },
+                  "resources": [
+                    {
+                      "name": "[concat(parameters('automationAccountName'), '/', parameters('runbookName'))]",
+                      "type": "Microsoft.Automation/automationAccounts/runbooks",
+                      "apiVersion": "2018-06-30",
+                      "location": "[resourceGroup().location]",
+                      "properties": {
+                        "runbookType": "PowerShell",
+                        "logProgress": false,
+                        "logVerbose": false,
+                        "publishContentLink": {
+                          "uri": "https://raw.githubusercontent.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps/add-healthcheck-monitoring/run_runbook.ps1"
+                        }
+                      }
+                    },
+                    {
+                      "type": "Microsoft.Automation/automationAccounts/variables",
+                      "apiVersion": "2015-10-31",
+                      "name": "[concat(parameters('automationAccountName'), '/apiKey')]",
+                      "properties": {
+                        "description": "api key",
+                        "isEncrypted": true,
+                        "value": "[concat('\"', parameters('apiKeyValue'), '\"')]"
+                      }
+                    },      
+                    {
+                      "type": "Microsoft.Automation/automationAccounts/variables",
+                      "apiVersion": "2015-10-31",
+                      "name": "[concat(parameters('automationAccountName'), '/envName')]",
+                      "properties": {
+                        "description": "environment name",
+                        "isEncrypted": false,
+                        "value": "[concat('\"', parameters('envNameValue'), '\"')]"
+                      }
+                    },
+                    {
+                      "name": "[concat(parameters('automationAccountName'), '/octoProject')]",
+                      "type": "Microsoft.Automation/automationAccounts/variables",
+                      "apiVersion": "2019-06-01",
+                      "location": "[resourceGroup().location]",
+                      "properties": {
+                        "isEncrypted": false,
+                        "value": "[concat('\"', parameters('octoProjectValue'), '\"')]"
+                      }
+                    },
+                    {
+                      "name": "[concat(parameters('automationAccountName'), '/octoURL')]",
+                      "type": "Microsoft.Automation/automationAccounts/variables",
+                      "apiVersion": "2019-06-01",
+                      "location": "[resourceGroup().location]",
+                      "properties": {
+                        "isEncrypted": true,
+                        "value": "[concat('\"', parameters('octoURLValue'), '\"')]"
+                      }
+                    },
+                    {
+                      "name": "[concat(parameters('automationAccountName'), '/octoRunbook')]",
+                      "type": "Microsoft.Automation/automationAccounts/variables",
+                      "apiVersion": "2019-06-01",
+                      "location": "[resourceGroup().location]",
+                      "properties": {
+                        "isEncrypted": false,
+                        "value": "[concat('\"', parameters('octoRunbookValue'), '\"')]"
+                      }
+                    },
+                    {
+                      "name": "[concat(parameters('automationAccountName'), '/octoSpace')]",
+                      "type": "Microsoft.Automation/automationAccounts/variables",
+                      "apiVersion": "2019-06-01",
+                      "location": "[resourceGroup().location]",
+                      "properties": {
+                        "isEncrypted": false,
+                        "value": "[concat('\"', parameters('octoSpaceValue'), '\"')]"
+                      }
+                    }
+                    
+                  ]
+                }
+                
+                EOT
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"TDD-automation\"},\"runbookName\":{\"value\":\"octo-runbook\"},\"contentURL\":{\"value\":\"https://raw.githubusercontent.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps/add-healthcheck-monitoring/run_runbook.ps1\"},\"apiKeyValue\":{\"value\":\"#{azrunbookAPI}\"},\"envNameValue\":{\"value\":\"#{Octopus.Environment.Name}\"},\"octoProjectValue\":{\"value\":\"#{Octopus.Project.Name}\"},\"octoURLValue\":{\"value\":\"https://clearmeasure.octopus.app\"},\"octoRunbookValue\":{\"value\":\"Unhealthy app alert\"},\"octoSpaceValue\":{\"value\":\"#{Octopus.Space.Name}\"}}"
+            Octopus.Action.Azure.TemplateSource = "Inline"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool_variable = ""
+    }
+}
+
 step "create-resource-group" {
     condition = "Variable"
     name = "Create Resource Group"
@@ -1024,7 +1160,7 @@ step "create-automation-account" {
                         },
                         "tags": {
                             "type": "object"
-                        }
+                        }     
                     },
                     "resources": [
                         {
@@ -1038,73 +1174,12 @@ step "create-automation-account" {
                                     "name": "Basic"
                                 }
                             }
-                        }
+                        }   
                     ]
                 }
                 
                 EOT
             Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"#{Octopus.Environment.Name}-automation\"},\"location\":{\"value\":\"#{az_location}\"},\"tags\":{\"value\":{}}}"
-            Octopus.Action.Azure.TemplateSource = "Inline"
-            OctopusUseBundledTooling = "False"
-        }
-        worker_pool_variable = ""
-    }
-}
-
-step "create-runbook" {
-    name = "Create runbook"
-
-    action {
-        action_type = "Octopus.AzureResourceGroup"
-        properties = {
-            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
-            Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
-            Octopus.Action.Azure.ResourceGroupName = "#{ResourceGroupName}"
-            Octopus.Action.Azure.ResourceGroupTemplate = <<-EOT
-                {
-                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {
-                        "automationAccountName": {
-                            "type": "string"
-                        },
-                        "runbookName": {
-                            "type": "string"
-                        },
-                        "runbookDescription": {
-                            "type": "string"
-                        },
-                        "runbookScriptContent": {
-                            "type": "string",
-                            "defaultValue": ""
-                        }
-                    },
-                    "resources": [
-                        {
-                            "name": "[concat(parameters('automationAccountName'), '/', parameters('runbookName'))]",
-                            "type": "Microsoft.Automation/automationAccounts/runbooks",
-                            "apiVersion": "2018-06-30",
-                            "location": "[resourceGroup().location]",
-                            "properties": {
-                                "logVerbose": false,
-                                "logProgress": false,
-                                "logActivityTrace": 0,
-                                "runbookType": "PowerShell",
-                                "description": "[parameters('runbookDescription')]",
-                                "publishContentLink": {
-                                    "uri": "[concat('data:application/octet-stream;base64,', base64(parameters('runbookScriptContent')))]",
-                                    "contentHash": {
-                                        "algorithm": "sha256",
-                                        "value": "[base64(sha256(parameters('runbookScriptContent')))]"
-                                    }
-                                }
-                            }
-                        }
-                    ]
-                }
-                
-                EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"#{Octopus.Environment.Name}-automation\"},\"runbookName\":{\"value\":\"octo-runbook\"},\"runbookDescription\":{\"value\":\"Runs octopus runbook\"},\"runbookScriptContent\":{\"value\":\"$ErrorActionPreference = \\\"Stop\\\";\\n\\n# Define working variables\\n$octopusURL = \\\"https://clearmeasure.octopus.app/\\\"\\n$octopusAPIKey = \\\"API-L5IB8Y1CRCZPXSU1D33DO6WFE8FNWMXU\\\"\\n$header = @{ \\\"X-Octopus-ApiKey\\\" = $octopusAPIKey }\\n$spaceName = \\\"Onion DevOps\\\"\\n$projectName = \\\"onion-architecture-dotnet-7-container-apps\\\"\\n$runbookName = \\\"Unhealthy app alert\\\"\\n$environmentNames = @(\\\"TDD\\\")\\n\\n# Get space\\n$space = (Invoke-RestMethod -Method Get -Uri \\\"$octopusURL/api/spaces/all\\\" -Headers $header) | Where-Object {$_.Name -eq $spaceName}\\nWrite-Host \\\"Using Space named $($space.Name) with id $($space.Id)\\\"\\n\\n# Create the release body\\n$createRunbookRunCommandV1 = @{\\n\\tSpaceId          = $space.Id\\n    SpaceIdOrName    = $spaceName\\n    ProjectName      = $projectName\\n    RunbookName      = $runbookName\\n    EnvironmentNames = $environmentNames\\n} | ConvertTo-Json\\n\\n# Run runbook\\nInvoke-RestMethod -Method POST -Uri \\\"$OctopusURL/api/$($Space.Id)/runbook-runs/create/v1\\\" -Body $createRunbookRunCommandV1 -Headers $header\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
