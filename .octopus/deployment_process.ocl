@@ -1168,7 +1168,7 @@ step "create-runbook" {
                       "name": "concat(parameters('automationAccountName'), '/', octoSpace)",
                       "type": "Microsoft.Automation/automationAccounts/variables",
                       "apiVersion": "2019-06-01",
-                      "location": "[parameters('location')]",
+                      "location": "[resourceGroup().location]",
                       "properties": {
                         "isEncrypted": true,
                         "value": "[parameters('octoSpaceValue')]"
