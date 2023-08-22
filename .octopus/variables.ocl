@@ -204,3 +204,7 @@ variable "LowAvailabilityAlertName" {
 variable "LogAnalyticsWorkspaceName" {
     value "#{Octopus.Environment.Name}-Log-Analytics" {}
 }
+
+variable "AutomationAccount" {
+    value "#{Octopus.Environment.Name}-#{Octopus.Release.Id | ToLower }-automation" {}
+}
