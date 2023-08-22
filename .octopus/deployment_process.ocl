@@ -1058,16 +1058,6 @@ step "create-automation-account" {
                             }
                         },
                       	{
-                          "name": "apikey",
-                          "type": "Microsoft.Automation/automationAccounts/variables",
-                          "apiVersion": "2019-06-01",
-                          "location": "[parameters('location')]",
-                          "properties": {
-                            "isEncrypted": true,
-                            "value": "[parameters('apiKeyValue'))]"
-                          }
-                        },
-                      	{
                           "name": "envName",
                           "type": "Microsoft.Automation/automationAccounts/variables",
                           "apiVersion": "2019-06-01",
