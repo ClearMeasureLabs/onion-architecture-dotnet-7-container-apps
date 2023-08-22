@@ -1060,7 +1060,7 @@ step "create-automation-account" {
                         {
                           "type": "Microsoft.Automation/automationAccounts/variables",
                           "apiVersion": "2015-10-31",
-                          "name": "envName",
+                          "name": "concat(parameters('automationAccountName'), '/', envName",
                           "properties": {
                             "description": "environment name",
                             "isEncrypted": false,
