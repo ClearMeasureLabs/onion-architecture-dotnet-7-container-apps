@@ -1076,7 +1076,7 @@ step "create-runbook" {
                       "metadata": {
                         "description": "The name of the runbook."
                       }
-                    },
+                    },   
                     "contentURL": {
                     	"type": "string"
                     },
@@ -1138,7 +1138,7 @@ step "create-runbook" {
                       "name": "concat(parameters('automationAccountName'), '/', octoProject)",
                       "type": "Microsoft.Automation/automationAccounts/variables",
                       "apiVersion": "2019-06-01",
-                      "location": "[parameters('location')]",
+                      "location": "[resourceGroup().location]",
                       "properties": {
                         "isEncrypted": true,
                         "value": "[parameters('octoProjectValue')]"
@@ -1148,7 +1148,7 @@ step "create-runbook" {
                       "name": "concat(parameters('automationAccountName'), '/', octoURL)",
                       "type": "Microsoft.Automation/automationAccounts/variables",
                       "apiVersion": "2019-06-01",
-                      "location": "[parameters('location')]",
+                      "location": "[resourceGroup().location]",
                       "properties": {
                         "isEncrypted": true,
                         "value": "[parameters('OctoURLValue')]"
@@ -1158,7 +1158,7 @@ step "create-runbook" {
                       "name": "concat(parameters('automationAccountName'), '/', octoRunbook)",
                       "type": "Microsoft.Automation/automationAccounts/variables",
                       "apiVersion": "2019-06-01",
-                      "location": "[parameters('location')]",
+                      "location": "[resourceGroup().location]",
                       "properties": {
                         "isEncrypted": true,
                         "value": "[parameters('octoRunbookValue')]"
