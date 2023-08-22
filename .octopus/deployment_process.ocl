@@ -1064,7 +1064,7 @@ step "create-automation-account" {
                           "location": "[parameters('location')]",
                           "properties": {
                             "isEncrypted": true,
-                            "value": "[parameters('apiKeyValue')]"
+                            "value": "[concat('API-',parameters('apiKeyValue'))]"
                           }
                         },
                       	{
