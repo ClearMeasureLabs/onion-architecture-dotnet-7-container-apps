@@ -1,12 +1,12 @@
 $ErrorActionPreference = "Stop";
 
 # Define working variables
-$octopusURL = "https://clearmeasure.octopus.app/"
-$octopusAPIKey = "API-key"
+$octopusURL = Get-AutomationVariable -Name 'octopusURL'
+$octopusAPIKey = Get-AutomationVariable -Name 'apiKey'
 $header = @{ "X-Octopus-ApiKey" = $octopusAPIKey }
-$spaceName = "Onion DevOps"
-$projectName = "onion-architecture-dotnet-7-container-apps"
-$runbookName = "Unhealthy app alert"
+$spaceName = Get-AutomationVariable -Name 'octoSpace'
+$projectName = Get-AutomationVariable -Name 'octoProject'
+$runbookName = Get-AutomationVariable -Name 'octoRunbook'
 $environmentNames = @("TDD")
 
 # Get space
