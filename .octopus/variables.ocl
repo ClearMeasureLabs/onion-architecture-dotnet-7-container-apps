@@ -208,3 +208,7 @@ variable "LogAnalyticsWorkspaceName" {
 variable "AutomationAccount" {
     value "#{Octopus.Environment.Name}-#{Octopus.Release.Id | ToLower }-automation" {}
 }
+
+variable "webhookName" {
+    value "#{ResourceGroupName}-webhook" {}
+}
