@@ -903,8 +903,7 @@ step "create-automation-account" {
                                 "apiVersion": "2018-06-30",  
                                 "name": "[parameters('webhookName')]",    
                                 "dependsOn": [  
-                                  "[parameters('automationAccountName')]",
-                                  "[parameters('runbookName')]"
+                                  "[parameters('automationAccountName')]"
                                 ],  
                                 "properties": {  
                                   "isEnabled": true,  
