@@ -915,9 +915,12 @@ step "create-automation-account" {
                                 }  
                               },
                               {
+                                "name": "apiKey",
                                 "type": "variables",
                                 "apiVersion": "2015-10-31",
-                                "name": "apiKey",
+                                "dependsOn": [  
+                                  "[parameters('automationAccountName')]"  
+                                ], 
                                 "properties": {
                                   "description": "api key",
                                   "isEncrypted": true,
@@ -925,9 +928,12 @@ step "create-automation-account" {
                                 }
                               },      
                               {
+                                "name": "envName",
                                 "type": "variables",
                                 "apiVersion": "2015-10-31",
-                                "name": "envName",
+                                "dependsOn": [  
+                                  "[parameters('automationAccountName')]"  
+                                ], 
                                 "properties": {
                                   "description": "environment name",
                                   "isEncrypted": false,
@@ -939,6 +945,9 @@ step "create-automation-account" {
                                 "type": "variables",
                                 "apiVersion": "2019-06-01",
                                 "location": "[resourceGroup().location]",
+                                "dependsOn": [  
+                                  "[parameters('automationAccountName')]"  
+                                ], 
                                 "properties": {
                                   "isEncrypted": false,
                                   "value": "[concat('\"', parameters('octoProjectValue'), '\"')]"
@@ -949,6 +958,9 @@ step "create-automation-account" {
                                 "type": "variables",
                                 "apiVersion": "2019-06-01",
                                 "location": "[resourceGroup().location]",
+                                "dependsOn": [  
+                                  "[parameters('automationAccountName')]"  
+                                ], 
                                 "properties": {
                                   "isEncrypted": false,
                                   "value": "[concat('\"', parameters('octoURLValue'), '\"')]"
@@ -959,6 +971,9 @@ step "create-automation-account" {
                                 "type": "variables",
                                 "apiVersion": "2019-06-01",
                                 "location": "[resourceGroup().location]",
+                                "dependsOn": [  
+                                  "[parameters('automationAccountName')]"  
+                                ], 
                                 "properties": {
                                   "isEncrypted": false,
                                   "value": "[concat('\"', parameters('octoRunbookValue'), '\"')]"
@@ -969,6 +984,9 @@ step "create-automation-account" {
                                 "type": "variables",
                                 "apiVersion": "2019-06-01",
                                 "location": "[resourceGroup().location]",
+                                "dependsOn": [  
+                                  "[parameters('automationAccountName')]"  
+                                ], 
                                 "properties": {
                                   "isEncrypted": false,
                                   "value": "[concat('\"', parameters('octoSpaceValue'), '\"')]"
