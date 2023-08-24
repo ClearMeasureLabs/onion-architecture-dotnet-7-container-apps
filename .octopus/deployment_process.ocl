@@ -827,6 +827,45 @@ step "create-automation-account" {
                         },
                         "tags": {
                             "type": "object"
+                        },
+                        "runbookName": {
+                          "type": "string",
+                          "metadata": {
+                            "description": "The name of the runbook."
+                          }
+                        },
+                        "webhookName": {
+                          "type": "string",
+                          "metadata": {
+                            "description": "The name of the webhook."
+                          }
+                        },
+                        "webhookExpiryTime": {
+                          "type":"string",
+                          "metadata":{
+                            "description":"The expiry time of the webhook."
+                          }
+                        },   
+                        "contentURL": {
+                            "type": "string"
+                        },
+                        "apiKeyValue": {
+                          "type": "securestring"
+                        },
+                        "envNameValue": {
+                          "type": "string"
+                        },
+                        "octoProjectValue": {
+                          "type": "string"
+                        },
+                        "octoURLValue": {
+                          "type": "securestring"
+                        },
+                        "octoRunbookValue": {
+                          "type": "string"
+                        }, 
+                        "octoSpaceValue": {
+                          "type": "string"
                         }     
                     },
                     "resources": [
@@ -840,13 +879,107 @@ step "create-automation-account" {
                                 "sku": {
                                     "name": "Basic"
                                 }
-                            }
-                        }   
-                    ]
+                            },
+                          	"resources": [
+                              {
+                                "name": "[parameters('runbookName')]",
+                                "type": "runbooks",
+                                "apiVersion": "2018-06-30",
+                                "location": "[resourceGroup().location]",
+                                "properties": {
+                                  "runbookType": "PowerShell",
+                                  "logProgress": false,
+                                  "logVerbose": false,
+                                  "publishContentLink": {
+                                    "uri": "https://raw.githubusercontent.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps/add-healthcheck-monitoring/run_runbook.ps1"
+                                  }
+                                }
+                              },
+                              {  
+                                "type": "webhooks",  
+                                "apiVersion": "2018-06-30",  
+                                "name": "[parameters('webhookName')]",    
+                                "properties": {  
+                                  "isEnabled": true,  
+                                  "expiryTime": "[parameters('WebhookExpiryTime')]",  
+                                  "runbook": {  
+                                    "name": "[parameters('runbookName')]"  
+                                  }  
+                                }  
+                              }
+                            ]
+                        },
+                        {
+                          "type": "Microsoft.Automation/automationAccounts/variables",
+                          "apiVersion": "2015-10-31",
+                          "name": "[concat(parameters('automationAccountName'), '/apiKey')]",
+                          "properties": {
+                            "description": "api key",
+                            "isEncrypted": true,
+                            "value": "[concat('\"', parameters('apiKeyValue'), '\"')]"
+                          }
+                        },      
+                        {
+                          "type": "Microsoft.Automation/automationAccounts/variables",
+                          "apiVersion": "2015-10-31",
+                          "name": "[concat(parameters('automationAccountName'), '/envName')]",
+                          "properties": {
+                            "description": "environment name",
+                            "isEncrypted": false,
+                            "value": "[concat('\"', parameters('envNameValue'), '\"')]"
+                          }
+                        },
+                        {
+                          "name": "[concat(parameters('automationAccountName'), '/octoProject')]",
+                          "type": "Microsoft.Automation/automationAccounts/variables",
+                          "apiVersion": "2019-06-01",
+                          "location": "[resourceGroup().location]",
+                          "properties": {
+                            "isEncrypted": false,
+                            "value": "[concat('\"', parameters('octoProjectValue'), '\"')]"
+                          }
+                        },
+                        {
+                          "name": "[concat(parameters('automationAccountName'), '/octoURL')]",
+                          "type": "Microsoft.Automation/automationAccounts/variables",
+                          "apiVersion": "2019-06-01",
+                          "location": "[resourceGroup().location]",
+                          "properties": {
+                            "isEncrypted": false,
+                            "value": "[concat('\"', parameters('octoURLValue'), '\"')]"
+                          }
+                        },
+                        {
+                          "name": "[concat(parameters('automationAccountName'), '/octoRunbook')]",
+                          "type": "Microsoft.Automation/automationAccounts/variables",
+                          "apiVersion": "2019-06-01",
+                          "location": "[resourceGroup().location]",
+                          "properties": {
+                            "isEncrypted": false,
+                            "value": "[concat('\"', parameters('octoRunbookValue'), '\"')]"
+                          }
+                        },
+                        {
+                          "name": "[concat(parameters('automationAccountName'), '/octoSpace')]",
+                          "type": "Microsoft.Automation/automationAccounts/variables",
+                          "apiVersion": "2019-06-01",
+                          "location": "[resourceGroup().location]",
+                          "properties": {
+                            "isEncrypted": false,
+                            "value": "[concat('\"', parameters('octoSpaceValue'), '\"')]"
+                          }
+                        }     
+                    ],
+                    "outputs": {
+                      "webhookUri": {
+                        "type": "string",
+                        "value": "[listCallbackURL(concat(resourceId('Microsoft.Automation/automationAccounts/runbooks', parameters('automationAccountName'), parameters('runbookName')), '/webhooks/', parameters('webhookName')), '2018-06-30').value]"
+                      }
+                    }   
                 }
                 
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"#{AutomationAccount}\"},\"location\":{\"value\":\"#{az_location}\"},\"tags\":{\"value\":{}}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"#{AutomationAccount}\"},\"location\":{\"value\":\"#{az_location}\"},\"tags\":{\"value\":{}},\"runbookName\":{\"value\":\"octo-runbook\"},\"webhookName\":{\"value\":\"#{webhookName}\"},\"webhookExpiryTime\":{\"value\":\"3024-08-31T23:59:59Z\"},\"contentURL\":{\"value\":\"https://raw.githubusercontent.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps/add-healthcheck-monitoring/run_runbook.ps1\"},\"apiKeyValue\":{\"value\":\"#{azrunbookAPI}\"},\"envNameValue\":{\"value\":\"#{Octopus.Environment.Name}\"},\"octoProjectValue\":{\"value\":\"#{Octopus.Project.Name}\"},\"octoURLValue\":{\"value\":\"https://clearmeasure.octopus.app/\"},\"octoRunbookValue\":{\"value\":\"Unhealthy app alert\"},\"octoSpaceValue\":{\"value\":\"#{Octopus.Space.Name}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
@@ -859,6 +992,7 @@ step "create-runbook" {
 
     action {
         action_type = "Octopus.AzureResourceGroup"
+        is_disabled = true
         properties = {
             Octopus.Action.Azure.AccountId = "#{AzureAccount}"
             Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
