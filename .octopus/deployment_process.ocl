@@ -886,6 +886,9 @@ step "create-automation-account" {
                                 "type": "runbooks",
                                 "apiVersion": "2018-06-30",
                                 "location": "[resourceGroup().location]",
+                                "dependsOn": [  
+                                  "[parameters('automationAccountName')]"  
+                                ],                
                                 "properties": {
                                   "runbookType": "PowerShell",
                                   "logProgress": false,
@@ -899,6 +902,10 @@ step "create-automation-account" {
                                 "type": "webhooks",  
                                 "apiVersion": "2018-06-30",  
                                 "name": "[parameters('webhookName')]",    
+                                "dependsOn": [  
+                                  "[parameters('automationAccountName')]",
+                                  "[parameters('runbookName')]"
+                                ],  
                                 "properties": {  
                                   "isEnabled": true,  
                                   "expiryTime": "[parameters('WebhookExpiryTime')]",  
