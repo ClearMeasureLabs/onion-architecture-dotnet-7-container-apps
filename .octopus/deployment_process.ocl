@@ -879,6 +879,18 @@ step "create-runbook" {
                       "metadata": {
                         "description": "The name of the runbook."
                       }
+                    },
+                    "webhookName": {
+                      "type": "string",
+                      "metadata": {
+                        "description": "The name of the webhook."
+                      }
+                    },
+                    "webhookExpiryTime": {
+                      "type":"string",
+                      "metadata":{
+                        "description":"The expiry time of the webhook."
+                      }
                     },   
                     "contentURL": {
                     	"type": "string"
@@ -917,6 +929,22 @@ step "create-runbook" {
                         }
                       }
                     },
+                    {  
+                      "type": "Microsoft.Automation/automationAccounts/webhooks",  
+                      "apiVersion": "2018-06-30",  
+                      "name": "[parameters('webhookName')]",  
+                      "dependsOn": [  
+                        "[parameters('automationAccountName')]",  
+                        "[parameters('runbookName')]"  
+                      ],  
+                      "properties": {  
+                        "isEnabled": true,  
+                        "expiryTime": "[parameters('WebhookExpiryTime')]",  
+                        "runbook": {  
+                          "name": "[parameters('runbookName')]"  
+                        }  
+                      }  
+                    },    
                     {
                       "type": "Microsoft.Automation/automationAccounts/variables",
                       "apiVersion": "2015-10-31",
@@ -977,12 +1005,17 @@ step "create-runbook" {
                         "value": "[concat('\"', parameters('octoSpaceValue'), '\"')]"
                       }
                     }
-                    
-                  ]
+                  ],
+                  "outputs": {
+                      "webhookUri": {
+                          "type": "string",
+                          "value": "[listCallbackURL(concat(resourceId('Microsoft.Automation/automationAccounts/runbooks', parameters('automationAccountName'), parameters('runbookName')), '/webhooks/', parameters('webhookName')), '2018-06-30').value]"
+                      }
+                  }
                 }
                 
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"#{AutomationAccount}\"},\"runbookName\":{\"value\":\"octo-runbook\"},\"contentURL\":{\"value\":\"https://raw.githubusercontent.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps/add-healthcheck-monitoring/run_runbook.ps1\"},\"apiKeyValue\":{\"value\":\"#{azrunbookAPI}\"},\"envNameValue\":{\"value\":\"#{Octopus.Environment.Name}\"},\"octoProjectValue\":{\"value\":\"#{Octopus.Project.Name}\"},\"octoURLValue\":{\"value\":\"https://clearmeasure.octopus.app/\"},\"octoRunbookValue\":{\"value\":\"Unhealthy app alert\"},\"octoSpaceValue\":{\"value\":\"#{Octopus.Space.Name}\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"#{AutomationAccount}\"},\"runbookName\":{\"value\":\"octo-runbook\"},\"webhookName\":{\"value\":\"#{webhookName}\"},\"webhookExpiryTime\":{\"value\":\"\\\"3024-08-31T23:59:59Z\\\"\"},\"contentURL\":{\"value\":\"https://raw.githubusercontent.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps/add-healthcheck-monitoring/run_runbook.ps1\"},\"apiKeyValue\":{\"value\":\"#{azrunbookAPI}\"},\"envNameValue\":{\"value\":\"#{Octopus.Environment.Name}\"},\"octoProjectValue\":{\"value\":\"#{Octopus.Project.Name}\"},\"octoURLValue\":{\"value\":\"https://clearmeasure.octopus.app/\"},\"octoRunbookValue\":{\"value\":\"Unhealthy app alert\"},\"octoSpaceValue\":{\"value\":\"#{Octopus.Space.Name}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
@@ -991,7 +1024,7 @@ step "create-runbook" {
 }
 
 step "create-email-alert-action" {
-    name = "Create Email Alert Action"
+    name = "Create Runbook Alert Action"
 
     action {
         action_type = "Octopus.AzureResourceGroup"
@@ -1004,11 +1037,19 @@ step "create-email-alert-action" {
                     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
                     "contentVersion": "1.0.0.0",
                     "parameters": {
-                        "actionGroups_Email_Alert_name": {
-                            "defaultValue": "Email Alert",
+                        "actionGroups_Runbook_Alert_name": {
+                            "defaultValue": "Runbook Alert",
                             "type": "String"
                         },
-                      	"email_address": {
+                        "automationAccounts_externalid": {
+                            "defaultValue": "",
+                            "type": "String"
+                        },
+                      	"serviceUri": {
+                          	"defaultValue": "",
+                        	"type": "String"
+                        },
+                      	"webhookResourceId": {
                         	"defaultValue": "",
                           	"type": "String"
                         }
@@ -1018,16 +1059,20 @@ step "create-email-alert-action" {
                         {
                             "type": "microsoft.insights/actionGroups",
                             "apiVersion": "2023-01-01",
-                            "name": "[parameters('actionGroups_Email_Alert_name')]",
+                            "name": "[parameters('actionGroups_Runbook_Alert_name')]",
                             "location": "Global",
                             "properties": {
-                                "groupShortName": "[parameters('actionGroups_Email_Alert_name')]",
+                                "groupShortName": "[parameters('actionGroups_Runbook_Alert_name')]",
                                 "enabled": true,
-                                "emailReceivers": [
+                                "automationRunbookReceivers": [
                                     {
-                                        "name": "Email_-EmailAction-",
-                                        "emailAddress": "[parameters('email_address')]",
-                                        "useCommonAlertSchema": false
+                                        "name": "Trigger Octo Runbook",
+                                        "serviceUri": "[parameters('serviceUri')]",
+                                        "useCommonAlertSchema": false,
+                                        "automationAccountId": "[parameters('automationAccounts_externalid')]",
+                                        "runbookName": "octo-runbook",
+                                        "webhookResourceId": "[concat(parameters('automationAccounts_externalid'), parameters('webhookResourceId'))]",
+                                        "isGlobalRunbook": false
                                     }
                                 ],
                                 "smsReceivers": [],
@@ -1039,13 +1084,14 @@ step "create-email-alert-action" {
                                 "voiceReceivers": [],
                                 "logicAppReceivers": [],
                                 "azureFunctionReceivers": [],
-                                "armRoleReceivers": []
+                                "armRoleReceivers": [],
+                              	"emailReceivers": []
                             }
                         }
                     ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"actionGroups_Email_Alert_name\":{\"value\":\"#{EmailAlertActionName}\"},\"email_address\":{\"value\":\"dale.marttinen@clear-measure.com\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"actionGroups_Runbook_Alert_name\":{\"value\":\"Runbook Alert\"},\"automationAccounts_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/Microsoft.Automation/automationAccounts/#{AutomationAccount}\"},\"serviceUri\":{\"value\":\"#{Octopus.Action[Create runbook].Output.AzureOutputs.webhookUri}\"},\"webhookResourceId\":{\"value\":\"/webhooks/#{webhookName}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
