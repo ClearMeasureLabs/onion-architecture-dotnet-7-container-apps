@@ -932,7 +932,7 @@ step "create-runbook" {
                     {  
                       "type": "Microsoft.Automation/automationAccounts/webhooks",  
                       "apiVersion": "2018-06-30",  
-                      "name": "[parameters('webhookName')]",  
+                      "name": "[concat(parameters('automationAccountName'), '/', parameters('webhookName'))]",  
                       "dependsOn": [  
                         "[parameters('automationAccountName')]",  
                         "[parameters('runbookName')]"  
