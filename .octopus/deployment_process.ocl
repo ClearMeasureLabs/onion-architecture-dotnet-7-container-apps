@@ -913,69 +913,69 @@ step "create-automation-account" {
                                     "name": "[parameters('runbookName')]"  
                                   }  
                                 }  
-                              }
+                              },
+                              {
+                                "type": "variables",
+                                "apiVersion": "2015-10-31",
+                                "name": "apiKey",
+                                "properties": {
+                                  "description": "api key",
+                                  "isEncrypted": true,
+                                  "value": "[concat('\"', parameters('apiKeyValue'), '\"')]"
+                                }
+                              },      
+                              {
+                                "type": "variables",
+                                "apiVersion": "2015-10-31",
+                                "name": "envName",
+                                "properties": {
+                                  "description": "environment name",
+                                  "isEncrypted": false,
+                                  "value": "[concat('\"', parameters('envNameValue'), '\"')]"
+                                }
+                              },
+                              {
+                                "name": "octoProject",
+                                "type": "variables",
+                                "apiVersion": "2019-06-01",
+                                "location": "[resourceGroup().location]",
+                                "properties": {
+                                  "isEncrypted": false,
+                                  "value": "[concat('\"', parameters('octoProjectValue'), '\"')]"
+                                }
+                              },
+                              {
+                                "name": "octoURL",
+                                "type": "variables",
+                                "apiVersion": "2019-06-01",
+                                "location": "[resourceGroup().location]",
+                                "properties": {
+                                  "isEncrypted": false,
+                                  "value": "[concat('\"', parameters('octoURLValue'), '\"')]"
+                                }
+                              },
+                              {
+                                "name": "octoRunbook",
+                                "type": "variables",
+                                "apiVersion": "2019-06-01",
+                                "location": "[resourceGroup().location]",
+                                "properties": {
+                                  "isEncrypted": false,
+                                  "value": "[concat('\"', parameters('octoRunbookValue'), '\"')]"
+                                }
+                              },
+                              {
+                                "name": "octoSpace",
+                                "type": "variables",
+                                "apiVersion": "2019-06-01",
+                                "location": "[resourceGroup().location]",
+                                "properties": {
+                                  "isEncrypted": false,
+                                  "value": "[concat('\"', parameters('octoSpaceValue'), '\"')]"
+                                }
+                              }               
                             ]
-                        },
-                        {
-                          "type": "Microsoft.Automation/automationAccounts/variables",
-                          "apiVersion": "2015-10-31",
-                          "name": "[concat(parameters('automationAccountName'), '/apiKey')]",
-                          "properties": {
-                            "description": "api key",
-                            "isEncrypted": true,
-                            "value": "[concat('\"', parameters('apiKeyValue'), '\"')]"
-                          }
-                        },      
-                        {
-                          "type": "Microsoft.Automation/automationAccounts/variables",
-                          "apiVersion": "2015-10-31",
-                          "name": "[concat(parameters('automationAccountName'), '/envName')]",
-                          "properties": {
-                            "description": "environment name",
-                            "isEncrypted": false,
-                            "value": "[concat('\"', parameters('envNameValue'), '\"')]"
-                          }
-                        },
-                        {
-                          "name": "[concat(parameters('automationAccountName'), '/octoProject')]",
-                          "type": "Microsoft.Automation/automationAccounts/variables",
-                          "apiVersion": "2019-06-01",
-                          "location": "[resourceGroup().location]",
-                          "properties": {
-                            "isEncrypted": false,
-                            "value": "[concat('\"', parameters('octoProjectValue'), '\"')]"
-                          }
-                        },
-                        {
-                          "name": "[concat(parameters('automationAccountName'), '/octoURL')]",
-                          "type": "Microsoft.Automation/automationAccounts/variables",
-                          "apiVersion": "2019-06-01",
-                          "location": "[resourceGroup().location]",
-                          "properties": {
-                            "isEncrypted": false,
-                            "value": "[concat('\"', parameters('octoURLValue'), '\"')]"
-                          }
-                        },
-                        {
-                          "name": "[concat(parameters('automationAccountName'), '/octoRunbook')]",
-                          "type": "Microsoft.Automation/automationAccounts/variables",
-                          "apiVersion": "2019-06-01",
-                          "location": "[resourceGroup().location]",
-                          "properties": {
-                            "isEncrypted": false,
-                            "value": "[concat('\"', parameters('octoRunbookValue'), '\"')]"
-                          }
-                        },
-                        {
-                          "name": "[concat(parameters('automationAccountName'), '/octoSpace')]",
-                          "type": "Microsoft.Automation/automationAccounts/variables",
-                          "apiVersion": "2019-06-01",
-                          "location": "[resourceGroup().location]",
-                          "properties": {
-                            "isEncrypted": false,
-                            "value": "[concat('\"', parameters('octoSpaceValue'), '\"')]"
-                          }
-                        }     
+                        }    
                     ],
                     "outputs": {
                       "webhookUri": {
