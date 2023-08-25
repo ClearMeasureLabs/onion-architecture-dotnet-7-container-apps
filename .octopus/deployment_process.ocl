@@ -884,22 +884,6 @@ step "create-automation-account" {
                                 }
                             },
                           	"resources": [
-                              {  
-                                "type": "webhooks",  
-                                "apiVersion": "2018-06-30",  
-                                "name": "[parameters('webhookName')]",    
-                                "dependsOn": [  
-                                  "[concat('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'))]",
-                                  "[concat('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'), '/runbooks/', parameters('runbookName'))]"
-                                ],  
-                                "properties": {  
-                                  "isEnabled": true,  
-                                  "expiryTime": "[parameters('WebhookExpiryTime')]",  
-                                  "runbook": {  
-                                    "name": "[parameters('runbookName')]"  
-                                  }  
-                                }  
-                              },
                               {
                                 "name": "[parameters('runbookName')]",
                                 "type": "runbooks",
@@ -997,13 +981,7 @@ step "create-automation-account" {
                               }               
                             ]
                         }    
-                    ],
-                    "outputs": {
-                      "webhookUri": {
-                        "type": "string",
-                        "value": "[listCallbackURL(parameters('webhookId'), '2018-06-30').value]"
-                      }
-                    }   
+                    ]   
                 }
                 
                 EOT
@@ -1185,6 +1163,83 @@ step "create-runbook" {
     }
 }
 
+step "create-automation-webhook" {
+    name = "Create automation webhook"
+
+    action {
+        action_type = "Octopus.AzurePowerShell"
+        properties = {
+            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
+            Octopus.Action.Script.ScriptBody = <<-EOT
+                #$azPath = "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin"
+                ###################################################################
+                #Octopus Deploy's default Hosted Windows install includes
+                #az cli, but the version doesn't include the containerapp
+                #extension or the upgrade extension.  That's the reason for
+                #all the az cli installation work here.  Starting with a
+                #fresh agent and fresh install gives us some flexibility
+                #in extensions.
+                #
+                #That also means that the agent doesn't inherit the
+                #credentials from Octopus Deploy, so we also have to
+                #set up az cli with the relevant information for az
+                #login.  Those details are stored as Project Variables
+                #for ease of reference and secrecy.
+                ###################################################################
+                
+                ###################################################################
+                #Intalls az cli latest version from Microsoft. Essentially 
+                #a copy/paste from MS documentation.
+                $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; rm .\AzureCLI.msi
+                ###################################################################
+                
+                ###################################################################
+                #az cli installer doesn't consistently add the install
+                #directory to PATH.  This is here to make sure we can run
+                #from whatever default directory the agent lands on.
+                $Env:PATH += ";C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\"
+                Write-Host $env:PATH -Split ';'
+                ###################################################################
+                
+                ###################################################################
+                #They heavy lifting.  With the cli installed and PATH set
+                #all that's left to do is configure it for the subscription.
+                & az extension add --name containerapp
+                & az login --service-principal -u $az_login_appid -p $az_login_appkey --tenant $az_login_tenant
+                
+                ###################################################################
+                
+                
+                $resourceGroup = $ResourceGroupName
+                $automationAccount = $AutomationAccount
+                $runbook = "octo-runbook"
+                $psWebhook = $webhookName
+                
+                # Create webhook
+                $newWebhook = New-AzAutomationWebhook `
+                    -ResourceGroup $resourceGroup `
+                    -AutomationAccountName $automationAccount `
+                    -Name $psWebhook `
+                    -RunbookName $runbook `
+                    -IsEnabled $True `
+                    -ExpiryTime "12/31/2024" `
+                    -Force
+                
+                # Store URL in variable; reveal variable
+                $uri = $newWebhook.WebhookURI
+                $uri
+                Set-OctopusVariable -name "webhookUri" -value $uri
+                
+                
+                EOT
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool_variable = ""
+    }
+}
+
 step "create-email-alert-action" {
     name = "Create Runbook Alert Action"
 
@@ -1253,7 +1308,7 @@ step "create-email-alert-action" {
                     ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"actionGroups_Runbook_Alert_name\":{\"value\":\"runRunbook\"},\"automationAccounts_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/Microsoft.Automation/automationAccounts/#{AutomationAccount}\"},\"serviceUri\":{\"value\":\"#{Octopus.Action[Create automation account].Output.AzureOutputs.webhookUri}\"},\"webhookResourceId\":{\"value\":\"/webhooks/#{webhookName}\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"actionGroups_Runbook_Alert_name\":{\"value\":\"runRunbook\"},\"automationAccounts_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/Microsoft.Automation/automationAccounts/#{AutomationAccount}\"},\"serviceUri\":{\"value\":\"#{Octopus.Action[Create automation webhook].Output.webhookUri}\"},\"webhookResourceId\":{\"value\":\"/webhooks/#{webhookName}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
