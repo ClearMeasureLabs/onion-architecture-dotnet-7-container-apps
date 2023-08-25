@@ -8,29 +8,29 @@ step "create-automation-webhook" {
             Octopus.Action.Script.ScriptBody = <<-EOT
                 $securePassword = ConvertTo-SecureString -String $az_login_appkey -AsPlainText -Force
                 $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $az_login_appid, $securePassword
-                # Connect-AzAccount -ServicePrincipal -ApplicationId $az_login_appid -Credential $credential -TenantId $az_login_tenant
+                Connect-AzAccount -ServicePrincipal -TenantId $az_login_tenant -Credential $credential 
                 # & Install-Module -Name Az.Automation -Force -AllowClobber
                 
                 # Define variables
-                #$resourceGroup = $ResourceGroupName
-                #$automationAccount = $AutomationAccount
-                #$psWebhook = $webhookName
-                #$runbook = "octo-runbook"
+                $resourceGroup = $ResourceGroupName
+                $automationAccount = $AutomationAccount
+                $psWebhook = $webhookName
+                $runbook = "octo-runbook"
                 
                 # Create webhook
-                #$newWebhook = New-AzAutomationWebhook `
-                #    -ResourceGroupName $resourceGroup `
-                #    -AutomationAccountName $automationAccount `
-                #    -Name $psWebhook `
-                #    -RunbookName $runbook `
-                #    -IsEnabled $True `
-                #    -ExpiryTime "12/31/2024" `
-                #    -Force
+                $newWebhook = New-AzAutomationWebhook `
+                    -ResourceGroupName $resourceGroup `
+                    -AutomationAccountName $automationAccount `
+                    -Name $psWebhook `
+                    -RunbookName $runbook `
+                    -IsEnabled $True `
+                    -ExpiryTime "12/31/2024" `
+                    -Force
                 
                 # Store URL in variable; reveal variable
-                #$uri = $newWebhook.WebhookURI
-                #$uri
-                #Set-OctopusVariable -name "webhookUri" -value $uri
+                $uri = $newWebhook.WebhookURI
+                $uri
+                Set-OctopusVariable -name "webhookUri" -value $uri
                 
                 
                 EOT
