@@ -1205,29 +1205,30 @@ step "create-automation-webhook" {
                 #They heavy lifting.  With the cli installed and PATH set
                 #all that's left to do is configure it for the subscription.
                 & az login --service-principal -u $az_login_appid -p $az_login_appkey --tenant $az_login_tenant
-                & Install-Module -Name Az.Automation -Force
                 ###################################################################
                 
+                # Define variables
+                $resourceGroupName = $ResourceGroupName
+                $automationAccountName = $AutomationAccount
+                $webhookName = $webhookName
+                $runbookName = "octo-runbook"
+                $expiryTime = "12/31/2024"
                 
-                $resourceGroup = $ResourceGroupName
-                $automationAccount = $AutomationAccount
-                $runbook = "octo-runbook"
-                $psWebhook = $webhookName
+                # Authenticate and sign in to Azure account
+                az login
                 
-                # Create webhook
-                $newWebhook = New-AzAutomationWebhook `
-                    -ResourceGroup $resourceGroup `
-                    -AutomationAccountName $automationAccount `
-                    -Name $psWebhook `
-                    -RunbookName $runbook `
-                    -IsEnabled $True `
-                    -ExpiryTime "12/31/2024" `
-                    -Force
+                # Create automation webhook
+                $webhook = az automation webhook create `
+                    --resource-group $resourceGroupName `
+                    --automation-account-name $automationAccountName `
+                    --name $webhookName `
+                    --runbook-name $runbookName `
+                    --is-enabled true `
+                    --expiry-time $expiryTime | ConvertFrom-Json
                 
-                # Store URL in variable; reveal variable
-                $uri = $newWebhook.WebhookURI
-                $uri
-                Set-OctopusVariable -name "webhookUri" -value $uri
+                # Output webhook URI
+                Write-Output "Webhook URI: $($webhook.uri)"
+                Set-OctopusVariable -name "webhookUri" -value $webhook.uri
                 
                 
                 EOT
