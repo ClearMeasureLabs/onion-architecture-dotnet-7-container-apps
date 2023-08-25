@@ -8,7 +8,7 @@ step "create-automation-webhook" {
             Octopus.Action.Script.ScriptBody = <<-EOT
                 $securePassword = ConvertTo-SecureString -String $az_login_appkey -AsPlainText -Force
                 $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $az_login_appid, $securePassword
-                Connect-AzAccount -ServicePrincipal -ApplicationId $az_login_appid -Credential $credential -TenantId $az_login_tenant
+                # Connect-AzAccount -ServicePrincipal -ApplicationId $az_login_appid -Credential $credential -TenantId $az_login_tenant
                 # & Install-Module -Name Az.Automation -Force -AllowClobber
                 
                 # Define variables
