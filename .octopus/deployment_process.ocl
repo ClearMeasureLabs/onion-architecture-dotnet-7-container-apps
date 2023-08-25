@@ -866,7 +866,10 @@ step "create-automation-account" {
                         }, 
                         "octoSpaceValue": {
                           "type": "string"
-                        }     
+                        },
+                      	"webhookId": {
+                        	"type": "string"
+                        }
                     },
                     "resources": [
                         {
@@ -998,13 +1001,13 @@ step "create-automation-account" {
                     "outputs": {
                       "webhookUri": {
                         "type": "string",
-                        "value": "[listCallbackURL(concat(resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName')), '/webhooks/', parameters('webhookName')), '2018-06-30').value]"
+                        "value": "[listCallbackURL(parameters('webhookId'), '2018-06-30').value]"
                       }
                     }   
                 }
                 
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"#{AutomationAccount}\"},\"location\":{\"value\":\"#{az_location}\"},\"tags\":{\"value\":{}},\"runbookName\":{\"value\":\"octo-runbook\"},\"webhookName\":{\"value\":\"#{webhookName}\"},\"webhookExpiryTime\":{\"value\":\"2024-08-31T23:59:59Z\"},\"contentURL\":{\"value\":\"https://raw.githubusercontent.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps/add-healthcheck-monitoring/run_runbook.ps1\"},\"apiKeyValue\":{\"value\":\"#{azrunbookAPI}\"},\"envNameValue\":{\"value\":\"#{Octopus.Environment.Name}\"},\"octoProjectValue\":{\"value\":\"#{Octopus.Project.Name}\"},\"octoURLValue\":{\"value\":\"https://clearmeasure.octopus.app/\"},\"octoRunbookValue\":{\"value\":\"Unhealthy app alert\"},\"octoSpaceValue\":{\"value\":\"#{Octopus.Space.Name}\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"#{AutomationAccount}\"},\"location\":{\"value\":\"#{az_location}\"},\"tags\":{\"value\":{}},\"runbookName\":{\"value\":\"octo-runbook\"},\"webhookName\":{\"value\":\"#{webhookName}\"},\"webhookExpiryTime\":{\"value\":\"2024-08-31T23:59:59Z\"},\"contentURL\":{\"value\":\"https://raw.githubusercontent.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps/add-healthcheck-monitoring/run_runbook.ps1\"},\"apiKeyValue\":{\"value\":\"#{azrunbookAPI}\"},\"envNameValue\":{\"value\":\"#{Octopus.Environment.Name}\"},\"octoProjectValue\":{\"value\":\"#{Octopus.Project.Name}\"},\"octoURLValue\":{\"value\":\"https://clearmeasure.octopus.app/\"},\"octoRunbookValue\":{\"value\":\"Unhealthy app alert\"},\"octoSpaceValue\":{\"value\":\"#{Octopus.Space.Name}\"},\"webhookId\":{\"value\":\"/subscriptions/7077ad68-92ba-412e-9bf8-67eb78f9481b/resourceGroups/onion-architecture-dotnet-7-containers-tdd-1.1.632/providers/Microsoft.Automation/automationAccounts/TDD-releases-28529-automation/webhooks/onion-architecture-dotnet-7-containers-tdd-1.1.632-webhook\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
