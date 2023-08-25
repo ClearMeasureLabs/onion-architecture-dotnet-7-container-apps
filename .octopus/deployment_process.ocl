@@ -1191,7 +1191,7 @@ step "create-email-alert-action" {
                     "contentVersion": "1.0.0.0",
                     "parameters": {
                         "actionGroups_Runbook_Alert_name": {
-                            "defaultValue": "Runbook Alert",
+                            "defaultValue": "runRunbook",
                             "type": "String"
                         },
                         "automationAccounts_externalid": {
@@ -1219,7 +1219,7 @@ step "create-email-alert-action" {
                                 "enabled": true,
                                 "automationRunbookReceivers": [
                                     {
-                                        "name": "Trigger Octo Runbook",
+                                        "name": "[parameters('actionGroups_Runbook_Alert_name')]",
                                         "serviceUri": "[parameters('serviceUri')]",
                                         "useCommonAlertSchema": false,
                                         "automationAccountId": "[parameters('automationAccounts_externalid')]",
