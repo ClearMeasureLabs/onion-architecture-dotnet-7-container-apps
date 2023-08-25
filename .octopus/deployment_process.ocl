@@ -1,3 +1,47 @@
+step "create-automation-webhook" {
+    name = "Create automation webhook"
+
+    action {
+        action_type = "Octopus.AzurePowerShell"
+        properties = {
+            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
+            Octopus.Action.Script.ScriptBody = <<-EOT
+                $securePassword = ConvertTo-SecureString -String $az_login_appkey -AsPlainText -Force
+                $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $az_login_appid, $securePassword
+                Connect-AzAccount -ServicePrincipal -ApplicationId $az_login_appid -Credential $credential -TenantId $az_login_tenant
+                # & Install-Module -Name Az.Automation -Force -AllowClobber
+                
+                # Define variables
+                #$resourceGroup = $ResourceGroupName
+                #$automationAccount = $AutomationAccount
+                #$psWebhook = $webhookName
+                #$runbook = "octo-runbook"
+                
+                # Create webhook
+                #$newWebhook = New-AzAutomationWebhook `
+                #    -ResourceGroupName $resourceGroup `
+                #    -AutomationAccountName $automationAccount `
+                #    -Name $psWebhook `
+                #    -RunbookName $runbook `
+                #    -IsEnabled $True `
+                #    -ExpiryTime "12/31/2024" `
+                #    -Force
+                
+                # Store URL in variable; reveal variable
+                #$uri = $newWebhook.WebhookURI
+                #$uri
+                #Set-OctopusVariable -name "webhookUri" -value $uri
+                
+                
+                EOT
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool_variable = ""
+    }
+}
+
 step "create-resource-group" {
     name = "Create Resource Group"
 
@@ -1165,84 +1209,6 @@ step "create-runbook" {
                 EOT
             Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"#{AutomationAccount}\"},\"runbookName\":{\"value\":\"octo-runbook\"},\"webhookName\":{\"value\":\"#{webhookName}\"},\"webhookExpiryTime\":{\"value\":\"\\\"3024-08-31T23:59:59Z\\\"\"},\"contentURL\":{\"value\":\"https://raw.githubusercontent.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps/add-healthcheck-monitoring/run_runbook.ps1\"},\"apiKeyValue\":{\"value\":\"#{azrunbookAPI}\"},\"envNameValue\":{\"value\":\"#{Octopus.Environment.Name}\"},\"octoProjectValue\":{\"value\":\"#{Octopus.Project.Name}\"},\"octoURLValue\":{\"value\":\"https://clearmeasure.octopus.app/\"},\"octoRunbookValue\":{\"value\":\"Unhealthy app alert\"},\"octoSpaceValue\":{\"value\":\"#{Octopus.Space.Name}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
-            OctopusUseBundledTooling = "False"
-        }
-        worker_pool_variable = ""
-    }
-}
-
-step "create-automation-webhook" {
-    name = "Create automation webhook"
-
-    action {
-        action_type = "Octopus.AzurePowerShell"
-        properties = {
-            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
-            Octopus.Action.Script.ScriptBody = <<-EOT
-                #$azPath = "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin"
-                ###################################################################
-                #Octopus Deploy's default Hosted Windows install includes
-                #az cli, but the version doesn't include the containerapp
-                #extension or the upgrade extension.  That's the reason for
-                #all the az cli installation work here.  Starting with a
-                #fresh agent and fresh install gives us some flexibility
-                #in extensions.
-                #
-                #That also means that the agent doesn't inherit the
-                #credentials from Octopus Deploy, so we also have to
-                #set up az cli with the relevant information for az
-                #login.  Those details are stored as Project Variables
-                #for ease of reference and secrecy.
-                ###################################################################
-                
-                ###################################################################
-                #Intalls az cli latest version from Microsoft. Essentially 
-                #a copy/paste from MS documentation.
-                $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; rm .\AzureCLI.msi
-                ###################################################################
-                
-                ###################################################################
-                #az cli installer doesn't consistently add the install
-                #directory to PATH.  This is here to make sure we can run
-                #from whatever default directory the agent lands on.
-                $Env:PATH += ";C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\"
-                Write-Host $env:PATH -Split ';'
-                ###################################################################
-                
-                ###################################################################
-                #They heavy lifting.  With the cli installed and PATH set
-                #all that's left to do is configure it for the subscription.
-                $securePassword = ConvertTo-SecureString -String $az_login_appkey -AsPlainText -Force
-                $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $az_login_appid, $securePassword
-                Connect-AzAccount -ServicePrincipal -ApplicationId $az_login_appid -Credential $credential -TenantId $az_login_tenant
-                & Install-Module -Name Az.Automation -Force -AllowClobber
-                ###################################################################
-                
-                # Define variables
-                $resourceGroup = $ResourceGroupName
-                $automationAccount = $AutomationAccount
-                $psWebhook = $webhookName
-                $runbook = "octo-runbook"
-                
-                # Create webhook
-                $newWebhook = New-AzAutomationWebhook `
-                    -ResourceGroupName $resourceGroup `
-                    -AutomationAccountName $automationAccount `
-                    -Name $psWebhook `
-                    -RunbookName $runbook `
-                    -IsEnabled $True `
-                    -ExpiryTime "12/31/2024" `
-                    -Force
-                
-                # Store URL in variable; reveal variable
-                $uri = $newWebhook.WebhookURI
-                $uri
-                Set-OctopusVariable -name "webhookUri" -value $uri
-                
-                
-                EOT
-            Octopus.Action.Script.ScriptSource = "Inline"
-            Octopus.Action.Script.Syntax = "PowerShell"
             OctopusUseBundledTooling = "False"
         }
         worker_pool_variable = ""
