@@ -1204,9 +1204,8 @@ step "create-automation-webhook" {
                 ###################################################################
                 #They heavy lifting.  With the cli installed and PATH set
                 #all that's left to do is configure it for the subscription.
-                & az extension add --name containerapp
                 & az login --service-principal -u $az_login_appid -p $az_login_appkey --tenant $az_login_tenant
-                
+                & Install-Module -Name Az.Automation
                 ###################################################################
                 
                 
