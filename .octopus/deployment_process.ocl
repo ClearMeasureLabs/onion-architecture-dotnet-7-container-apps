@@ -1205,6 +1205,15 @@ step "create-email-alert-action" {
                       	"webhookResourceId": {
                         	"defaultValue": "",
                           	"type": "String"
+                        },
+                        "webhookName": {
+                          "type": "string",
+                          "metadata": {
+                            "description": "The name of the webhook."
+                          }
+                        },
+                        "automationAccountName": {
+                            "type": "string"
                         }
                     },
                     "variables": {},
@@ -1250,7 +1259,7 @@ step "create-email-alert-action" {
                     } 
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"actionGroups_Runbook_Alert_name\":{\"value\":\"runRunbook\"},\"automationAccounts_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/Microsoft.Automation/automationAccounts/#{AutomationAccount}\"},\"serviceUri\":{\"value\":\"#{Octopus.Action[Create automation account].Output.AzureOutputs.webhookUri}\"},\"webhookResourceId\":{\"value\":\"/webhooks/#{webhookName}\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"actionGroups_Runbook_Alert_name\":{\"value\":\"runRunbook\"},\"automationAccounts_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/Microsoft.Automation/automationAccounts/#{AutomationAccount}\"},\"serviceUri\":{\"value\":\"#{Octopus.Action[Create automation account].Output.AzureOutputs.webhookUri}\"},\"webhookResourceId\":{\"value\":\"/webhooks/#{webhookName}\"},\"webhookName\":{\"value\":\"#{webhookName}\"},\"automationAccountName\":{\"value\":\"#{AutomationAccount}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
