@@ -994,13 +994,7 @@ step "create-automation-account" {
                               }               
                             ]
                         }    
-                    ],
-                    "outputs": {
-                      "webhookUri": {
-                        "type": "string",
-                        "value": "[listCallbackURL(concat(resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName')), '/webhooks/', parameters('webhookName')), '2015-10-31').value]"
-                      }
-                    }   
+                    ]  
                 }
                 
                 EOT
@@ -1247,7 +1241,13 @@ step "create-email-alert-action" {
                               	"emailReceivers": []
                             }
                         }
-                    ]
+                    ],
+                    "outputs": {
+                      "webhookUri": {
+                        "type": "string",
+                        "value": "[listCallbackURL(concat(resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName')), '/webhooks/', parameters('webhookName')), '2015-10-31').value]"
+                      }
+                    } 
                 }
                 EOT
             Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"actionGroups_Runbook_Alert_name\":{\"value\":\"runRunbook\"},\"automationAccounts_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/Microsoft.Automation/automationAccounts/#{AutomationAccount}\"},\"serviceUri\":{\"value\":\"#{Octopus.Action[Create automation account].Output.AzureOutputs.webhookUri}\"},\"webhookResourceId\":{\"value\":\"/webhooks/#{webhookName}\"}}"
