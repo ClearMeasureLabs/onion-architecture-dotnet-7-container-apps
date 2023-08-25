@@ -881,6 +881,22 @@ step "create-automation-account" {
                                 }
                             },
                           	"resources": [
+                              {  
+                                "type": "webhooks",  
+                                "apiVersion": "2018-06-30",  
+                                "name": "[parameters('webhookName')]",    
+                                "dependsOn": [  
+                                  "[concat('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'))]",
+                                  "[concat('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'), '/runbooks/', parameters('runbookName'))]"
+                                ],  
+                                "properties": {  
+                                  "isEnabled": true,  
+                                  "expiryTime": "[parameters('WebhookExpiryTime')]",  
+                                  "runbook": {  
+                                    "name": "[parameters('runbookName')]"  
+                                  }  
+                                }  
+                              },
                               {
                                 "name": "[parameters('runbookName')]",
                                 "type": "runbooks",
@@ -1228,7 +1244,7 @@ step "create-email-alert-action" {
                     ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"actionGroups_Runbook_Alert_name\":{\"value\":\"Runbook Alert\"},\"automationAccounts_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/Microsoft.Automation/automationAccounts/#{AutomationAccount}\"},\"serviceUri\":{\"value\":\"#{Octopus.Action[Create runbook].Output.AzureOutputs.webhookUri}\"},\"webhookResourceId\":{\"value\":\"/webhooks/#{webhookName}\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"actionGroups_Runbook_Alert_name\":{\"value\":\"Run Runbook\"},\"automationAccounts_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/Microsoft.Automation/automationAccounts/#{AutomationAccount}\"},\"serviceUri\":{\"value\":\"#{Octopus.Action[Create runbook].Output.AzureOutputs.webhookUri}\"},\"webhookResourceId\":{\"value\":\"/webhooks/#{webhookName}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
