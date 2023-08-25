@@ -12,21 +12,13 @@ step "create-email-alert-action" {
                     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
                     "contentVersion": "1.0.0.0",
                     "parameters": {
-                        "actionGroups_Runbook_Alert_name": {
+                        "actionGroups_runRunbook_name": {
                             "defaultValue": "runRunbook",
                             "type": "String"
                         },
-                        "automationAccounts_externalid": {
-                            "defaultValue": "",
+                        "automationAccounts_TDD_releases_28553_automation_externalid": {
+                            "defaultValue": "/subscriptions/7077ad68-92ba-412e-9bf8-67eb78f9481b/resourceGroups/onion-architecture-dotnet-7-containers-tdd-1.1.632/providers/Microsoft.Automation/automationAccounts/TDD-releases-28553-automation",
                             "type": "String"
-                        },
-                      	"serviceUri": {
-                          	"defaultValue": "",
-                        	"type": "String"
-                        },
-                      	"webhookResourceId": {
-                        	"defaultValue": "",
-                          	"type": "String"
                         }
                     },
                     "variables": {},
@@ -34,39 +26,38 @@ step "create-email-alert-action" {
                         {
                             "type": "microsoft.insights/actionGroups",
                             "apiVersion": "2023-01-01",
-                            "name": "[parameters('actionGroups_Runbook_Alert_name')]",
+                            "name": "[parameters('actionGroups_runRunbook_name')]",
                             "location": "Global",
                             "properties": {
-                                "groupShortName": "[parameters('actionGroups_Runbook_Alert_name')]",
+                                "groupShortName": "[parameters('actionGroups_runRunbook_name')]",
                                 "enabled": true,
-                                "automationRunbookReceivers": [
-                                    {
-                                        "name": "runbookAlert",
-                                        "serviceUri": "[parameters('serviceUri')]",
-                                        "useCommonAlertSchema": false,
-                                        "automationAccountId": "[parameters('automationAccounts_externalid')]",
-                                        "runbookName": "octo-runbook",
-                                        "webhookResourceId": "[parameters('webhookResourceId')]",
-                                        "isGlobalRunbook": true
-                                    }
-                                ],
+                                "emailReceivers": [],
                                 "smsReceivers": [],
                                 "webhookReceivers": [],
                                 "eventHubReceivers": [],
                                 "itsmReceivers": [],
                                 "azureAppPushReceivers": [],
-                                "automationRunbookReceivers": [],
+                                "automationRunbookReceivers": [
+                                    {
+                                        "name": "runbook",
+                                        "serviceUri": "https://6b894c79-d1d9-4b6f-8a15-33d3fe23dc88.webhook.scus.azure-automation.net/webhooks?token=%2fBnM3Laqts8s%2fZUZBc4hoE9cy3nCmafNCR%2bqZEan10s%3d",
+                                        "useCommonAlertSchema": false,
+                                        "automationAccountId": "[parameters('automationAccounts_TDD_releases_28553_automation_externalid')]",
+                                        "runbookName": "octo-runbook",
+                                        "webhookResourceId": "[concat(parameters('automationAccounts_TDD_releases_28553_automation_externalid'), '/webhooks/Alert1692995020666')]",
+                                        "isGlobalRunbook": false
+                                    }
+                                ],
                                 "voiceReceivers": [],
                                 "logicAppReceivers": [],
                                 "azureFunctionReceivers": [],
-                                "armRoleReceivers": [],
-                              	"emailReceivers": []
+                                "armRoleReceivers": []
                             }
                         }
                     ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"actionGroups_Runbook_Alert_name\":{\"value\":\"runRunbook\"},\"automationAccounts_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/onion-architecture-dotnet-7-containers-tdd-1.1.632/providers/Microsoft.Automation/automationAccounts/TDD-releases-28553-automation\"},\"serviceUri\":{\"value\":\"https://6b894c79-d1d9-4b6f-8a15-33d3fe23dc88.webhook.scus.azure-automation.net/webhooks?token=Zm75nAEHKEzjHpDeu8HLHQQU3JtqAwesukVR1euUo7A%3d\"},\"webhookResourceId\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourc/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/onion-architecture-dotnet-7-containers-tdd-1.1.632/providers/Microsoft.Automation/automationAccounts/TDD-releases-28553-automation/webhooks/onion-architecture-dotnet-7-containers-tdd-1.1.632-webhook\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"actionGroups_runRunbook_name\":{\"value\":\"runRunbook\"},\"automationAccounts_TDD_releases_28553_automation_externalid\":{\"value\":\"/subscriptions/7077ad68-92ba-412e-9bf8-67eb78f9481b/resourceGroups/onion-architecture-dotnet-7-containers-tdd-1.1.632/providers/Microsoft.Automation/automationAccounts/TDD-releases-28553-automation\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
