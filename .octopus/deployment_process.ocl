@@ -1,46 +1,3 @@
-step "create-automation-webhook" {
-    name = "Create Automation Webhook"
-
-    action {
-        action_type = "Octopus.Script"
-        properties = {
-            Octopus.Action.RunOnServer = "true"
-            Octopus.Action.Script.ScriptBody = <<-EOT
-                $securePassword = ConvertTo-SecureString -String $az_login_appkey -AsPlainText -Force
-                $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $az_login_appid, $securePassword
-                Connect-AzAccount -ServicePrincipal -TenantId $az_login_tenant -Credential $credential 
-                # & Install-Module -Name Az.Automation -Force -AllowClobber
-                
-                # Define variables
-                $resourceGroup = $ResourceGroupName
-                $automationAccount = $AutomationAccount
-                $psWebhook = $webhookName
-                $runbook = "octo-runbook"
-                
-                # Create webhook
-                $newWebhook = New-AzAutomationWebhook `
-                    -ResourceGroupName $resourceGroup `
-                    -AutomationAccountName $automationAccount `
-                    -Name $psWebhook `
-                    -RunbookName $runbook `
-                    -IsEnabled $True `
-                    -ExpiryTime "12/31/2024" `
-                    -Force
-                
-                # Store URL in variable; reveal variable
-                $uri = $newWebhook.WebhookURI
-                $uri
-                Set-OctopusVariable -name "webhookUri" -value $uri
-                
-                
-                EOT
-            Octopus.Action.Script.ScriptSource = "Inline"
-            Octopus.Action.Script.Syntax = "PowerShell"
-        }
-        worker_pool = "hosted-windows"
-    }
-}
-
 step "create-resource-group" {
     name = "Create Resource Group"
 
@@ -1211,6 +1168,49 @@ step "create-runbook" {
             OctopusUseBundledTooling = "False"
         }
         worker_pool_variable = ""
+    }
+}
+
+step "create-automation-webhook" {
+    name = "Create Automation Webhook"
+
+    action {
+        action_type = "Octopus.Script"
+        properties = {
+            Octopus.Action.RunOnServer = "true"
+            Octopus.Action.Script.ScriptBody = <<-EOT
+                $securePassword = ConvertTo-SecureString -String $az_login_appkey -AsPlainText -Force
+                $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $az_login_appid, $securePassword
+                Connect-AzAccount -ServicePrincipal -TenantId $az_login_tenant -Credential $credential 
+                # & Install-Module -Name Az.Automation -Force -AllowClobber
+                
+                # Define variables
+                $resourceGroup = $ResourceGroupName
+                $automationAccount = $AutomationAccount
+                $psWebhook = $webhookName
+                $runbook = "octo-runbook"
+                
+                # Create webhook
+                $newWebhook = New-AzAutomationWebhook `
+                    -ResourceGroupName $resourceGroup `
+                    -AutomationAccountName $automationAccount `
+                    -Name $psWebhook `
+                    -RunbookName $runbook `
+                    -IsEnabled $True `
+                    -ExpiryTime "12/31/2024" `
+                    -Force
+                
+                # Store URL in variable; reveal variable
+                $uri = $newWebhook.WebhookURI
+                $uri
+                Set-OctopusVariable -name "webhookUri" -value $uri
+                
+                
+                EOT
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+        }
+        worker_pool = "hosted-windows"
     }
 }
 
