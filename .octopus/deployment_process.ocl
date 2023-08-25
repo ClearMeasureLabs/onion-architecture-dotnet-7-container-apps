@@ -1214,9 +1214,6 @@ step "create-automation-webhook" {
                 $runbookName = "octo-runbook"
                 $expiryTime = "12/31/2024"
                 
-                # Authenticate and sign in to Azure account
-                az login
-                
                 # Create automation webhook
                 $webhook = az automation webhook create `
                     --resource-group $resourceGroupName `
