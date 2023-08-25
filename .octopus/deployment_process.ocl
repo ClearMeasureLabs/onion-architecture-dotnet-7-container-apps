@@ -1,3 +1,79 @@
+step "create-email-alert-action" {
+    name = "Create Runbook Alert Action"
+
+    action {
+        action_type = "Octopus.AzureResourceGroup"
+        properties = {
+            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
+            Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
+            Octopus.Action.Azure.ResourceGroupName = "#{ResourceGroupName}"
+            Octopus.Action.Azure.ResourceGroupTemplate = <<-EOT
+                {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "actionGroups_Runbook_Alert_name": {
+                            "defaultValue": "runRunbook",
+                            "type": "String"
+                        },
+                        "automationAccounts_externalid": {
+                            "defaultValue": "",
+                            "type": "String"
+                        },
+                      	"serviceUri": {
+                          	"defaultValue": "",
+                        	"type": "String"
+                        },
+                      	"webhookResourceId": {
+                        	"defaultValue": "",
+                          	"type": "String"
+                        }
+                    },
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "microsoft.insights/actionGroups",
+                            "apiVersion": "2023-01-01",
+                            "name": "[parameters('actionGroups_Runbook_Alert_name')]",
+                            "location": "Global",
+                            "properties": {
+                                "groupShortName": "[parameters('actionGroups_Runbook_Alert_name')]",
+                                "enabled": true,
+                                "automationRunbookReceivers": [
+                                    {
+                                        "name": "runbookAlert",
+                                        "serviceUri": "[parameters('serviceUri')]",
+                                        "useCommonAlertSchema": false,
+                                        "automationAccountId": "[parameters('automationAccounts_externalid')]",
+                                        "runbookName": "octo-runbook",
+                                        "webhookResourceId": "[parameters('webhookResourceId')]",
+                                        "isGlobalRunbook": true
+                                    }
+                                ],
+                                "smsReceivers": [],
+                                "webhookReceivers": [],
+                                "eventHubReceivers": [],
+                                "itsmReceivers": [],
+                                "azureAppPushReceivers": [],
+                                "automationRunbookReceivers": [],
+                                "voiceReceivers": [],
+                                "logicAppReceivers": [],
+                                "azureFunctionReceivers": [],
+                                "armRoleReceivers": [],
+                              	"emailReceivers": []
+                            }
+                        }
+                    ]
+                }
+                EOT
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"actionGroups_Runbook_Alert_name\":{\"value\":\"runRunbook\"},\"automationAccounts_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/onion-architecture-dotnet-7-containers-tdd-1.1.632/providers/Microsoft.Automation/automationAccounts/TDD-releases-28553-automation\"},\"serviceUri\":{\"value\":\"https://6b894c79-d1d9-4b6f-8a15-33d3fe23dc88.webhook.scus.azure-automation.net/webhooks?token=Zm75nAEHKEzjHpDeu8HLHQQU3JtqAwesukVR1euUo7A%3d\"},\"webhookResourceId\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourc/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/onion-architecture-dotnet-7-containers-tdd-1.1.632/providers/Microsoft.Automation/automationAccounts/TDD-releases-28553-automation/webhooks/onion-architecture-dotnet-7-containers-tdd-1.1.632-webhook\"}}"
+            Octopus.Action.Azure.TemplateSource = "Inline"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool_variable = ""
+    }
+}
+
 step "create-resource-group" {
     name = "Create Resource Group"
 
@@ -1211,82 +1287,6 @@ step "create-automation-webhook" {
             Octopus.Action.Script.Syntax = "PowerShell"
         }
         worker_pool = "hosted-windows"
-    }
-}
-
-step "create-email-alert-action" {
-    name = "Create Runbook Alert Action"
-
-    action {
-        action_type = "Octopus.AzureResourceGroup"
-        properties = {
-            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
-            Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
-            Octopus.Action.Azure.ResourceGroupName = "#{ResourceGroupName}"
-            Octopus.Action.Azure.ResourceGroupTemplate = <<-EOT
-                {
-                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {
-                        "actionGroups_Runbook_Alert_name": {
-                            "defaultValue": "runRunbook",
-                            "type": "String"
-                        },
-                        "automationAccounts_externalid": {
-                            "defaultValue": "",
-                            "type": "String"
-                        },
-                      	"serviceUri": {
-                          	"defaultValue": "",
-                        	"type": "String"
-                        },
-                      	"webhookResourceId": {
-                        	"defaultValue": "",
-                          	"type": "String"
-                        }
-                    },
-                    "variables": {},
-                    "resources": [
-                        {
-                            "type": "microsoft.insights/actionGroups",
-                            "apiVersion": "2023-01-01",
-                            "name": "[parameters('actionGroups_Runbook_Alert_name')]",
-                            "location": "Global",
-                            "properties": {
-                                "groupShortName": "[parameters('actionGroups_Runbook_Alert_name')]",
-                                "enabled": true,
-                                "automationRunbookReceivers": [
-                                    {
-                                        "name": "[parameters('actionGroups_Runbook_Alert_name')]",
-                                        "serviceUri": "[parameters('serviceUri')]",
-                                        "useCommonAlertSchema": false,
-                                        "automationAccountId": "[parameters('automationAccounts_externalid')]",
-                                        "runbookName": "octo-runbook",
-                                        "webhookResourceId": "[concat(parameters('automationAccounts_externalid'), parameters('webhookResourceId'))]",
-                                        "isGlobalRunbook": false
-                                    }
-                                ],
-                                "smsReceivers": [],
-                                "webhookReceivers": [],
-                                "eventHubReceivers": [],
-                                "itsmReceivers": [],
-                                "azureAppPushReceivers": [],
-                                "automationRunbookReceivers": [],
-                                "voiceReceivers": [],
-                                "logicAppReceivers": [],
-                                "azureFunctionReceivers": [],
-                                "armRoleReceivers": [],
-                              	"emailReceivers": []
-                            }
-                        }
-                    ]
-                }
-                EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"actionGroups_Runbook_Alert_name\":{\"value\":\"runRunbook\"},\"automationAccounts_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/Microsoft.Automation/automationAccounts/#{AutomationAccount}\"},\"serviceUri\":{\"value\":\"#{Octopus.Action[Create Automation Webhook].Output.webhookUri}\"},\"webhookResourceId\":{\"value\":\"/webhooks/#{webhookName}\"}}"
-            Octopus.Action.Azure.TemplateSource = "Inline"
-            OctopusUseBundledTooling = "False"
-        }
-        worker_pool_variable = ""
     }
 }
 
