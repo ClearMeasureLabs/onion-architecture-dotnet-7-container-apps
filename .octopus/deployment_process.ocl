@@ -10,31 +10,43 @@ step "create-resource-group" {
         properties = {
             Octopus.Action.Azure.AccountId = "#{AzureAccount}"
             Octopus.Action.Script.ScriptBody = <<-EOT
-                $ResourceGroupName = $ResourceGroupName
-                $Location = $az_location
-                 
-                 Write-Output "Variables:"
-                 Write-Output "ResourceGroupName: $ResourceGroupName"
-                 Write-Output "Location: $Location"
+                #$azPath = "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin"
+                ###################################################################
+                #Octopus Deploy's default Hosted Windows install includes
+                #az cli, but the version doesn't include the containerapp
+                #extension or the upgrade extension.  That's the reason for
+                #all the az cli installation work here.  Starting with a
+                #fresh agent and fresh install gives us some flexibility
+                #in extensions.
+                #
+                #That also means that the agent doesn't inherit the
+                #credentials from Octopus Deploy, so we also have to
+                #set up az cli with the relevant information for az
+                #login.  Those details are stored as Project Variables
+                #for ease of reference and secrecy.
+                ###################################################################
                 
-                Write-Output '###############################################'
-                Write-Output '##Step1: Create Resource Group '
-                $AzureResourceGroup = Get-AzureRmResourceGroup -Name $ResourceGroupName -ErrorAction SilentlyContinue
-                if ( $null -eq $AzureResourceGroup)
-                {
-                Write-Output "Resource Group $ResourceGroupName does not exist, creating one ..."
-                $AzureResourceGroup =New-AzureRmResourceGroup -Name $ResourceGroupName -Location $Location
-                } 
-                else{
-                Write-Output "Resource Group $ResourceGroupName already exists ..."
-                }
+                ###################################################################
+                #Intalls az cli latest version from Microsoft. Essentially 
+                #a copy/paste from MS documentation.
+                $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; rm .\AzureCLI.msi
+                ###################################################################
                 
-                Write-Output '###############################################'
-                Write-Output '##Step2: Validate Resource Group '
+                ###################################################################
+                #az cli installer doesn't consistently add the install
+                #directory to PATH.  This is here to make sure we can run
+                #from whatever default directory the agent lands on.
+                $Env:PATH += ";C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\"
+                Write-Host $env:PATH -Split ';'
+                ###################################################################
                 
-                if ($null -eq $AzureResourceGroup ){
-                Throw "Failed to create resource group $AzureResourceGroupName"
-                }
+                ###################################################################
+                #They heavy lifting.  With the cli installed and PATH set
+                #all that's left to do is configure it for the subscription.
+                & az login --service-principal -u $az_login_appid -p $az_login_appkey --tenant $az_login_tenant
+                
+                ###################################################################
+                & az group create --name $ResourceGroupName --location $az_location
                 EOT
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "PowerShell"
