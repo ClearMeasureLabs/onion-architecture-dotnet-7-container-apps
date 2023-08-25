@@ -212,3 +212,7 @@ variable "AutomationAccount" {
 variable "webhookName" {
     value "#{ResourceGroupName}-webhook" {}
 }
+
+variable "RunbookName" {
+    value "OctoRunbook" {}
+}
