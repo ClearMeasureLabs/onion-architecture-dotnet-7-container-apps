@@ -1244,7 +1244,7 @@ step "create-email-alert-action" {
                     ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"actionGroups_Runbook_Alert_name\":{\"value\":\"Run Runbook\"},\"automationAccounts_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/Microsoft.Automation/automationAccounts/#{AutomationAccount}\"},\"serviceUri\":{\"value\":\"#{Octopus.Action[Create runbook].Output.AzureOutputs.webhookUri}\"},\"webhookResourceId\":{\"value\":\"/webhooks/#{webhookName}\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"actionGroups_Runbook_Alert_name\":{\"value\":\"runRunbook\"},\"automationAccounts_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/Microsoft.Automation/automationAccounts/#{AutomationAccount}\"},\"serviceUri\":{\"value\":\"#{Octopus.Action[Create runbook].Output.AzureOutputs.webhookUri}\"},\"webhookResourceId\":{\"value\":\"/webhooks/#{webhookName}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
@@ -1323,7 +1323,7 @@ step "create-low-availability-metric-alert" {
                     ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"metricAlerts_Prod_UI_Low_Availability_name\":{\"value\":\"#{LowAvailabilityAlertName}\"},\"components_onion_architecture_dotnet_7_containers_Prod_Insights_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/components/#{AppInsightsName}\"},\"actionGroups_Email_Alert_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/actionGroups/#{EmailAlertActionName}\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"metricAlerts_Prod_UI_Low_Availability_name\":{\"value\":\"#{LowAvailabilityAlertName}\"},\"components_onion_architecture_dotnet_7_containers_Prod_Insights_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/components/#{AppInsightsName}\"},\"actionGroups_Email_Alert_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/actionGroups/runRunbook\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
