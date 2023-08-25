@@ -1,9 +1,5 @@
 step "create-resource-group" {
-    condition = "Variable"
     name = "Create Resource Group"
-    properties = {
-        Octopus.Step.ConditionVariableExpression = "#{if Octopus.Environment.Name == \"TDD\"}true#{else}#{if EnsureEnvironmentsExist}true#{else}False#{/if}#{/if}"
-    }
 
     action {
         action_type = "Octopus.AzurePowerShell"
@@ -50,7 +46,7 @@ step "create-resource-group" {
                 EOT
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "PowerShell"
-            OctopusUseBundledTooling = "True"
+            OctopusUseBundledTooling = "False"
         }
         worker_pool_variable = ""
     }
