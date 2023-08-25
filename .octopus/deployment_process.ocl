@@ -998,7 +998,7 @@ step "create-automation-account" {
                     "outputs": {
                       "webhookUri": {
                         "type": "string",
-                        "value": "[listCallbackURL(concat(resourceId('Microsoft.Automation/automationAccounts/webhooks', parameters('automationAccountName'), parameters('runbookName')), '/', parameters('webhookName')), '2018-06-30').value]"
+                        "value": "[listCallbackURL(concat(resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName')), '/webhooks/', parameters('webhookName')), '2015-10-31').value]"
                       }
                     }   
                 }
