@@ -175,16 +175,6 @@ variable "DBScaledUpPerformanceLevel" {
     value "S0" {}
 }
 
-variable "EnsureEnvironmentsExist" {
-    value "True" {
-        environment = ["uat"]
-    }
-
-    value "True" {
-        environment = ["prod"]
-    }
-}
-
 variable "EmailAlertActionName" {
     value "Email Alert" {}
 }
@@ -227,4 +217,14 @@ variable "OctoRunbookName" {
 
 variable "azrunbookname" {
     value "octo-runbook" {}
+}
+
+variable "EnsureEnvironmentsExist" {
+    value "False" {
+        environment = ["uat"]
+    }
+
+    value "False" {
+        environment = ["prod"]
+    }
 }
