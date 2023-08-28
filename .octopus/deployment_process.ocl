@@ -1179,10 +1179,11 @@ step "create-automation-webhook" {
         properties = {
             Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptBody = <<-EOT
+                Install-Module -Name Az -Repository PSGallery -Force
                 $securePassword = ConvertTo-SecureString -String $az_login_appkey -AsPlainText -Force
                 $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $az_login_appid, $securePassword
                 Connect-AzAccount -ServicePrincipal -TenantId $az_login_tenant -Credential $credential 
-                # & Install-Module -Name Az.Automation -Force -AllowClobber
+                Install-Module -Name Az.Automation -Force -AllowClobber
                 
                 # Define variables
                 $resourceGroup = $ResourceGroupName
