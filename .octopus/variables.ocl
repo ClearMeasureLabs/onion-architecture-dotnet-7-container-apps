@@ -216,3 +216,15 @@ variable "webhookName" {
 variable "RunbookName" {
     value "OctoRunbook" {}
 }
+
+variable "ActionName" {
+    value "runRunbook" {}
+}
+
+variable "OctoRunbookName" {
+    value "Unhealthy app alert" {}
+}
+
+variable "azrunbookname" {
+    value "octo-runbook" {}
+}
