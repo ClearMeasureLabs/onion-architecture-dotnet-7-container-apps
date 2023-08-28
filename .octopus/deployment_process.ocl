@@ -554,7 +554,11 @@ step "healthcheck" {
 }
 
 step "create-log-analytics-workspace" {
+    condition = "Variable"
     name = "Create Log Analytics Workspace"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if Octopus.Environment.Name == \"TDD\"}true#{else}#{if EnsureEnvironmentsExist}true#{else}False#{/if}#{/if}"
+    }
 
     action {
         action_type = "Octopus.AzureResourceGroup"
@@ -814,7 +818,11 @@ step "create-availability-test" {
 }
 
 step "create-automation-account" {
+    condition = "Variable"
     name = "Create automation account"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if Octopus.Environment.Name == \"TDD\"}true#{else}#{if EnsureEnvironmentsExist}true#{else}False#{/if}#{/if}"
+    }
 
     action {
         action_type = "Octopus.AzureResourceGroup"
@@ -1002,7 +1010,11 @@ step "create-automation-account" {
 }
 
 step "create-automation-webhook" {
+    condition = "Variable"
     name = "Create Automation Webhook"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if Octopus.Environment.Name == \"TDD\"}true#{else}#{if EnsureEnvironmentsExist}true#{else}False#{/if}#{/if}"
+    }
 
     action {
         action_type = "Octopus.Script"
@@ -1046,7 +1058,11 @@ step "create-automation-webhook" {
 }
 
 step "create-email-alert-action" {
+    condition = "Variable"
     name = "Create Runbook Alert Action"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if Octopus.Environment.Name == \"TDD\"}true#{else}#{if EnsureEnvironmentsExist}true#{else}False#{/if}#{/if}"
+    }
 
     action {
         action_type = "Octopus.AzureResourceGroup"
@@ -1120,7 +1136,11 @@ step "create-email-alert-action" {
 }
 
 step "create-low-availability-metric-alert" {
+    condition = "Variable"
     name = "Create Low Availability Metric Alert"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if Octopus.Environment.Name == \"TDD\"}true#{else}#{if EnsureEnvironmentsExist}true#{else}False#{/if}#{/if}"
+    }
 
     action {
         action_type = "Octopus.AzureResourceGroup"
