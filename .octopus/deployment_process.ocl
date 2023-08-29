@@ -665,12 +665,6 @@ step "create-app-insights" {
                         "description": "Name of Application Insights resource."
                       }
                     },
-                    "type": {
-                      "type": "string",
-                      "metadata": {
-                        "description": "Type of app you are deploying. This field is for legacy reasons and will not impact the type of App Insights resource you deploy."
-                      }
-                    },
                     "regionId": {
                       "type": "string",
                       "metadata": {
@@ -681,12 +675,6 @@ step "create-app-insights" {
                       "type": "object",
                       "metadata": {
                         "description": "See documentation on tags: https://learn.microsoft.com/azure/azure-resource-manager/management/tag-resources."
-                      }
-                    },
-                    "requestSource": {
-                      "type": "string",
-                      "metadata": {
-                        "description": "Source of Azure Resource Manager deployment"
                       }
                     },
                     "workspaceResourceId": {
@@ -705,16 +693,16 @@ step "create-app-insights" {
                       "tags": "[parameters('tagsArray')]",
                       "kind": "other",
                       "properties": {
-                        "Application_Type": "[parameters('type')]",
+                        "Application_Type": "web",
                         "Flow_Type": "Bluefield",
-                        "Request_Source": "[parameters('requestSource')]",
+                        "Request_Source": "Octopus",
                         "WorkspaceResourceId": "[parameters('workspaceResourceId')]"
                       }
                     }
                   ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"name\":{\"value\":\"#{AppInsightsName}\"},\"type\":{\"value\":\"web\"},\"regionId\":{\"value\":\"#{az_location}\"},\"tagsArray\":{\"value\":{}},\"requestSource\":{\"value\":\"Octopus\"},\"workspaceResourceId\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourcegroups/#{ResourceGroupName}/providers/microsoft.operationalinsights/workspaces/#{LogAnalyticsWorkspaceName}\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"name\":{\"value\":\"#{AppInsightsName}\"},\"regionId\":{\"value\":\"#{az_location}\"},\"tagsArray\":{\"value\":{}},\"workspaceResourceId\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourcegroups/#{ResourceGroupName}/providers/microsoft.operationalinsights/workspaces/#{LogAnalyticsWorkspaceName}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
@@ -1001,7 +989,7 @@ step "create-automation-account" {
                 }
                 
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"#{AutomationAccount}\"},\"location\":{\"value\":\"#{az_location}\"},\"tags\":{\"value\":{}},\"runbookName\":{\"value\":\"#{azrunbookname}\"},\"webhookName\":{\"value\":\"#{webhookName}\"},\"webhookExpiryTime\":{\"value\":\"2024-08-31T23:59:59Z\"},\"contentURL\":{\"value\":\"https://raw.githubusercontent.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps/add-healthcheck-monitoring/run_runbook.ps1\"},\"apiKeyValue\":{\"value\":\"#{azrunbookAPI}\"},\"envNameValue\":{\"value\":\"#{Octopus.Environment.Name}\"},\"octoProjectValue\":{\"value\":\"#{Octopus.Project.Name}\"},\"octoURLValue\":{\"value\":\"https://clearmeasure.octopus.app/\"},\"octoRunbookValue\":{\"value\":\"#{OctoRunbookName}\"},\"octoSpaceValue\":{\"value\":\"#{Octopus.Space.Name}\"},\"webhookId\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/Microsoft.Automation/automationAccounts/TDD-releases-28529-automation/webhooks/#{webhookName}\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"#{AutomationAccount}\"},\"location\":{\"value\":\"#{az_location}\"},\"tags\":{\"value\":{}},\"runbookName\":{\"value\":\"#{azrunbookname}\"},\"webhookName\":{\"value\":\"#{webhookName}\"},\"webhookExpiryTime\":{\"value\":\"2025-08-31T23:59:59Z\"},\"contentURL\":{\"value\":\"https://raw.githubusercontent.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps/add-healthcheck-monitoring/run_runbook.ps1\"},\"apiKeyValue\":{\"value\":\"#{azrunbookAPI}\"},\"envNameValue\":{\"value\":\"#{Octopus.Environment.Name}\"},\"octoProjectValue\":{\"value\":\"#{Octopus.Project.Name}\"},\"octoURLValue\":{\"value\":\"#{OctoInstanceURL}\"},\"octoRunbookValue\":{\"value\":\"#{OctoRunbookName}\"},\"octoSpaceValue\":{\"value\":\"#{Octopus.Space.Name}\"},\"webhookId\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/Microsoft.Automation/automationAccounts/TDD-releases-28529-automation/webhooks/#{webhookName}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
@@ -1127,7 +1115,7 @@ step "create-email-alert-action" {
                     ]
                 }
                 EOT
-            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"actionGroups_runRunbook_name\":{\"value\":\"#{ActionName}\"},\"automationAccounts_TDD_releases_28553_automation_externalid\":{\"value\":\"/subscriptions/7077ad68-92ba-412e-9bf8-67eb78f9481b/resourceGroups/#{ResourceGroupName}/providers/Microsoft.Automation/automationAccounts/#{AutomationAccount}\"},\"uri\":{\"value\":\"#{Octopus.Action[Create Automation Webhook].Output.webhookUri}\"},\"webhookId\":{\"value\":\"#{webhookName}\"}}"
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"actionGroups_runRunbook_name\":{\"value\":\"#{ActionName}\"},\"automationAccounts_TDD_releases_28553_automation_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/Microsoft.Automation/automationAccounts/#{AutomationAccount}\"},\"uri\":{\"value\":\"#{Octopus.Action[Create Automation Webhook].Output.webhookUri}\"},\"webhookId\":{\"value\":\"#{webhookName}\"}}"
             Octopus.Action.Azure.TemplateSource = "Inline"
             OctopusUseBundledTooling = "False"
         }
