@@ -7,7 +7,7 @@ $header = @{ "X-Octopus-ApiKey" = $octopusAPIKey }
 $spaceName = Get-AutomationVariable -Name 'octoSpace'
 $projectName = Get-AutomationVariable -Name 'octoProject'
 $runbookName = Get-AutomationVariable -Name 'octoRunbook'
-$environmentNames = @("TDD")
+$environmentNames = @(Get-AutomationVariable -Name 'envName')
 
 # Get space
 $space = (Invoke-RestMethod -Method Get -Uri "$octopusURL/api/spaces/all" -Headers $header) | Where-Object {$_.Name -eq $spaceName}
