@@ -13,6 +13,7 @@ This project will create all of the required infrastructure in Azure programatic
   - [Connect Octopus to GitHub](#connect-octopus-to-github)
   - [Create a new Version Controlled Project:](#create-a-new-version-controlled-project)
   - [Create and Update Project Variables](#create-and-update-project-variables)
+  - [Optional-Create a runbook for availability monitoring](#optional-create-a-runbook-for-availability-monitoring)
 - [Azure DevOps Setup:](#azure-devops-setup)
   - [Create Service Connections](#create-service-connections)
   - [Create an artifact feed](#create-an-artifact-feed)
@@ -29,7 +30,7 @@ This project will create all of the required infrastructure in Azure programatic
     - [Create the following secrets:](#create-the-following-secrets)
     - [Create the following variables:](#create-the-following-variables)
   - [Connect Octopus to the Github Packages feed:](#connect-octopus-to-the-github-packages-feed)
-- [TeamCity](#teamcity)
+- [TeamCity Setup](#teamcity-setup)
   - [Create a New Project](#create-a-new-project)
   - [Enable UI Updates](#enable-ui-updates)
   - [Create an Azure Service Principal](#create-an-azure-service-principal-1)
@@ -50,13 +51,17 @@ Requirements:
 
 - Octopus Deploy
 - Azure
-- Azure DevOps
 - Github
 
-This project is configured to work with either Azure DevOps Pipelines or Github Actions. It cannot work with both at the same time.
+Optional:
+- Azure DevOps
+- TeamCity
+
+This project is configured to work with either Azure DevOps Pipelines or Github Actions, or TeamCity.
 Follow the [Github](#github),[Azure](#azure),[Octopus Deploy Environment Setup:](#octopus-deploy-environment-setup) and [Octopus Deploy Project Setup:](#octopus-deploy-project-setup) steps at the beginning of this document, then:
 - If using Azure DevOps, follow the steps in the [Azure DevOps Setup:](#azure-devops-setup) section
 - If using Github Actions, follow the steps in the [Github Actions Setup:](#github-actions-setup) section
+- If using TeamCity, follow the steps in the [TeamCity Setup](#teamcity-setup) section
  
 # Github
 Fork the [onion-architecture-dotnet-7-container-apps](https://github.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps) repo
@@ -183,8 +188,19 @@ In the Octopus Project navigate to Variables -\> Project
 
 - Create a variable named **DatabasePassword** Set the values to Sensitive and enter passwords for TDD, UAT, and Prod environments
 - Update **registry\_login\_server** to the login server of the Azure Container Registry that was created
-  - This loging server can be found in the Overview page of the container registry in the Azure Web Portal
+  - This login server can be found in the Overview page of the container registry in the Azure Web Portal
 - Update **EnsureEnvironmentsExist** to True for Prod/UAT to ensure that all resources will be created the first time.
+
+
+## Optional-Create a runbook for availability monitoring
+
+In the deployment process Octopus will setup Azure App Insights to monitor the availability of the app. If the healthcheck endpoint returns unhealthy an alert will be created that triggers an Octopus Runbook. 
+To configure the Runbook integration:
+- There is a variable in the project named **OctoRunbookName** this is the name of the Runbook that Azure will run. Create a Runbook with the same name. e.g. Unhealthy app alert
+- In the project create a variable named **azrunbookAPI** Set the value to Sensitive and provide an API key that has access to the project
+- Update **OctoInstanceURL** with the URL of your Octopus instance
+
+
 
 # Azure DevOps Setup:
 
@@ -416,7 +432,7 @@ In the forked Github repository, navigate to Actions. Select *I understand my wo
 Push a commit to trigger Github Actions to run the pipeline.  
 
 
-# TeamCity
+# TeamCity Setup
 
 ## Create a New Project
 Create a New Project by selecting the **New project…** button in the top right
