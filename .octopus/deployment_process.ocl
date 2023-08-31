@@ -552,3 +552,656 @@ step "healthcheck" {
         }
     }
 }
+
+step "create-log-analytics-workspace" {
+    condition = "Variable"
+    name = "Create Log Analytics Workspace"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if Octopus.Environment.Name == \"TDD\"}true#{else}#{if EnsureEnvironmentsExist}true#{else}False#{/if}#{/if}"
+    }
+
+    action {
+        action_type = "Octopus.AzureResourceGroup"
+        properties = {
+            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
+            Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
+            Octopus.Action.Azure.ResourceGroupName = "#{ResourceGroupName}"
+            Octopus.Action.Azure.ResourceGroupTemplate = <<-EOT
+                {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "workspaceName": {
+                      "type": "string",
+                      "metadata": {
+                        "description": "Specify the name of the workspace."
+                      }
+                    },
+                    "location": {
+                      "type": "string",
+                      "metadata": {
+                        "description": "Specify the location for the workspace."
+                      }
+                    },
+                    "sku": {
+                      "type": "string",
+                      "defaultValue": "PerGB2018",
+                      "allowedValues": [
+                        "CapacityReservation",
+                        "Free",
+                        "LACluster",
+                        "PerGB2018",
+                        "PerNode",
+                        "Premium",
+                        "Standalone",
+                        "Standard"
+                      ],
+                      "metadata": {
+                        "description": "Specify the pricing tier: PerGB2018 or legacy tiers (Free, Standalone, PerNode, Standard or Premium) which are not available to all customers."
+                      }
+                    },
+                    "retentionInDays": {
+                      "type": "int",
+                      "defaultValue": 120,
+                      "metadata": {
+                        "description": "Specify the number of days to retain data."
+                      }
+                    },
+                    "resourcePermissions": {
+                      "type": "bool",
+                      "metadata": {
+                        "description": "Specify true to use resource or workspace permissions, or false to require workspace permissions."
+                      }
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.OperationalInsights/workspaces",
+                      "apiVersion": "2021-12-01-preview",
+                      "name": "[parameters('workspaceName')]",
+                      "location": "[parameters('location')]",
+                      "properties": {
+                        "sku": {
+                          "name": "[parameters('sku')]"
+                        },
+                        "retentionInDays": "[parameters('retentionInDays')]",
+                        "features": {
+                          "enableLogAccessUsingOnlyResourcePermissions": "[parameters('resourcePermissions')]"
+                        }
+                      }
+                    }
+                  ]
+                }
+                EOT
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"workspaceName\":{\"value\":\"#{LogAnalyticsWorkspaceName}\"},\"location\":{\"value\":\"#{az_location}\"},\"sku\":{\"value\":\"PerGB2018\"},\"retentionInDays\":{\"value\":120},\"resourcePermissions\":{\"value\":\"True\"}}"
+            Octopus.Action.Azure.TemplateSource = "Inline"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool_variable = ""
+    }
+}
+
+step "create-app-insights" {
+    condition = "Variable"
+    name = "Create App Insights"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if Octopus.Environment.Name == \"TDD\"}true#{else}#{if EnsureEnvironmentsExist}true#{else}False#{/if}#{/if}"
+    }
+
+    action {
+        action_type = "Octopus.AzureResourceGroup"
+        properties = {
+            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
+            Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
+            Octopus.Action.Azure.ResourceGroupName = "#{ResourceGroupName}"
+            Octopus.Action.Azure.ResourceGroupTemplate = <<-EOT
+                {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "name": {
+                      "type": "string",
+                      "metadata": {
+                        "description": "Name of Application Insights resource."
+                      }
+                    },
+                    "regionId": {
+                      "type": "string",
+                      "metadata": {
+                        "description": "Which Azure Region to deploy the resource to. This must be a valid Azure regionId."
+                      }
+                    },
+                    "tagsArray": {
+                      "type": "object",
+                      "metadata": {
+                        "description": "See documentation on tags: https://learn.microsoft.com/azure/azure-resource-manager/management/tag-resources."
+                      }
+                    },
+                    "workspaceResourceId": {
+                      "type": "string",
+                      "metadata": {
+                        "description": "Log Analytics workspace ID to associate with your Application Insights resource."
+                      }
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Insights/components",
+                      "apiVersion": "2020-02-02",
+                      "name": "[parameters('name')]",
+                      "location": "[parameters('regionId')]",
+                      "tags": "[parameters('tagsArray')]",
+                      "kind": "other",
+                      "properties": {
+                        "Application_Type": "web",
+                        "Flow_Type": "Bluefield",
+                        "Request_Source": "Octopus",
+                        "WorkspaceResourceId": "[parameters('workspaceResourceId')]"
+                      }
+                    }
+                  ]
+                }
+                EOT
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"name\":{\"value\":\"#{AppInsightsName}\"},\"regionId\":{\"value\":\"#{az_location}\"},\"tagsArray\":{\"value\":{}},\"workspaceResourceId\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourcegroups/#{ResourceGroupName}/providers/microsoft.operationalinsights/workspaces/#{LogAnalyticsWorkspaceName}\"}}"
+            Octopus.Action.Azure.TemplateSource = "Inline"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool_variable = ""
+    }
+}
+
+step "create-availability-test" {
+    condition = "Variable"
+    name = "Create Availability Test"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if Octopus.Environment.Name == \"TDD\"}true#{else}#{if EnsureEnvironmentsExist}true#{else}False#{/if}#{/if}"
+    }
+
+    action {
+        action_type = "Octopus.AzureResourceGroup"
+        properties = {
+            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
+            Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
+            Octopus.Action.Azure.ResourceGroupName = "#{ResourceGroupName}"
+            Octopus.Action.Azure.ResourceGroupTemplate = <<-EOT
+                {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "webtests_healthcheck_name": {
+                            "defaultValue": "Availability Test",
+                            "type": "String"
+                        },
+                      	"healthcheck_url": {
+                        	"defaultValue": "",
+                          	"type": "String"
+                        },
+                      	"location": {
+                        	"defaultValue": "southcentralus",
+                          	"type": "String"
+                        },
+                      	"hidden-link": {
+                          	"defaultValue": "",
+                          	"type": "String"
+                        }
+                    },
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "microsoft.insights/webtests",
+                            "apiVersion": "2022-06-15",
+                            "name": "[parameters('webtests_healthcheck_name')]",
+                            "location": "[parameters('location')]",
+                            "tags": {
+                                "[parameters('hidden-link')]": "Resource"
+                            },
+                            "properties": {
+                                "SyntheticMonitorId": "[parameters('webtests_healthcheck_name')]",
+                                "Name": "Availability Test",
+                                "Enabled": true,
+                                "Frequency": 300,
+                                "Timeout": 30,
+                                "Kind": "standard",
+                                "RetryEnabled": true,
+                                "Locations": [
+                                    {
+                                        "Id": "us-ca-sjc-azr"
+                                    },
+                                    {
+                                        "Id": "emea-nl-ams-azr"
+                                    },
+                                    {
+                                        "Id": "us-va-ash-azr"
+                                    },
+                                    {
+                                        "Id": "us-tx-sn1-azr"
+                                    }
+                                ],
+                                "Request": {
+                                    "RequestUrl": "[replace(parameters('healthcheck_url'), '\"', '')]",
+                                    "HttpVerb": "GET",
+                                    "ParseDependentRequests": false
+                                },
+                                "ValidationRules": {
+                                    "ExpectedHttpStatusCode": 200,
+                                    "IgnoreHttpStatusCode": false,
+                                    "ContentValidation": {
+                                        "ContentMatch": "Healthy",
+                                        "IgnoreCase": false,
+                                        "PassIfTextFound": true
+                                    },
+                                    "SSLCheck": false
+                                }
+                            }
+                        }
+                    ]
+                }
+                EOT
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"webtests_healthcheck_name\":{\"value\":\"#{AvailabilityTestName}\"},\"healthcheck_url\":{\"value\":\"http://#{containerAppURL}/_healthcheck\"},\"location\":{\"value\":\"#{az_location}\"},\"hidden-link\":{\"value\":\"hidden-link:/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/components/#{AppInsightsName}\"}}"
+            Octopus.Action.Azure.TemplateSource = "Inline"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool_variable = ""
+    }
+}
+
+step "create-automation-account" {
+    condition = "Variable"
+    name = "Create automation account"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if Octopus.Environment.Name == \"TDD\"}true#{else}#{if EnsureEnvironmentsExist}true#{else}False#{/if}#{/if}"
+    }
+
+    action {
+        action_type = "Octopus.AzureResourceGroup"
+        properties = {
+            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
+            Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
+            Octopus.Action.Azure.ResourceGroupName = "#{ResourceGroupName}"
+            Octopus.Action.Azure.ResourceGroupTemplate = <<-EOT
+                {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "automationAccountName": {
+                            "type": "string"
+                        },
+                        "location": {
+                            "type": "string"
+                        },
+                        "tags": {
+                            "type": "object"
+                        },
+                        "runbookName": {
+                          "type": "string",
+                          "metadata": {
+                            "description": "The name of the runbook."
+                          }
+                        },
+                        "webhookName": {
+                          "type": "string",
+                          "metadata": {
+                            "description": "The name of the webhook."
+                          }
+                        },
+                        "webhookExpiryTime": {
+                          "type":"string",
+                          "metadata":{
+                            "description":"The expiry time of the webhook."
+                          }
+                        },   
+                        "contentURL": {
+                            "type": "string"
+                        },
+                        "apiKeyValue": {
+                          "type": "securestring"
+                        },
+                        "envNameValue": {
+                          "type": "string"
+                        },
+                        "octoProjectValue": {
+                          "type": "string"
+                        },
+                        "octoURLValue": {
+                          "type": "securestring"
+                        },
+                        "octoRunbookValue": {
+                          "type": "string"
+                        }, 
+                        "octoSpaceValue": {
+                          "type": "string"
+                        },
+                      	"webhookId": {
+                        	"type": "string"
+                        }
+                    },
+                    "resources": [
+                        {
+                            "name": "[parameters('automationAccountName')]",
+                            "type": "Microsoft.Automation/automationAccounts",
+                            "apiVersion": "2018-06-30",
+                            "location": "[parameters('location')]",
+                            "tags": "[parameters('tags')]",
+                            "properties": {
+                                "sku": {
+                                    "name": "Basic"
+                                }
+                            },
+                          	"resources": [
+                              {
+                                "name": "[parameters('runbookName')]",
+                                "type": "runbooks",
+                                "apiVersion": "2018-06-30",
+                                "location": "[resourceGroup().location]",
+                                "dependsOn": [  
+                                  "[parameters('automationAccountName')]"  
+                                ],                
+                                "properties": {
+                                  "runbookType": "PowerShell",
+                                  "logProgress": false,
+                                  "logVerbose": false,
+                                  "publishContentLink": {
+                                    "uri": "https://raw.githubusercontent.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps/add-healthcheck-monitoring/run_runbook.ps1"
+                                  }
+                                }
+                              },
+                              {
+                                "name": "apiKey",
+                                "type": "variables",
+                                "apiVersion": "2015-10-31",
+                                "dependsOn": [  
+                                  "[parameters('automationAccountName')]"  
+                                ], 
+                                "properties": {
+                                  "description": "api key",
+                                  "isEncrypted": true,
+                                  "value": "[concat('\"', parameters('apiKeyValue'), '\"')]"
+                                }
+                              },      
+                              {
+                                "name": "envName",
+                                "type": "variables",
+                                "apiVersion": "2015-10-31",
+                                "dependsOn": [  
+                                  "[parameters('automationAccountName')]"  
+                                ], 
+                                "properties": {
+                                  "description": "environment name",
+                                  "isEncrypted": false,
+                                  "value": "[concat('\"', parameters('envNameValue'), '\"')]"
+                                }
+                              },
+                              {
+                                "name": "octoProject",
+                                "type": "variables",
+                                "apiVersion": "2019-06-01",
+                                "location": "[resourceGroup().location]",
+                                "dependsOn": [  
+                                  "[parameters('automationAccountName')]"  
+                                ], 
+                                "properties": {
+                                  "isEncrypted": false,
+                                  "value": "[concat('\"', parameters('octoProjectValue'), '\"')]"
+                                }
+                              },
+                              {
+                                "name": "octoURL",
+                                "type": "variables",
+                                "apiVersion": "2019-06-01",
+                                "location": "[resourceGroup().location]",
+                                "dependsOn": [  
+                                  "[parameters('automationAccountName')]"  
+                                ], 
+                                "properties": {
+                                  "isEncrypted": false,
+                                  "value": "[concat('\"', parameters('octoURLValue'), '\"')]"
+                                }
+                              },
+                              {
+                                "name": "octoRunbook",
+                                "type": "variables",
+                                "apiVersion": "2019-06-01",
+                                "location": "[resourceGroup().location]",
+                                "dependsOn": [  
+                                  "[parameters('automationAccountName')]"  
+                                ], 
+                                "properties": {
+                                  "isEncrypted": false,
+                                  "value": "[concat('\"', parameters('octoRunbookValue'), '\"')]"
+                                }
+                              },
+                              {
+                                "name": "octoSpace",
+                                "type": "variables",
+                                "apiVersion": "2019-06-01",
+                                "location": "[resourceGroup().location]",
+                                "dependsOn": [  
+                                  "[parameters('automationAccountName')]"  
+                                ], 
+                                "properties": {
+                                  "isEncrypted": false,
+                                  "value": "[concat('\"', parameters('octoSpaceValue'), '\"')]"
+                                }
+                              }               
+                            ]
+                        }    
+                    ]   
+                }
+                
+                EOT
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"automationAccountName\":{\"value\":\"#{AutomationAccount}\"},\"location\":{\"value\":\"#{az_location}\"},\"tags\":{\"value\":{}},\"runbookName\":{\"value\":\"#{azrunbookname}\"},\"webhookName\":{\"value\":\"#{webhookName}\"},\"webhookExpiryTime\":{\"value\":\"2025-08-31T23:59:59Z\"},\"contentURL\":{\"value\":\"https://raw.githubusercontent.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps/add-healthcheck-monitoring/run_runbook.ps1\"},\"apiKeyValue\":{\"value\":\"#{azrunbookAPI}\"},\"envNameValue\":{\"value\":\"#{Octopus.Environment.Name}\"},\"octoProjectValue\":{\"value\":\"#{Octopus.Project.Name}\"},\"octoURLValue\":{\"value\":\"#{OctoInstanceURL}\"},\"octoRunbookValue\":{\"value\":\"#{OctoRunbookName}\"},\"octoSpaceValue\":{\"value\":\"#{Octopus.Space.Name}\"},\"webhookId\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/Microsoft.Automation/automationAccounts/TDD-releases-28529-automation/webhooks/#{webhookName}\"}}"
+            Octopus.Action.Azure.TemplateSource = "Inline"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool_variable = ""
+    }
+}
+
+step "create-automation-webhook" {
+    condition = "Variable"
+    name = "Create Automation Webhook"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if Octopus.Environment.Name == \"TDD\"}true#{else}#{if EnsureEnvironmentsExist}true#{else}False#{/if}#{/if}"
+    }
+
+    action {
+        action_type = "Octopus.Script"
+        properties = {
+            Octopus.Action.RunOnServer = "true"
+            Octopus.Action.Script.ScriptBody = <<-EOT
+                Install-Module -Name Az -Repository PSGallery -Force
+                $securePassword = ConvertTo-SecureString -String $az_login_appkey -AsPlainText -Force
+                $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $az_login_appid, $securePassword
+                Connect-AzAccount -ServicePrincipal -TenantId $az_login_tenant -Credential $credential 
+                Install-Module -Name Az.Automation -Force -AllowClobber
+                
+                # Define variables
+                $resourceGroup = $ResourceGroupName
+                $automationAccount = $AutomationAccount
+                $psWebhook = $webhookName
+                $runbook = "octo-runbook"
+                
+                # Create webhook
+                $newWebhook = New-AzAutomationWebhook `
+                    -ResourceGroupName $resourceGroup `
+                    -AutomationAccountName $automationAccount `
+                    -Name $psWebhook `
+                    -RunbookName $runbook `
+                    -IsEnabled $True `
+                    -ExpiryTime "12/31/2024" `
+                    -Force
+                
+                # Store URL in variable; reveal variable
+                $uri = $newWebhook.WebhookURI
+                $uri
+                Set-OctopusVariable -name "webhookUri" -value $uri
+                
+                
+                EOT
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+        }
+        worker_pool = "hosted-windows"
+    }
+}
+
+step "create-email-alert-action" {
+    condition = "Variable"
+    name = "Create Runbook Alert Action"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if Octopus.Environment.Name == \"TDD\"}true#{else}#{if EnsureEnvironmentsExist}true#{else}False#{/if}#{/if}"
+    }
+
+    action {
+        action_type = "Octopus.AzureResourceGroup"
+        properties = {
+            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
+            Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
+            Octopus.Action.Azure.ResourceGroupName = "#{ResourceGroupName}"
+            Octopus.Action.Azure.ResourceGroupTemplate = <<-EOT
+                {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "actionGroups_runRunbook_name": {
+                            "defaultValue": "runRunbook",
+                            "type": "String"
+                        },
+                        "automationAccounts_TDD_releases_28553_automation_externalid": {
+                            "defaultValue": "",
+                            "type": "String"
+                        },
+                      	"uri": {
+                        	"defaultValue": "",
+                          	"type": "String"
+                        },
+                      	"webhookId": {
+                        	"type": "String"
+                        }
+                    },
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "microsoft.insights/actionGroups",
+                            "apiVersion": "2023-01-01",
+                            "name": "[parameters('actionGroups_runRunbook_name')]",
+                            "location": "Global",
+                            "properties": {
+                                "groupShortName": "[parameters('actionGroups_runRunbook_name')]",
+                                "enabled": true,
+                                "emailReceivers": [],
+                                "smsReceivers": [],
+                                "webhookReceivers": [],
+                                "eventHubReceivers": [],
+                                "itsmReceivers": [],
+                                "azureAppPushReceivers": [],
+                                "automationRunbookReceivers": [
+                                    {
+                                        "name": "runbook",
+                                        "serviceUri": "[parameters('uri')]",
+                                        "useCommonAlertSchema": false,
+                                        "automationAccountId": "[parameters('automationAccounts_TDD_releases_28553_automation_externalid')]",
+                                        "runbookName": "octo-runbook",
+                                        "webhookResourceId": "[concat(parameters('automationAccounts_TDD_releases_28553_automation_externalid'), '/webhooks/', parameters('webhookId'))]",
+                                        "isGlobalRunbook": false
+                                    }
+                                ],
+                                "voiceReceivers": [],
+                                "logicAppReceivers": [],
+                                "azureFunctionReceivers": [],
+                                "armRoleReceivers": []
+                            }
+                        }
+                    ]
+                }
+                EOT
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"actionGroups_runRunbook_name\":{\"value\":\"#{ActionName}\"},\"automationAccounts_TDD_releases_28553_automation_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/Microsoft.Automation/automationAccounts/#{AutomationAccount}\"},\"uri\":{\"value\":\"#{Octopus.Action[Create Automation Webhook].Output.webhookUri}\"},\"webhookId\":{\"value\":\"#{webhookName}\"}}"
+            Octopus.Action.Azure.TemplateSource = "Inline"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool_variable = ""
+    }
+}
+
+step "create-low-availability-metric-alert" {
+    condition = "Variable"
+    name = "Create Low Availability Metric Alert"
+    properties = {
+        Octopus.Step.ConditionVariableExpression = "#{if Octopus.Environment.Name == \"TDD\"}true#{else}#{if EnsureEnvironmentsExist}true#{else}False#{/if}#{/if}"
+    }
+
+    action {
+        action_type = "Octopus.AzureResourceGroup"
+        properties = {
+            Octopus.Action.Azure.AccountId = "#{AzureAccount}"
+            Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
+            Octopus.Action.Azure.ResourceGroupName = "#{ResourceGroupName}"
+            Octopus.Action.Azure.ResourceGroupTemplate = <<-EOT
+                {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "metricAlerts_Prod_UI_Low_Availability_name": {
+                            "defaultValue": "Prod-UI Low Availability",
+                            "type": "String"
+                        },
+                        "components_onion_architecture_dotnet_7_containers_Prod_Insights_externalid": {
+                            "defaultValue": "",
+                            "type": "String"
+                        },
+                        "actionGroups_Email_Alert_externalid": {
+                            "defaultValue": "",
+                            "type": "String"
+                        }
+                    },
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "microsoft.insights/metricAlerts",
+                            "apiVersion": "2018-03-01",
+                            "name": "[parameters('metricAlerts_Prod_UI_Low_Availability_name')]",
+                            "location": "global",
+                            "properties": {
+                                "severity": 2,
+                                "enabled": true,
+                                "scopes": [
+                                    "[parameters('components_onion_architecture_dotnet_7_containers_Prod_Insights_externalid')]"
+                                ],
+                                "evaluationFrequency": "PT1M",
+                                "windowSize": "PT5M",
+                                "criteria": {
+                                    "allOf": [
+                                        {
+                                            "threshold": 100,
+                                            "name": "Metric1",
+                                            "metricNamespace": "microsoft.insights/components",
+                                            "metricName": "availabilityResults/availabilityPercentage",
+                                            "operator": "LessThan",
+                                            "timeAggregation": "Average",
+                                            "skipMetricValidation": false,
+                                            "criterionType": "StaticThresholdCriterion"
+                                        }
+                                    ],
+                                    "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
+                                },
+                                "autoMitigate": true,
+                                "targetResourceType": "microsoft.insights/components",
+                                "targetResourceRegion": "southcentralus",
+                                "actions": [
+                                    {
+                                        "actionGroupId": "[parameters('actionGroups_Email_Alert_externalid')]",
+                                        "webHookProperties": {}
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+                EOT
+            Octopus.Action.Azure.ResourceGroupTemplateParameters = "{\"metricAlerts_Prod_UI_Low_Availability_name\":{\"value\":\"#{LowAvailabilityAlertName}\"},\"components_onion_architecture_dotnet_7_containers_Prod_Insights_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/components/#{AppInsightsName}\"},\"actionGroups_Email_Alert_externalid\":{\"value\":\"/subscriptions/#{Octopus.Action.Azure.SubscriptionId}/resourceGroups/#{ResourceGroupName}/providers/microsoft.insights/actionGroups/#{ActionName}\"}}"
+            Octopus.Action.Azure.TemplateSource = "Inline"
+            OctopusUseBundledTooling = "False"
+        }
+        worker_pool_variable = ""
+    }
+}

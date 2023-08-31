@@ -175,12 +175,60 @@ variable "DBScaledUpPerformanceLevel" {
     value "S0" {}
 }
 
+variable "EmailAlertActionName" {
+    value "Email Alert" {}
+}
+
+variable "AvailabilityTestName" {
+    value "#{container_app_name}-availability-test" {}
+}
+
+variable "AppInsightsName" {
+    value "#{ResourceGroupName}-Insights" {}
+}
+
+variable "LowAvailabilityAlertName" {
+    value "#{ResourceGroupName} Low Availability" {}
+}
+
+variable "LogAnalyticsWorkspaceName" {
+    value "#{Octopus.Environment.Name}-Log-Analytics" {}
+}
+
+variable "AutomationAccount" {
+    value "#{Octopus.Environment.Name}-#{Octopus.Release.Id | ToLower }-automation" {}
+}
+
+variable "webhookName" {
+    value "#{ResourceGroupName}-webhook" {}
+}
+
+variable "RunbookName" {
+    value "OctoRunbook" {}
+}
+
+variable "ActionName" {
+    value "runRunbook" {}
+}
+
+variable "OctoRunbookName" {
+    value "Unhealthy app alert" {}
+}
+
+variable "azrunbookname" {
+    value "octo-runbook" {}
+}
+
 variable "EnsureEnvironmentsExist" {
-    value "True" {
+    value "False" {
         environment = ["uat"]
     }
 
-    value "True" {
+    value "False" {
         environment = ["prod"]
     }
+}
+
+variable "OctoInstanceURL" {
+    value "https://clearmeasure.octopus.app/" {}
 }
