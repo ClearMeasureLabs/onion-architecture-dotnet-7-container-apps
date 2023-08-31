@@ -122,14 +122,14 @@ When creating the container registry, a Basic SKU is sufficient. Name the contai
 - Add an Azure Subscription Account
     1. Name the account Azure-Onion-Containers
     2. Fill in the Subscription ID
-        i. This can be found in the Subscription Overview page in the Azure web portal
+        - This can be found in the Subscription Overview page in the Azure web portal
     3. Leave the Authentication Method as 'Use a Service Principal'
     4. Fill in the Tenant ID
-        i. This can be found in the Overview page of the App Registration in the Azure web portal
+        - This can be found in the Overview page of the App Registration in the Azure web portal
     5. Fill in the Application ID
-        i. This is the Application (client) ID from the App registration that was just created. This can be found in the Overview page in the Azure web portal
+        - This is the Application (client) ID from the App registration that was just created. This can be found in the Overview page in the Azure web portal
     6. Fill in the Application Password / Key
-        i. This is the client secret value that was created previously
+        - This is the client secret value that was created previously
 
 ![Alt text](images/Create%20azure%20app%20registration%206.png)
 
@@ -144,13 +144,6 @@ In Octopus Deploy create 3 environments.
 No Deployment targets need to be created.
 
 Create a Lifecycle that uses those three environments promoting from TDD -\> UAT -\> Prod
-
-# Octopus Deploy Library Set Setup:
-
-In Octopus Deploy navigate to Library -\> Variable Sets
-
-Create a new variable set named Onion DevOps
-Create a variable named DatabaseServerName. Leave the value blank.
 
 # Octopus Deploy Project Setup:
 
