@@ -13,6 +13,7 @@ This project will create all of the required infrastructure in Azure programatic
   - [Connect Octopus to GitHub](#connect-octopus-to-github)
   - [Create a new Version Controlled Project:](#create-a-new-version-controlled-project)
   - [Create and Update Project Variables](#create-and-update-project-variables)
+  - [(Optional) Create a runbook for availability monitoring](#(Optional)-create-a-runbook-for-availability-monitoring)
 - [Azure DevOps Setup:](#azure-devops-setup)
   - [Create Service Connections](#create-service-connections)
   - [Create an artifact feed](#create-an-artifact-feed)
@@ -183,8 +184,19 @@ In the Octopus Project navigate to Variables -\> Project
 
 - Create a variable named **DatabasePassword** Set the values to Sensitive and enter passwords for TDD, UAT, and Prod environments
 - Update **registry\_login\_server** to the login server of the Azure Container Registry that was created
-  - This loging server can be found in the Overview page of the container registry in the Azure Web Portal
+  - This login server can be found in the Overview page of the container registry in the Azure Web Portal
 - Update **EnsureEnvironmentsExist** to True for Prod/UAT to ensure that all resources will be created the first time.
+
+
+## (Optional) Create a runbook for availability monitoring
+
+In the deployment process Octopus will setup Azure App Insights to monitor the availability of the app. If the healthcheck endpoint returns unhealthy an alert will be created that triggers an Octopus Runbook. 
+To configure the Runbook integration:
+- There is a variable in the project named **OctoRunbookName** this is the name of the Runbook that Azure will run. Create a Runbook with the same name. e.g. Unhealthy app alert
+- In the project create a variable named **azrunbookAPI** Set the value to Sensitive and provide an API key that has access to the project
+- Update **OctoInstanceURL** with the URL of your Octopus instance
+
+
 
 # Azure DevOps Setup:
 
