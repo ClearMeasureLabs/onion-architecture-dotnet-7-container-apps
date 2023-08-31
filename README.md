@@ -30,7 +30,7 @@ This project will create all of the required infrastructure in Azure programatic
     - [Create the following secrets:](#create-the-following-secrets)
     - [Create the following variables:](#create-the-following-variables)
   - [Connect Octopus to the Github Packages feed:](#connect-octopus-to-the-github-packages-feed)
-- [TeamCity](#teamcity)
+- [TeamCity Setup](#teamcity-setup)
   - [Create a New Project](#create-a-new-project)
   - [Enable UI Updates](#enable-ui-updates)
   - [Create an Azure Service Principal](#create-an-azure-service-principal-1)
@@ -51,13 +51,17 @@ Requirements:
 
 - Octopus Deploy
 - Azure
-- Azure DevOps
 - Github
 
-This project is configured to work with either Azure DevOps Pipelines or Github Actions. It cannot work with both at the same time.
+Optional:
+- Azure DevOps
+- TeamCity
+
+This project is configured to work with either Azure DevOps Pipelines or Github Actions, or TeamCity.
 Follow the [Github](#github),[Azure](#azure),[Octopus Deploy Environment Setup:](#octopus-deploy-environment-setup) and [Octopus Deploy Project Setup:](#octopus-deploy-project-setup) steps at the beginning of this document, then:
 - If using Azure DevOps, follow the steps in the [Azure DevOps Setup:](#azure-devops-setup) section
 - If using Github Actions, follow the steps in the [Github Actions Setup:](#github-actions-setup) section
+- If using TeamCity, follow the steps in the [TeamCity Setup](#teamcity) section
  
 # Github
 Fork the [onion-architecture-dotnet-7-container-apps](https://github.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps) repo
@@ -428,7 +432,7 @@ In the forked Github repository, navigate to Actions. Select *I understand my wo
 Push a commit to trigger Github Actions to run the pipeline.  
 
 
-# TeamCity
+# TeamCity Setup
 
 ## Create a New Project
 Create a New Project by selecting the **New project…** button in the top right
