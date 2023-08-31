@@ -13,7 +13,7 @@ This project will create all of the required infrastructure in Azure programatic
   - [Connect Octopus to GitHub](#connect-octopus-to-github)
   - [Create a new Version Controlled Project:](#create-a-new-version-controlled-project)
   - [Create and Update Project Variables](#create-and-update-project-variables)
-  - [(Optional) Create a runbook for availability monitoring](#(Optional)-create-a-runbook-for-availability-monitoring)
+  - [Optional-Create a runbook for availability monitoring](#optional-create-a-runbook-for-availability-monitoring)
 - [Azure DevOps Setup:](#azure-devops-setup)
   - [Create Service Connections](#create-service-connections)
   - [Create an artifact feed](#create-an-artifact-feed)
@@ -61,7 +61,7 @@ This project is configured to work with either Azure DevOps Pipelines or Github 
 Follow the [Github](#github),[Azure](#azure),[Octopus Deploy Environment Setup:](#octopus-deploy-environment-setup) and [Octopus Deploy Project Setup:](#octopus-deploy-project-setup) steps at the beginning of this document, then:
 - If using Azure DevOps, follow the steps in the [Azure DevOps Setup:](#azure-devops-setup) section
 - If using Github Actions, follow the steps in the [Github Actions Setup:](#github-actions-setup) section
-- If using TeamCity, follow the steps in the [TeamCity Setup](#teamcity) section
+- If using TeamCity, follow the steps in the [TeamCity Setup](#teamcity-setup) section
  
 # Github
 Fork the [onion-architecture-dotnet-7-container-apps](https://github.com/ClearMeasureLabs/onion-architecture-dotnet-7-container-apps) repo
@@ -192,7 +192,7 @@ In the Octopus Project navigate to Variables -\> Project
 - Update **EnsureEnvironmentsExist** to True for Prod/UAT to ensure that all resources will be created the first time.
 
 
-## (Optional) Create a runbook for availability monitoring
+## Optional-Create a runbook for availability monitoring
 
 In the deployment process Octopus will setup Azure App Insights to monitor the availability of the app. If the healthcheck endpoint returns unhealthy an alert will be created that triggers an Octopus Runbook. 
 To configure the Runbook integration:
