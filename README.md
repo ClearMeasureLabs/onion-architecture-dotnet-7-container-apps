@@ -453,8 +453,8 @@ Select Apply
 
 ## Create an Azure Service Principal
 Using the az cli run:
-- az ad sp create-for-rbac --scope /subscriptions/subscriptionid --role Contributor --sdk-auth
-- replace **subscriptionid** with the id of your Azure subscription. Save the JSON output as it will be needed later.
+- az ad sp create-for-rbac --scope /subscriptions/subscriptionid --role AcrPush --sdk-auth
+- replace **subscriptionid** with the id of your Azure subscription. Save the JSON output as some of the values will be needed.
 
 ## Update Project Parameters
 Navigate to Project Settings -> Parameters
@@ -468,6 +468,7 @@ Edit the following Configuration Parameters
 - OctoSpace – ID of the Octopus Deploy Space that houses the project. This should be Spaces-##
 - OctoSpaceName – Name of the Octopus Deploy Space that houses the project. E.g. Default
 - OctoURL – URL of the Octopus Deploy Instance. E.g. https://clearmeasure.octopus.app
+- RegistyLogin - Login server of the Azure Container Registry
 
 ![Alt text](images/TC5.png)
 
@@ -484,13 +485,13 @@ Edit the following Configuration Parameters
 
 ## Create a TeamCity Nuget feed
 
-Navigate to Edit Project -> NuGet Feed
-- If this option is not available, contact TeamCity and request a NuGet feed be enabled
-Name the feed Onion_Architecture_Container_Apps
-In the Integration Build build configuration, edit the Publish Packages Build Step
-- Set the API key value to: **%teamcity.nuget.feed.api.key%**
-- Set the Package Source value to the nuget feed that was just created
-- The nuget feed can be found in the hamburger dropdown menu
+- Navigate to Edit Project -> NuGet Feed
+  - If this option is not available, contact TeamCity and request a NuGet feed be enabled)
+- Name the feed Onion_Architecture_Container_Apps
+- In the Integration Build build configuration, edit the Publish Packages Build Step
+  - Set the API key value to: **%teamcity.nuget.feed.api.key%**
+  - Set the Package Source value to the nuget feed that was just created
+  - The nuget feed can be found in the hamburger dropdown menu
 
 ## Connect Octopus to the TeamCity feed:
 ### In Octopus Deploy
