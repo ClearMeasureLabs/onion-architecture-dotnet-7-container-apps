@@ -371,7 +371,7 @@ The pipeline will build the application, create all of the resources in the TDD 
 
 ### Create an Azure Service Principal
 Using the az cli run:
-- az ad sp create-for-rbac --scope /subscriptions/subscriptionid --role Contributor --sdk-auth
+- az ad sp create-for-rbac --scope /subscriptions/subscriptionid --role AcrPush --sdk-auth
 - replace **subscriptionid** with the id of your Azure subscription. Save the JSON output as it will be needed later.
 
 ### Create an API Key in Octopus Deploy
