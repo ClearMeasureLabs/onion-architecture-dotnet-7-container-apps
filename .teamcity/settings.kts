@@ -415,7 +415,7 @@ object Tdd : BuildType({
                     [System.IO.Compression.ZipFile]::ExtractToDirectory(${'$'}nupkgPath, ${'$'}destinationPath)
                     ${'$'}currentPath = (Get-Location).Path
                     # Set the download URL for the Chrome driver
-                    ${'$'}chromeDriverUrl = "http://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip"
+                    ${'$'}chromeDriverUrl = "http://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_win32.zip"
                     ${'$'}chromeDriverPath = "./chromedriver.zip"
                     
                     # Download the Chrome driver
@@ -432,7 +432,7 @@ object Tdd : BuildType({
                     ${'$'}ChromeInstaller = "ChromeInstaller.exe"; 
                     ${'$'}ChromeInstallerFile = "${'$'}LocalTempDir\${'$'}ChromeInstaller"; 
                     ${'$'}WebClient = New-Object System.Net.WebClient; 
-                    ${'$'}WebClient.DownloadFile("http://dl.google.com/chrome/install/375.126/chrome_installer.exe", ${'$'}ChromeInstallerFile); 
+                    ${'$'}WebClient.DownloadFile("https://download.filepuma.com/files/web-browsers/google-chrome-64bit-/Google_Chrome_(64bit)_v114.0.5735.199.exe", ${'$'}ChromeInstallerFile); 
                     Start-Process -FilePath ${'$'}ChromeInstallerFile -Args "/silent /install" -Verb RunAs -Wait; 
                     Remove-Item ${'$'}ChromeInstallerFile
                 """.trimIndent()
