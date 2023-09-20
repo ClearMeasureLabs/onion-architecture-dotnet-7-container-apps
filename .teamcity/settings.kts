@@ -62,6 +62,7 @@ project {
         password("AzPassword", "credentialsJSON:b66a8739-aa0b-4987-a245-07c6907bdd01", label = "AzPassword")
         param("OctoURL", "https://clearmeasure.octopus.app/")
         password("OctoApiKey", "credentialsJSON:959b363e-7a9f-4706-86fa-532f285020e7", label = "OctoApiKey")
+        param("RegistryLogin", "onionarchitecturedotnet7containers.azurecr.io")
         password("AzTenant", "credentialsJSON:d16337c7-5751-4ecd-9110-f82755b0ebca", label = "AzTenant")
     }
 
@@ -117,13 +118,13 @@ object Build : BuildType({
                     path = "Dockerfile"
                 }
                 contextDir = "."
-                namesAndTags = "onionarchitecturedotnet7containers.azurecr.io/churchbulletin.ui:%build.number%"
+                namesAndTags = "%RegistryLogin%/churchbulletin.ui:%build.number%"
             }
         }
         dockerCommand {
             name = "Docker Push"
             commandType = push {
-                namesAndTags = "onionarchitecturedotnet7containers.azurecr.io/churchbulletin.ui:%build.number%"
+                namesAndTags = "%RegistryLogin%/churchbulletin.ui:%build.number%"
             }
         }
     }
