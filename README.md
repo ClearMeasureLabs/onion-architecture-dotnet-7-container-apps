@@ -12,7 +12,6 @@ This project will create all of the required infrastructure in Azure programatic
 - [Octopus Deploy Project Setup:](#octopus-deploy-project-setup)
   - [Connect Octopus to GitHub](#connect-octopus-to-github)
   - [Create a new Version Controlled Project:](#create-a-new-version-controlled-project)
-  - [Create and Update Project Variables](#create-and-update-project-variables)
   - [Optional-Create a runbook for availability monitoring](#optional-create-a-runbook-for-availability-monitoring)
 - [Azure DevOps Setup:](#azure-devops-setup)
   - [Create Service Connections](#create-service-connections)
@@ -175,16 +174,6 @@ Create Git Credentials using the GitHub Personal Access Token
 
 7. Click CONFIGURE and push the initial commit to convert the project
 
-## Create and Update Project Variables
-
-In the Octopus Project navigate to Variables -\> Project
-
-- Create a variable named **DatabasePassword** Set the values to Sensitive and enter passwords for TDD, UAT, and Prod environments
-- Update **registry\_login\_server** to the login server of the Azure Container Registry that was created
-  - This login server can be found in the Overview page of the container registry in the Azure Web Portal
-- Update **EnsureEnvironmentsExist** to True for Prod/UAT to ensure that all resources will be created the first time.
-
-
 ## Optional-Create a runbook for availability monitoring
 
 In the deployment process Octopus will setup Azure App Insights to monitor the availability of the app. If the healthcheck endpoint returns unhealthy an alert will be created that triggers an Octopus Runbook. 
@@ -299,6 +288,15 @@ To create a service connection
 5. Provide something in the Feed username field. It can be anything other than an empty string. It's not actually used.
 6. Provide the personal access token from Azure DevOps as the Feed Password
 
+## Create and Update Project Variables
+
+In the Octopus Project navigate to Variables -\> Project
+
+- Create a variable named **DatabasePassword** Set the values to Sensitive and enter passwords for TDD, UAT, and Prod environments
+- Update **registry\_login\_server** to the login server of the Azure Container Registry that was created
+  - This login server can be found in the Overview page of the container registry in the Azure Web Portal
+- Update **EnsureEnvironmentsExist** to True for Prod/UAT to ensure that all resources will be created the first time.
+
 ![Alt text](images/add%20feed%20to%20octo%202.png)
 
 ## Create the Library Variable Group
@@ -408,6 +406,15 @@ In Octopus Deploy:
 - Set the Feed username to the github username of the user that created the PAT
 - Provide the personal access token from Github as the Feed Password
 
+## Create and Update Project Variables
+
+In the Octopus Project navigate to Variables -\> Project
+
+- Create a variable named **DatabasePassword** Set the values to Sensitive and enter passwords for TDD, UAT, and Prod environments
+- Update **registry\_login\_server** to the login server of the Azure Container Registry that was created
+  - This login server can be found in the Overview page of the container registry in the Azure Web Portal
+- Update **EnsureEnvironmentsExist** to True for Prod/UAT to ensure that all resources will be created the first time.
+
 ## Create Environments
 In Github
 1. Go to Settings -\> Environments
@@ -502,6 +509,15 @@ Edit the following Configuration Parameters
 5.	Provide the username from one of the TeamCity users as the Username. 
 6.	Provide the password from the TeamCity user as the Feed Password
 - Making a TeamCity user for Octopus to connect to TeamCity is recommended
+
+## Create and Update Project Variables
+
+In the Octopus Project navigate to Variables -\> Project
+
+- Create a variable named **DatabasePassword** Set the values to Sensitive and enter passwords for TDD, UAT, and Prod environments
+- Update **registry\_login\_server** to the login server of the Azure Container Registry that was created
+  - This login server can be found in the Overview page of the container registry in the Azure Web Portal
+- Update **EnsureEnvironmentsExist** to True for Prod/UAT to ensure that all resources will be created the first time.
 
 ![Alt text](images/TC7.png)
 
