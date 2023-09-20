@@ -62,6 +62,7 @@ project {
         password("AzPassword", "credentialsJSON:b66a8739-aa0b-4987-a245-07c6907bdd01", label = "AzPassword")
         param("OctoURL", "https://clearmeasure.octopus.app/")
         password("OctoApiKey", "credentialsJSON:959b363e-7a9f-4706-86fa-532f285020e7", label = "OctoApiKey")
+        param("RegistryLogin", "onionarchitecturedotnet7containers.azurecr.io")
         password("AzTenant", "credentialsJSON:d16337c7-5751-4ecd-9110-f82755b0ebca", label = "AzTenant")
     }
 
@@ -117,13 +118,13 @@ object Build : BuildType({
                     path = "Dockerfile"
                 }
                 contextDir = "."
-                namesAndTags = "onionarchitecturedotnet7containers.azurecr.io/churchbulletin.ui:%build.number%"
+                namesAndTags = "%RegistryLogin%/churchbulletin.ui:%build.number%"
             }
         }
         dockerCommand {
             name = "Docker Push"
             commandType = push {
-                namesAndTags = "onionarchitecturedotnet7containers.azurecr.io/churchbulletin.ui:%build.number%"
+                namesAndTags = "%RegistryLogin%/churchbulletin.ui:%build.number%"
             }
         }
     }
@@ -415,7 +416,7 @@ object Tdd : BuildType({
                     [System.IO.Compression.ZipFile]::ExtractToDirectory(${'$'}nupkgPath, ${'$'}destinationPath)
                     ${'$'}currentPath = (Get-Location).Path
                     # Set the download URL for the Chrome driver
-                    ${'$'}chromeDriverUrl = "http://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip"
+                    ${'$'}chromeDriverUrl = "http://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_win32.zip"
                     ${'$'}chromeDriverPath = "./chromedriver.zip"
                     
                     # Download the Chrome driver
@@ -432,7 +433,7 @@ object Tdd : BuildType({
                     ${'$'}ChromeInstaller = "ChromeInstaller.exe"; 
                     ${'$'}ChromeInstallerFile = "${'$'}LocalTempDir\${'$'}ChromeInstaller"; 
                     ${'$'}WebClient = New-Object System.Net.WebClient; 
-                    ${'$'}WebClient.DownloadFile("http://dl.google.com/chrome/install/375.126/chrome_installer.exe", ${'$'}ChromeInstallerFile); 
+                    ${'$'}WebClient.DownloadFile("https://download.filepuma.com/files/web-browsers/google-chrome-64bit-/Google_Chrome_(64bit)_v114.0.5735.199.exe", ${'$'}ChromeInstallerFile); 
                     Start-Process -FilePath ${'$'}ChromeInstallerFile -Args "/silent /install" -Verb RunAs -Wait; 
                     Remove-Item ${'$'}ChromeInstallerFile
                 """.trimIndent()
