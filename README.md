@@ -288,6 +288,8 @@ To create a service connection
 5. Provide something in the Feed username field. It can be anything other than an empty string. It's not actually used.
 6. Provide the personal access token from Azure DevOps as the Feed Password
 
+![Alt text](images/add%20feed%20to%20octo%202.png)
+
 ## Create and Update Project Variables
 
 In the Octopus Project navigate to Variables -\> Project
@@ -296,8 +298,6 @@ In the Octopus Project navigate to Variables -\> Project
 - Update **registry\_login\_server** to the login server of the Azure Container Registry that was created
   - This login server can be found in the Overview page of the container registry in the Azure Web Portal
 - Update **EnsureEnvironmentsExist** to True for Prod/UAT to ensure that all resources will be created the first time.
-
-![Alt text](images/add%20feed%20to%20octo%202.png)
 
 ## Create the Library Variable Group
 
@@ -510,6 +510,9 @@ Edit the following Configuration Parameters
 6.	Provide the password from the TeamCity user as the Feed Password
 - Making a TeamCity user for Octopus to connect to TeamCity is recommended
 
+![Alt text](images/TC7.png)
+
+
 ## Create and Update Project Variables
 
 In the Octopus Project navigate to Variables -\> Project
@@ -518,8 +521,6 @@ In the Octopus Project navigate to Variables -\> Project
 - Update **registry\_login\_server** to the login server of the Azure Container Registry that was created
   - This login server can be found in the Overview page of the container registry in the Azure Web Portal
 - Update **EnsureEnvironmentsExist** to True for Prod/UAT to ensure that all resources will be created the first time.
-
-![Alt text](images/TC7.png)
 
 Push a commit to the git repo, and the pipeline will start
 
