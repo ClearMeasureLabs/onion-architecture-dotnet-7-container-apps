@@ -224,11 +224,11 @@ variable "OctoInstanceURL" {
 }
 
 variable "EnsureEnvironmentsExist" {
-    value "True" {
+    value "False" {
         environment = ["uat"]
     }
 
-    value "True" {
+    value "False" {
         environment = ["prod"]
     }
 }
