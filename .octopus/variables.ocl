@@ -219,6 +219,10 @@ variable "azrunbookname" {
     value "octo-runbook" {}
 }
 
+variable "OctoInstanceURL" {
+    value "https://clearmeasure.octopus.app/" {}
+}
+
 variable "EnsureEnvironmentsExist" {
     value "False" {
         environment = ["uat"]
@@ -227,8 +231,4 @@ variable "EnsureEnvironmentsExist" {
     value "False" {
         environment = ["prod"]
     }
-}
-
-variable "OctoInstanceURL" {
-    value "https://clearmeasure.octopus.app/" {}
 }
