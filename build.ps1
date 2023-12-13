@@ -9,7 +9,7 @@ $acceptanceTestProjectPath = "$source_dir\AcceptanceTests"
 $uiProjectPath = "$source_dir\UI\Server"
 $databaseProjectPath = "$source_dir\Database"
 $projectConfig = $env:BuildConfiguration
-$framework = "net7.0"
+$framework = "net8.0"
 $version = $env:BUILD_BUILDNUMBER
 
 $verbosity = "minimal"
