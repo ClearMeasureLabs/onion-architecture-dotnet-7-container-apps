@@ -17,7 +17,7 @@ namespace ProgrammingWithPalermo.ChurchBulletin.UnitTests
             item2.Id = item1.Id;
             item1.ShouldBe(item2);
             item2.ShouldBe(item1);
-            Assert.True(item1 == item2);
+            Assert.That(item1 == item2);
         }
 
         [Test]

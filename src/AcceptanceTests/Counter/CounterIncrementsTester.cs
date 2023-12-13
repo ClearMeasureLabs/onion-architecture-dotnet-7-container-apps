@@ -17,6 +17,7 @@ public class CounterIncrementsTester
     public void Teardown()
     {
         _testDriver.Dispose();
+        _driver.Dispose();
     }
 
     [TestCase(1, 1)]
