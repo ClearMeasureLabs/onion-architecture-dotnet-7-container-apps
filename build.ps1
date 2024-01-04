@@ -58,12 +58,6 @@ Function Compile{
 	}
 }
 
-Function AddMauiWorkflow{
-	exec {
-		& dotnet workload install maui
-	}
-}
-
 Function UnitTests{
 	Push-Location -Path $unitTestProjectPath
 
@@ -170,7 +164,6 @@ Function PrivateBuild{
 	[Environment]::SetEnvironmentVariable("containerAppURL", "localhost:7174", "User")
 	$sw = [Diagnostics.Stopwatch]::StartNew()
 	Init
-	AddMauiWorkflow
 	Compile
 	UnitTests
 	MigrateDatabaseLocal
@@ -183,7 +176,6 @@ Function PrivateBuild{
 Function CIBuild{
 	$sw = [Diagnostics.Stopwatch]::StartNew()
 	Init
-	AddMauiWorkflow
 	Compile
 	UnitTests
 	MigrateDatabaseLocal
