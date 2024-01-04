@@ -6,6 +6,8 @@ namespace UI.Maui
 {
     public static class MauiProgram
     {
+        public static string BaseAddress =
+            DeviceInfo.Platform == DevicePlatform.Android ? "https://10.0.2.2:7174" : "https://localhost:7174";
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
@@ -19,15 +21,8 @@ namespace UI.Maui
             builder.Services.AddMauiBlazorWebView();
             builder.Services.AddScoped<IUiBus>(provider => new MvcBus(NullLogger<MvcBus>.Instance));
 
-            var handler = new Xamarin.Android.Net.AndroidMessageHandler();
-            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
-            {
-                if (cert != null && cert.Issuer.Equals("CN=localhost"))
-                    return true;
-                return errors == System.Net.Security.SslPolicyErrors.None;
-            };
-
-            builder.Services.AddSingleton(sp => new HttpClient(handler) { BaseAddress = new Uri("https://10.0.2.2:7174/") });
+            HttpsClientHandlerService handler = new HttpsClientHandlerService();
+            builder.Services.AddSingleton(sp => new HttpClient(handler.GetPlatformMessageHandler()) { BaseAddress = new Uri(BaseAddress) });
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
