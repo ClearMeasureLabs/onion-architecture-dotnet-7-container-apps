@@ -49,7 +49,7 @@ stages:
           targetType: 'inline'
           script: |
             dotnet nuget locals all --clear 
-            dotnet workload install maui andriod ios
+            dotnet workload install maui android ios
 
       - task: PowerShell@2
         inputs:
