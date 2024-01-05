@@ -25,10 +25,16 @@
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
 
+		<AndroidProjectFolder>Platforms\Android</AndroidProjectFolder>
+		<AndroidManifest Condition=" Exists('$(AndroidProjectFolder)AndroidManifest.xml') ">$(AndroidProjectFolder)AndroidManifest.xml</AndroidManifest>
+
     </PropertyGroup>
 
     <ItemGroup>
-        <!-- App Icon -->
+
+	   
+
+		<!-- App Icon -->
         <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
 
         <!-- Splash Screen -->
@@ -44,6 +50,8 @@
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
     </ItemGroup>
+
+
 
 	<ItemGroup Condition="$(TargetFramework.StartsWith('net8.0-android')) != true">
 		<Compile Remove="**\Android\**\*.cs" />
