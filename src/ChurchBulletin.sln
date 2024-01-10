@@ -48,7 +48,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AcceptanceTests", "Acceptan
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI.Maui", "UI\Maui\UI.Maui.csproj", "{F1C0E19A-F6A0-40ED-8B02-583B438EE077}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI.Wpf", "UI.Wpf\UI.Wpf.csproj", "{8A8BE567-D047-4671-8FAD-960132DFD3AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI.Wpf", "UI.Wpf\UI.Wpf.csproj", "{8A8BE567-D047-4671-8FAD-960132DFD3AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
