@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
+using Palermo.BlazorMvc;
+using System.Net.Http;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,6 +26,8 @@ namespace UI.Wpf
 
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddWpfBlazorWebView();
+            serviceCollection.AddScoped<IUiBus>(svc => new MvcBus(NullLogger<MvcBus>.Instance));
+            serviceCollection.AddSingleton(svc => new HttpClient { BaseAddress = new Uri("https://localhost:7174") });
             Resources.Add("services", serviceCollection.BuildServiceProvider());
         }
     }
