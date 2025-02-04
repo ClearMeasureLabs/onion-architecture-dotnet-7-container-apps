@@ -819,6 +819,7 @@ step "create-automation-account" {
 
     action {
         action_type = "Octopus.AzureResourceGroup"
+        is_disabled = true
         properties = {
             Octopus.Action.Azure.AccountId = "#{AzureAccount}"
             Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
@@ -1012,6 +1013,7 @@ step "create-automation-webhook" {
 
     action {
         action_type = "Octopus.Script"
+        is_disabled = true
         properties = {
             Octopus.Action.Script.ScriptBody = <<-EOT
                 Install-Module -Name Az -Repository PSGallery -Force
@@ -1059,6 +1061,7 @@ step "create-email-alert-action" {
 
     action {
         action_type = "Octopus.AzureResourceGroup"
+        is_disabled = true
         properties = {
             Octopus.Action.Azure.AccountId = "#{AzureAccount}"
             Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
@@ -1138,6 +1141,7 @@ step "create-low-availability-metric-alert" {
 
     action {
         action_type = "Octopus.AzureResourceGroup"
+        is_disabled = true
         properties = {
             Octopus.Action.Azure.AccountId = "#{AzureAccount}"
             Octopus.Action.Azure.ResourceGroupDeploymentMode = "Incremental"
