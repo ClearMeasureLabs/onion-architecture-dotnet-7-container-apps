@@ -179,6 +179,15 @@ stages:
                 downloadPath: '$(System.DefaultWorkingDirectory)/tests'
                 extract: true
 
+            - task: UseDotNet@2
+              displayName: 'Install SDK 7.0.100'
+              inputs:
+                packageType: 'sdk'
+                version: '7.0.100'
+            - task: UseDotNet@2
+              inputs:
+                packageType: 'runtime'
+                version: '6.0.0'
             - task: VSTest@3
               displayName: 'VsTest - AcceptanceTests'
               inputs:
