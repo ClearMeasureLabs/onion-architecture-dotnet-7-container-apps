@@ -179,7 +179,7 @@ stages:
                 downloadPath: '$(System.DefaultWorkingDirectory)/tests'
                 extract: true
 
-            - task: VSTest@2
+            - task: VSTest@3
               displayName: 'VsTest - AcceptanceTests'
               inputs:
                 testSelector: 'testAssemblies'
