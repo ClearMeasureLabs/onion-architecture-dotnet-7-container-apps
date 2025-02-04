@@ -509,6 +509,8 @@ step "checkversion" {
     action {
         action_type = "Octopus.Script"
         properties = {
+            Octopus.Action.AutoRetry.MaximumCount = "3"
+            Octopus.Action.AutoRetry.MinimumBackoff = "15"
             Octopus.Action.Package.DownloadOnTentacle = "False"
             Octopus.Action.Package.FeedId = "onion-arch-dotnet-7"
             Octopus.Action.Package.PackageId = "ChurchBulletin.Script"
